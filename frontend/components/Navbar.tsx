@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -11,11 +11,11 @@ export default function Navbar() {
   const [logoFailed, setLogoFailed] = useState(false)
 
   const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/events', label: 'Events' },
-    { href: '/announcements', label: 'Announcements' },
-    { href: '/about', label: 'About' },
-    { href: '/contact', label: 'Contact' },
+  { href: '/', label: 'Home' },
+  { href: '/events', label: 'Events' },
+  { href: '/announcements', label: 'Announcements' },
+  { href: '/about', label: 'About ISR' },
+  { href: '/contact', label: 'Contact' },
   ]
 
   return (
@@ -24,7 +24,7 @@ export default function Navbar() {
             never changes the navbar's layout height. */}
         <div className="relative h-14">
         {/* Radius is pinned to half the bar height (h-14) so the pill shape
-            never changes as the drawer grows — only the bottom edge moves. */}
+            never changes as the drawer grows â€” only the bottom edge moves. */}
         <div className="absolute inset-x-0 top-0 overflow-hidden rounded-[1.75rem] border border-isr-light-blue/30 bg-isr-cream/70 shadow-lg backdrop-blur-md">
         <div className="relative z-10 flex h-14 shrink-0 items-center justify-between px-4 sm:px-6">
           {/* Logo */}
@@ -84,7 +84,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Mobile Menu — drawer expands vertically downward */}
+        {/* Mobile Menu â€” drawer expands vertically downward */}
         <div
           className={`grid transition-[grid-template-rows] duration-300 ease-out md:hidden ${
             isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'

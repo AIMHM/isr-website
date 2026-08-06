@@ -51,10 +51,10 @@ function EventPreviewCard({
           {event.name}
         </h3>
         <p className="mb-2 shrink-0 text-xs text-gray-600">
-          <strong>{date}</strong> · {time}
+          <strong>{date}</strong> Â· {time}
         </p>
         <div className="min-h-0 flex-1 overflow-hidden">
-          <p className="text-sm leading-relaxed text-gray-700">{event.description}</p>
+          <p className="line-clamp-4 text-sm leading-relaxed text-gray-700">{event.description}</p>
         </div>
         <span className="mt-3 inline-flex shrink-0 items-center text-xs font-semibold text-isr-dark-red underline decoration-isr-dark-red/30 underline-offset-2 transition-colors group-hover:text-isr-bright-red group-hover:decoration-isr-bright-red/50">
           Learn More
@@ -99,7 +99,7 @@ export default function EventsPreview() {
 
     try {
       const data = await fetchEvents('upcoming')
-      setEvents(data.slice(0, 5))
+      setEvents(data.slice(0, 3))
     } catch {
       setEvents([])
       setError('Unable to load upcoming events.')
@@ -123,7 +123,7 @@ export default function EventsPreview() {
 
         {loading && (
           <div className="mb-12 flex flex-wrap justify-center gap-6" aria-live="polite" aria-busy="true">
-            {[0, 1, 2, 3, 4].map((index) => (
+            {[0, 1, 2].map((index) => (
               <EventPreviewCardSkeleton key={index} />
             ))}
           </div>
