@@ -1,6 +1,13 @@
-﻿import { API_BASE_URL } from '@/lib/api'
+import { API_BASE_URL } from '@/lib/api'
 import { MOCK_EVENTS } from '@/lib/mockData'
 import { IS_LOCAL_MOCK_DATA } from '@/lib/mockMode'
+
+export type EventStatus =
+  | 'scheduled'
+  | 'sold-out'
+  | 'postponed'
+  | 'cancelled'
+  | 'completed'
 
 export type Event = {
   id: number
@@ -9,6 +16,17 @@ export type Event = {
   imageUrl: string
   description: string
   ticketUrl: string | null
+
+  endDate?: string | null
+  venue?: string | null
+  campus?: string | null
+  audience?: string | null
+  price?: string | null
+  accessibility?: string | null
+  status?: EventStatus
+  statusNote?: string | null
+  contentOwner?: string | null
+  reviewedAt?: string | null
 }
 
 export type EventsFilter = 'all' | 'upcoming' | 'past'
@@ -23,7 +41,10 @@ export type EventResponse = {
 
 const TIMEZONE = 'Australia/Melbourne'
 
-function formatDatetimeLocalInTimeZone(date: Date, timeZone: string): string {
+function formatDatetimeLocalInTimeZone(
+  date: Date,
+  timeZone: string,
+): string {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone,
     year: 'numeric',
@@ -40,37 +61,63 @@ function formatDatetimeLocalInTimeZone(date: Date, timeZone: string): string {
   let hour = get('hour')
   if (hour === '24') hour = '00'
 
-  return `${get('year')}-${get('month')}-${get('day')}T${hour}:${get('minute')}`
+  return `${get('year')}-${get('month')}-${get('day')}T${hour}:${get(
+    'minute',
+  )}`
 }
 
-/** ISO UTC to a datetime-local value in Australia/Melbourne. */
 export function toDatetimeLocalValue(isoDate: string): string {
-  return formatDatetimeLocalInTimeZone(new Date(isoDate), TIMEZONE)
+  return formatDatetimeLocalInTimeZone(
+    new Date(isoDate),
+    TIMEZONE,
+  )
 }
 
-/** Melbourne datetime-local value to ISO UTC. */
-export function fromDatetimeLocalValue(localValue: string): string {
+export function fromDatetimeLocalValue(
+  localValue: string,
+): string {
   const [datePart, timePart] = localValue.split('T')
   const [year, month, day] = datePart.split('-').map(Number)
   const [hour, minute] = timePart.split(':').map(Number)
 
-  let utcMs = Date.UTC(year, month - 1, day, hour, minute)
+  let utcMs = Date.UTC(
+    year,
+    month - 1,
+    day,
+    hour,
+    minute,
+  )
 
   for (let i = 0; i < 4; i++) {
-    const formatted = formatDatetimeLocalInTimeZone(new Date(utcMs), TIMEZONE)
+    const formatted = formatDatetimeLocalInTimeZone(
+      new Date(utcMs),
+      TIMEZONE,
+    )
 
     if (formatted === localValue) {
       return new Date(utcMs).toISOString()
     }
 
-    const [formattedDate, formattedTime] = formatted.split('T')
-    const [formattedYear, formattedMonth, formattedDay] = formattedDate
-      .split('-')
-      .map(Number)
-    const [formattedHour, formattedMinute] = formattedTime.split(':').map(Number)
+    const [formattedDate, formattedTime] =
+      formatted.split('T')
+
+    const [
+      formattedYear,
+      formattedMonth,
+      formattedDay,
+    ] = formattedDate.split('-').map(Number)
+
+    const [formattedHour, formattedMinute] =
+      formattedTime.split(':').map(Number)
 
     utcMs +=
-      Date.UTC(year, month - 1, day, hour, minute) -
+      Date.UTC(
+        year,
+        month - 1,
+        day,
+        hour,
+        minute,
+      ) -
       Date.UTC(
         formattedYear,
         formattedMonth - 1,
@@ -107,20 +154,81 @@ export function formatEventDate(isoDate: string): {
   return { date, time }
 }
 
+export function formatEventTime(isoDate: string): string {
+  return new Intl.DateTimeFormat('en-AU', {
+    timeZone: TIMEZONE,
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  }).format(new Date(isoDate))
+}
+
 export function isEventPast(isoDate: string): boolean {
   return new Date(isoDate).getTime() < Date.now()
 }
 
-export function sortEventsForDisplay(events: Event[]): Event[] {
+export function getEventStatus(
+  event: Event,
+): EventStatus {
+  if (event.status) return event.status
+
+  return isEventPast(event.endDate ?? event.date)
+    ? 'completed'
+    : 'scheduled'
+}
+
+export function getEventStatusLabel(
+  status: EventStatus,
+): string {
+  const labels: Record<EventStatus, string> = {
+    scheduled: 'Upcoming',
+    'sold-out': 'Sold out',
+    postponed: 'Postponed',
+    cancelled: 'Cancelled',
+    completed: 'Completed',
+  }
+
+  return labels[status]
+}
+
+export function canRegisterForEvent(
+  event: Event,
+): boolean {
+  const status = getEventStatus(event)
+
+  return (
+    Boolean(event.ticketUrl) &&
+    status !== 'cancelled' &&
+    status !== 'postponed' &&
+    status !== 'completed'
+  )
+}
+
+export function sortEventsForDisplay(
+  events: Event[],
+): Event[] {
   const now = Date.now()
 
   return [...events].sort((a, b) => {
     const aTime = new Date(a.date).getTime()
     const bTime = new Date(b.date).getTime()
-    const aUpcoming = aTime >= now
-    const bUpcoming = bTime >= now
 
-    if (aUpcoming !== bUpcoming) return aUpcoming ? -1 : 1
+    const aUpcoming =
+      getEventStatus(a) !== 'completed' &&
+      aTime >= now
+
+    const bUpcoming =
+      getEventStatus(b) !== 'completed' &&
+      bTime >= now
+
+    if (aUpcoming !== bUpcoming) {
+      return aUpcoming ? -1 : 1
+    }
+
+    if (aUpcoming) {
+      return aTime - bTime
+    }
+
     return bTime - aTime
   })
 }
@@ -135,18 +243,30 @@ export async function fetchEvents(
   filter: EventsFilter = 'all',
 ): Promise<Event[]> {
   if (IS_LOCAL_MOCK_DATA) {
-    const events = MOCK_EVENTS.map((event) => ({ ...event }))
+    const events = MOCK_EVENTS.map((event) => ({
+      ...event,
+    })) as Event[]
 
     const filtered = events.filter((event) => {
-      if (filter === 'upcoming') return !isEventPast(event.date)
-      if (filter === 'past') return isEventPast(event.date)
+      const status = getEventStatus(event)
+
+      if (filter === 'upcoming') {
+        return status !== 'completed'
+      }
+
+      if (filter === 'past') {
+        return status === 'completed'
+      }
+
       return true
     })
 
     return sortEventsForDisplay(filtered)
   }
 
-  const query = filter === 'all' ? '' : `?filter=${filter}`
+  const query =
+    filter === 'all' ? '' : `?filter=${filter}`
+
   const response = await fetch(
     `${API_BASE_URL}/api/events${query}`,
     fetchOptions(),
@@ -156,14 +276,21 @@ export async function fetchEvents(
     throw new Error('Failed to fetch events')
   }
 
-  const json = (await response.json()) as EventsResponse
-  return json.data
+  const json =
+    (await response.json()) as EventsResponse
+
+  return sortEventsForDisplay(json.data)
 }
 
-export async function fetchEventById(id: number): Promise<Event | null> {
+export async function fetchEventById(
+  id: number,
+): Promise<Event | null> {
   if (IS_LOCAL_MOCK_DATA) {
-    const event = MOCK_EVENTS.find((item) => item.id === id)
-    return event ? { ...event } : null
+    const event = MOCK_EVENTS.find(
+      (item) => item.id === id,
+    )
+
+    return event ? ({ ...event } as Event) : null
   }
 
   const response = await fetch(
@@ -177,6 +304,8 @@ export async function fetchEventById(id: number): Promise<Event | null> {
     throw new Error('Failed to fetch event')
   }
 
-  const json = (await response.json()) as EventResponse
+  const json =
+    (await response.json()) as EventResponse
+
   return json.data
 }
