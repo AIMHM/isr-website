@@ -1,4 +1,6 @@
-import { API_BASE_URL } from '@/lib/api'
+﻿import { API_BASE_URL } from '@/lib/api'
+import { MOCK_EVENTS } from '@/lib/mockData'
+import { IS_LOCAL_MOCK_DATA } from '@/lib/mockMode'
 
 export type Event = {
   id: number
@@ -33,7 +35,7 @@ function formatDatetimeLocalInTimeZone(date: Date, timeZone: string): string {
   }).formatToParts(date)
 
   const get = (type: Intl.DateTimeFormatPartTypes) =>
-    parts.find((p) => p.type === type)?.value ?? ''
+    parts.find((part) => part.type === type)?.value ?? ''
 
   let hour = get('hour')
   if (hour === '24') hour = '00'
@@ -41,12 +43,12 @@ function formatDatetimeLocalInTimeZone(date: Date, timeZone: string): string {
   return `${get('year')}-${get('month')}-${get('day')}T${hour}:${get('minute')}`
 }
 
-/** ISO UTC → `datetime-local` value in Australia/Melbourne. */
+/** ISO UTC to a datetime-local value in Australia/Melbourne. */
 export function toDatetimeLocalValue(isoDate: string): string {
   return formatDatetimeLocalInTimeZone(new Date(isoDate), TIMEZONE)
 }
 
-/** `datetime-local` value (Melbourne local time) → ISO UTC. */
+/** Melbourne datetime-local value to ISO UTC. */
 export function fromDatetimeLocalValue(localValue: string): string {
   const [datePart, timePart] = localValue.split('T')
   const [year, month, day] = datePart.split('-').map(Number)
@@ -56,21 +58,35 @@ export function fromDatetimeLocalValue(localValue: string): string {
 
   for (let i = 0; i < 4; i++) {
     const formatted = formatDatetimeLocalInTimeZone(new Date(utcMs), TIMEZONE)
+
     if (formatted === localValue) {
       return new Date(utcMs).toISOString()
     }
 
-    const [fDate, fTime] = formatted.split('T')
-    const [fy, fm, fd] = fDate.split('-').map(Number)
-    const [fh, fmin] = fTime.split(':').map(Number)
+    const [formattedDate, formattedTime] = formatted.split('T')
+    const [formattedYear, formattedMonth, formattedDay] = formattedDate
+      .split('-')
+      .map(Number)
+    const [formattedHour, formattedMinute] = formattedTime.split(':').map(Number)
 
-    utcMs += Date.UTC(year, month - 1, day, hour, minute) - Date.UTC(fy, fm - 1, fd, fh, fmin)
+    utcMs +=
+      Date.UTC(year, month - 1, day, hour, minute) -
+      Date.UTC(
+        formattedYear,
+        formattedMonth - 1,
+        formattedDay,
+        formattedHour,
+        formattedMinute,
+      )
   }
 
   return new Date(utcMs).toISOString()
 }
 
-export function formatEventDate(isoDate: string): { date: string; time: string } {
+export function formatEventDate(isoDate: string): {
+  date: string
+  time: string
+} {
   const parsed = new Date(isoDate)
 
   const date = new Intl.DateTimeFormat('en-AU', {
@@ -95,10 +111,6 @@ export function isEventPast(isoDate: string): boolean {
   return new Date(isoDate).getTime() < Date.now()
 }
 
-/**
- * Orders events for display: upcoming first (furthest in the future at the top),
- * then past events from most recent down to the oldest.
- */
 export function sortEventsForDisplay(events: Event[]): Event[] {
   const now = Date.now()
 
@@ -114,12 +126,31 @@ export function sortEventsForDisplay(events: Event[]): Event[] {
 }
 
 function fetchOptions(): RequestInit | undefined {
-  return typeof window === 'undefined' ? { next: { revalidate: 60 } } : undefined
+  return typeof window === 'undefined'
+    ? { next: { revalidate: 60 } }
+    : undefined
 }
 
-export async function fetchEvents(filter: EventsFilter = 'all'): Promise<Event[]> {
+export async function fetchEvents(
+  filter: EventsFilter = 'all',
+): Promise<Event[]> {
+  if (IS_LOCAL_MOCK_DATA) {
+    const events = MOCK_EVENTS.map((event) => ({ ...event }))
+
+    const filtered = events.filter((event) => {
+      if (filter === 'upcoming') return !isEventPast(event.date)
+      if (filter === 'past') return isEventPast(event.date)
+      return true
+    })
+
+    return sortEventsForDisplay(filtered)
+  }
+
   const query = filter === 'all' ? '' : `?filter=${filter}`
-  const response = await fetch(`${API_BASE_URL}/api/events${query}`, fetchOptions())
+  const response = await fetch(
+    `${API_BASE_URL}/api/events${query}`,
+    fetchOptions(),
+  )
 
   if (!response.ok) {
     throw new Error('Failed to fetch events')
@@ -130,9 +161,18 @@ export async function fetchEvents(filter: EventsFilter = 'all'): Promise<Event[]
 }
 
 export async function fetchEventById(id: number): Promise<Event | null> {
-  const response = await fetch(`${API_BASE_URL}/api/events/${id}`, fetchOptions())
+  if (IS_LOCAL_MOCK_DATA) {
+    const event = MOCK_EVENTS.find((item) => item.id === id)
+    return event ? { ...event } : null
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/events/${id}`,
+    fetchOptions(),
+  )
 
   if (response.status === 404) return null
+
   if (!response.ok) {
     throw new Error('Failed to fetch event')
   }

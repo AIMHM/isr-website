@@ -1,4 +1,6 @@
-import { API_BASE_URL } from '@/lib/api'
+﻿import { API_BASE_URL } from '@/lib/api'
+import { MOCK_PRAYER_TIMES } from '@/lib/mockData'
+import { IS_LOCAL_MOCK_DATA } from '@/lib/mockMode'
 
 export const DAILY_PRAYERS = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'] as const
 
@@ -46,6 +48,15 @@ function currentMinutesInMelbourne(): number {
 }
 
 export async function fetchPrayerTimes(): Promise<PrayerTimesData> {
+  if (IS_LOCAL_MOCK_DATA) {
+    return {
+      ...MOCK_PRAYER_TIMES,
+      timings: { ...MOCK_PRAYER_TIMES.timings },
+      date: { ...MOCK_PRAYER_TIMES.date },
+      meta: { ...MOCK_PRAYER_TIMES.meta },
+    }
+  }
+
   const response = await fetch(`${API_BASE_URL}/api/prayer-times`)
 
   if (!response.ok) {

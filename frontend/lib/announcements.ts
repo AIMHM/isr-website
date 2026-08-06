@@ -1,4 +1,6 @@
-import { API_BASE_URL } from '@/lib/api'
+﻿import { API_BASE_URL } from '@/lib/api'
+import { MOCK_ANNOUNCEMENTS } from '@/lib/mockData'
+import { IS_LOCAL_MOCK_DATA } from '@/lib/mockMode'
 
 export type Announcement = {
   id: number
@@ -9,7 +11,9 @@ export type Announcement = {
   createdAt: string
 }
 
-type AnnouncementsResponse = { data: Announcement[] }
+type AnnouncementsResponse = {
+  data: Announcement[]
+}
 
 const TIMEZONE = 'Australia/Melbourne'
 
@@ -23,12 +27,27 @@ export function formatAnnouncementDate(isoDate: string): string {
 }
 
 function fetchOptions(): RequestInit | undefined {
-  return typeof window === 'undefined' ? { next: { revalidate: 60 } } : undefined
+  return typeof window === 'undefined'
+    ? { next: { revalidate: 60 } }
+    : undefined
 }
 
 export async function fetchAnnouncements(): Promise<Announcement[]> {
-  const response = await fetch(`${API_BASE_URL}/api/announcements`, fetchOptions())
-  if (!response.ok) throw new Error('Failed to fetch announcements')
+  if (IS_LOCAL_MOCK_DATA) {
+    return MOCK_ANNOUNCEMENTS.map((announcement) => ({
+      ...announcement,
+    }))
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/announcements`,
+    fetchOptions(),
+  )
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch announcements')
+  }
+
   const json = (await response.json()) as AnnouncementsResponse
   return json.data
 }

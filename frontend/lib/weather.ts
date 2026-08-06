@@ -1,4 +1,6 @@
-import { API_BASE_URL } from '@/lib/api'
+﻿import { API_BASE_URL } from '@/lib/api'
+import { MOCK_WEATHER } from '@/lib/mockData'
+import { IS_LOCAL_MOCK_DATA } from '@/lib/mockMode'
 
 export type WeatherData = {
   current: {
@@ -19,6 +21,15 @@ export function getWeatherIconUrl(icon: string): string {
 }
 
 export async function fetchWeather(): Promise<WeatherData> {
+  if (IS_LOCAL_MOCK_DATA) {
+    return {
+      current: {
+        ...MOCK_WEATHER.current,
+        condition: { ...MOCK_WEATHER.current.condition },
+      },
+    }
+  }
+
   const response = await fetch(`${API_BASE_URL}/api/weather`)
 
   if (!response.ok) {
