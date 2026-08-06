@@ -1,4 +1,4 @@
-﻿import Image from 'next/image'
+import Image from 'next/image'
 import Link from 'next/link'
 
 export default function Hero() {
@@ -24,14 +24,12 @@ export default function Hero() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="https://campus.hellorubric.com/?s=10733"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/join"
                 className="rounded-full bg-isr-turquoise px-6 py-3 font-semibold text-white transition-colors hover:bg-isr-dark-red"
               >
                 Join ISR
-              </a>
+              </Link>
 
               <Link
                 href="/events"
@@ -40,12 +38,12 @@ export default function Hero() {
                 View Events
               </Link>
 
-              <a
-                href="#prayer-spaces"
+              <Link
+                href="/pray"
                 className="rounded-full px-6 py-3 font-semibold text-isr-turquoise underline decoration-isr-turquoise/30 underline-offset-4 hover:text-isr-dark-red"
               >
                 Find a Prayer Space
-              </a>
+              </Link>
             </div>
           </div>
 

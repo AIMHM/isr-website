@@ -1,4 +1,4 @@
-﻿import Navbar from '@/components/Navbar'
+import Navbar from '@/components/Navbar'
 import Hero from '@/components/Hero'
 import TodayAtISR from '@/components/TodayAtISR'
 import QuickActions from '@/components/QuickActions'
@@ -13,7 +13,7 @@ export default function Home() {
     <div className="min-h-screen">
       <Navbar />
 
-      <main>
+      <main id="main-content">
         <Hero />
         <TodayAtISR />
         <QuickActions />

@@ -2,107 +2,168 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
-import { fetchEvents, formatEventDate, type Event } from '@/lib/events'
-import { ArrowRight } from '@/components/Icons'
+import {
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
+import {
+  fetchEvents,
+  formatEventDate,
+  formatEventTime,
+  getEventStatus,
+  getEventStatusLabel,
+  type Event,
+  type EventStatus,
+} from '@/lib/events'
 
-const ACCENT_BARS = ['bg-isr-turquoise', 'bg-isr-bright-red', 'bg-isr-dark-red'] as const
-const EVENT_CARD_WIDTH = 273
-const EVENT_CARD_HEIGHT = 540
-const EVENT_IMAGE_MAX_HEIGHT = 320
+const STATUS_CLASSES: Record<EventStatus, string> = {
+  scheduled:
+    'bg-isr-turquoise/15 text-isr-turquoise',
+  'sold-out':
+    'bg-isr-yellow text-isr-dark-red',
+  postponed:
+    'bg-amber-100 text-amber-900',
+  cancelled:
+    'bg-red-100 text-red-800',
+  completed:
+    'bg-isr-light-blue/25 text-isr-dark-red',
+}
 
 function EventPreviewCard({
   event,
-  index,
 }: {
   event: Event
-  index: number
 }) {
-  const { date, time } = formatEventDate(event.date)
+  const { date, time } =
+    formatEventDate(event.date)
+
+  const status = getEventStatus(event)
 
   return (
-    <Link
-      href={`/events/${event.id}`}
-      className="group flex shrink-0 flex-col overflow-hidden rounded-xl bg-isr-cream shadow-[0_1px_5px_rgba(91,11,5,0.1)] transition-shadow hover:shadow-[0_2px_7px_rgba(91,11,5,0.14)]"
-      style={{ width: EVENT_CARD_WIDTH, height: EVENT_CARD_HEIGHT }}
-    >
-      <div className="shrink-0 px-2 pt-2">
-        {event.imageUrl ? (
-          <div className="overflow-hidden rounded-lg bg-isr-cream">
-            <Image
-              src={event.imageUrl}
-              alt={`${event.name} poster`}
-              width={0}
-              height={0}
-              sizes={`${EVENT_CARD_WIDTH}px`}
-              className="block h-auto w-full"
-              style={{ width: '100%', height: 'auto', maxHeight: EVENT_IMAGE_MAX_HEIGHT }}
-            />
-          </div>
-        ) : (
-          <div className="relative h-20 overflow-hidden rounded-lg bg-isr-yellow">
-            <div className={`absolute inset-x-0 top-0 h-1.5 ${ACCENT_BARS[index % ACCENT_BARS.length]}`} />
-          </div>
-        )}
-      </div>
-
-      <div className="flex min-h-0 flex-1 flex-col px-4 pb-4 pt-2">
-        <h3 className="mb-1.5 line-clamp-2 shrink-0 text-base font-bold leading-snug text-isr-dark-red transition-colors group-hover:text-isr-bright-red">
-          {event.name}
-        </h3>
-        <p className="mb-2 shrink-0 text-xs text-gray-600">
-          <strong>{date}</strong> Â· {time}
-        </p>
-        <div className="min-h-0 flex-1 overflow-hidden">
-          <p className="line-clamp-4 text-sm leading-relaxed text-gray-700">{event.description}</p>
+    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-isr-light-blue/30 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+      {event.imageUrl ? (
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-isr-cream">
+          <Image
+            src={event.imageUrl}
+            alt={`${event.name} poster`}
+            fill
+            className="object-cover object-center"
+            sizes="(max-width: 768px) 100vw, 33vw"
+          />
         </div>
-        <span className="mt-3 inline-flex shrink-0 items-center text-xs font-semibold text-isr-dark-red underline decoration-isr-dark-red/30 underline-offset-2 transition-colors group-hover:text-isr-bright-red group-hover:decoration-isr-bright-red/50">
-          Learn More
-          <ArrowRight />
-        </span>
+      ) : (
+        <div className="relative flex h-32 items-end overflow-hidden bg-gradient-to-br from-isr-cream to-isr-yellow p-5">
+          <div className="absolute inset-x-0 top-0 h-1.5 bg-isr-turquoise" />
+
+          <p className="text-sm font-semibold uppercase tracking-[0.15em] text-isr-dark-red/70">
+            Islamic Society of RMIT
+          </p>
+        </div>
+      )}
+
+      <div className="flex flex-1 flex-col p-5">
+        <div className="flex flex-wrap gap-2">
+          <span
+            className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${STATUS_CLASSES[status]}`}
+          >
+            {getEventStatusLabel(status)}
+          </span>
+
+          {event.campus && (
+            <span className="rounded-full bg-isr-cream px-3 py-1 text-xs font-semibold text-isr-dark-red">
+              {event.campus}
+            </span>
+          )}
+        </div>
+
+        <h3 className="mt-4 text-xl font-bold leading-snug text-isr-dark-red">
+          <Link
+            href={`/events/${event.id}`}
+            className="hover:text-isr-turquoise"
+          >
+            {event.name}
+          </Link>
+        </h3>
+
+        <p className="mt-3 text-sm font-semibold text-gray-700">
+          {date}
+        </p>
+
+        <p className="mt-1 text-sm text-gray-600">
+          {time}
+          {event.endDate
+            ? ` - ${formatEventTime(event.endDate)}`
+            : ''}
+        </p>
+
+        {event.venue && (
+          <p className="mt-2 text-sm text-gray-600">
+            {event.venue}
+          </p>
+        )}
+
+        {event.statusNote && (
+          <p className="mt-4 rounded-xl bg-isr-yellow/50 px-3 py-2 text-xs font-semibold leading-relaxed text-isr-dark-red">
+            {event.statusNote}
+          </p>
+        )}
+
+        <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-gray-700">
+          {event.description}
+        </p>
+
+        <Link
+          href={`/events/${event.id}`}
+          className="mt-auto pt-6 text-sm font-semibold text-isr-turquoise hover:text-isr-dark-red"
+        >
+          View event details →
+        </Link>
       </div>
-    </Link>
+    </article>
   )
 }
 
-function EventPreviewCardSkeleton() {
+function EventPreviewSkeleton() {
   return (
-    <div
-      className="flex shrink-0 flex-col overflow-hidden rounded-xl bg-isr-cream shadow-[0_1px_5px_rgba(91,11,5,0.1)] animate-pulse"
-      style={{ width: EVENT_CARD_WIDTH, height: EVENT_CARD_HEIGHT }}
-    >
-      <div className="shrink-0 px-2 pt-2">
-        <div className="h-48 rounded-lg bg-isr-yellow" />
-      </div>
-      <div className="flex min-h-0 flex-1 flex-col space-y-2 px-4 pb-4 pt-2">
-        <div className="h-4 w-3/4 shrink-0 rounded bg-isr-light-blue/30" />
-        <div className="h-3 w-1/2 shrink-0 rounded bg-isr-light-blue/20" />
-        <div className="min-h-0 flex-1 space-y-2">
-          <div className="h-3 w-full rounded bg-isr-light-blue/20" />
-          <div className="h-3 w-full rounded bg-isr-light-blue/20" />
-          <div className="h-3 w-full rounded bg-isr-light-blue/20" />
-          <div className="h-3 w-5/6 rounded bg-isr-light-blue/20" />
-        </div>
+    <div className="animate-pulse overflow-hidden rounded-2xl bg-white">
+      <div className="h-36 bg-isr-yellow" />
+
+      <div className="space-y-3 p-5">
+        <div className="h-5 w-24 rounded bg-isr-light-blue/30" />
+        <div className="h-7 w-4/5 rounded bg-isr-light-blue/30" />
+        <div className="h-4 w-1/2 rounded bg-isr-light-blue/20" />
+        <div className="h-4 w-full rounded bg-isr-light-blue/20" />
+        <div className="h-4 w-5/6 rounded bg-isr-light-blue/20" />
       </div>
     </div>
   )
 }
 
 export default function EventsPreview() {
-  const [events, setEvents] = useState<Event[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [events, setEvents] =
+    useState<Event[]>([])
+
+  const [loading, setLoading] =
+    useState(true)
+
+  const [error, setError] =
+    useState<string | null>(null)
 
   const loadEvents = useCallback(async () => {
     setLoading(true)
     setError(null)
 
     try {
-      const data = await fetchEvents('upcoming')
+      const data =
+        await fetchEvents('upcoming')
+
       setEvents(data.slice(0, 3))
     } catch {
       setEvents([])
-      setError('Unable to load upcoming events.')
+      setError(
+        'Unable to load upcoming events.',
+      )
     } finally {
       setLoading(false)
     }
@@ -113,25 +174,44 @@ export default function EventsPreview() {
   }, [loadEvents])
 
   return (
-    <section className="py-20 px-4 bg-isr-light-blue bg-opacity-10">
-      <div className="container-isr max-w-6xl mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-isr-dark-red">
-          Events & Activities
-        </h2>
+    <section className="bg-isr-light-blue/10 px-4 py-16 sm:py-20">
+      <div className="container-isr mx-auto max-w-6xl">
+        <div className="text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-turquoise">
+            Community and activities
+          </p>
 
-        <div className="w-16 h-1 bg-isr-bright-red mx-auto mb-12" />
+          <h2 className="mt-3 text-3xl font-bold text-isr-dark-red sm:text-4xl">
+            Upcoming events
+          </h2>
+
+          <p className="mx-auto mt-4 max-w-2xl text-gray-700">
+            Explore upcoming ISR programs, registrations
+            and community activities.
+          </p>
+        </div>
 
         {loading && (
-          <div className="mb-12 flex flex-wrap justify-center gap-6" aria-live="polite" aria-busy="true">
+          <div
+            className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+            aria-live="polite"
+            aria-busy="true"
+          >
             {[0, 1, 2].map((index) => (
-              <EventPreviewCardSkeleton key={index} />
+              <EventPreviewSkeleton key={index} />
             ))}
           </div>
         )}
 
         {!loading && error && (
-          <div className="mb-12 rounded-lg border border-isr-bright-red/20 bg-isr-yellow/60 px-6 py-8 text-center">
-            <p className="text-sm text-isr-dark-red">{error}</p>
+          <div
+            role="alert"
+            className="mx-auto mt-10 max-w-xl rounded-2xl border border-isr-bright-red/20 bg-isr-yellow/60 px-6 py-8 text-center"
+          >
+            <p className="text-sm text-isr-dark-red">
+              {error}
+            </p>
+
             <button
               type="button"
               onClick={() => void loadEvents()}
@@ -142,26 +222,42 @@ export default function EventsPreview() {
           </div>
         )}
 
-        {!loading && !error && events.length === 0 && (
-          <p className="mb-12 text-center text-gray-600">
-            No upcoming events right now. Check back soon!
-          </p>
-        )}
+        {!loading &&
+          !error &&
+          events.length === 0 && (
+            <div className="mx-auto mt-10 max-w-xl rounded-2xl border border-isr-light-blue/30 bg-white px-6 py-10 text-center">
+              <p className="font-semibold text-isr-dark-red">
+                No upcoming events are currently published.
+              </p>
 
-        {!loading && !error && events.length > 0 && (
-          <div className="mb-12 flex flex-wrap items-stretch justify-center gap-6">
-            {events.map((event, index) => (
-              <EventPreviewCard key={event.id} event={event} index={index} />
-            ))}
-          </div>
-        )}
+              <Link
+                href="/announcements"
+                className="mt-4 inline-block text-sm font-semibold text-isr-turquoise hover:text-isr-dark-red"
+              >
+                Check announcements →
+              </Link>
+            </div>
+          )}
 
-        <div className="text-center">
+        {!loading &&
+          !error &&
+          events.length > 0 && (
+            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {events.map((event) => (
+                <EventPreviewCard
+                  key={event.id}
+                  event={event}
+                />
+              ))}
+            </div>
+          )}
+
+        <div className="mt-10 text-center">
           <Link
             href="/events"
-            className="inline-block px-8 py-3 bg-isr-turquoise text-white font-semibold rounded-lg hover:bg-isr-dark-red transition-colors"
+            className="inline-block rounded-full bg-isr-turquoise px-7 py-3 font-semibold text-white hover:bg-isr-dark-red"
           >
-            View All Events
+            View all events
           </Link>
         </div>
       </div>
