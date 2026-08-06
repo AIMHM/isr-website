@@ -2,43 +2,42 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* ── ISR brand colours ───────────────────────────────────────────── */
+/* ISR brand colours */
 @theme {
-  --color-isr-cream:      #EAE3D8;
+  --color-isr-cream: #EAE3D8;
   --color-isr-light-blue: #98AEA8;
-  --color-isr-yellow:     #EBE8CB;
-  --color-isr-turquoise:  #509589;
-  --color-isr-dark-red:   #5B0B05;
+  --color-isr-yellow: #EBE8CB;
+  --color-isr-turquoise: #509589;
+  --color-isr-dark-red: #5B0B05;
   --color-isr-bright-red: #D43325;
 }
 
-/* ── shadcn colour tokens (inline = not output as separate vars) ─── */
+/* Shared shadcn colour tokens */
 @theme inline {
-  --color-background:          var(--background);
-  --color-foreground:          var(--foreground);
-  --color-card:                var(--card);
-  --color-card-foreground:     var(--card-foreground);
-  --color-popover:             var(--popover);
-  --color-popover-foreground:  var(--popover-foreground);
-  --color-primary:             var(--primary);
-  --color-primary-foreground:  var(--primary-foreground);
-  --color-secondary:           var(--secondary);
-  --color-secondary-foreground:var(--secondary-foreground);
-  --color-muted:               var(--muted);
-  --color-muted-foreground:    var(--muted-foreground);
-  --color-accent:              var(--accent);
-  --color-accent-foreground:   var(--accent-foreground);
-  --color-destructive:         var(--destructive);
-  --color-border:              var(--border);
-  --color-input:               var(--input);
-  --color-ring:                var(--ring);
-  --radius-sm:   calc(var(--radius) - 4px);
-  --radius-md:   calc(var(--radius) - 2px);
-  --radius-lg:   var(--radius);
-  --radius-xl:   calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* ── Light / dark theme variable values ─────────────────────────── */
 @layer base {
   :root {
     --background: oklch(1 0 0);
@@ -61,6 +60,7 @@
     --ring: oklch(0.708 0 0);
     --radius: 0.625rem;
   }
+
   .dark {
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
@@ -86,24 +86,36 @@
     border-color: var(--border);
   }
 
-  body {
-    background-color: #fff;
-    color: oklch(0.145 0 0);
-    font-family: system-ui, -apple-system, sans-serif;
-    overflow-x: hidden;
-  }
-
   html {
     scroll-behavior: smooth;
     overflow-x: hidden;
+    scrollbar-color: #98AEA8 #EAE3D8;
+    scrollbar-width: thin;
   }
-}
 
-/* ── Scrollbar styling — dark red track matches the footer so the
-      white browser-default track doesn't bleed against it ─────────── */
-html {
-  scrollbar-color: #98AEA8 #EAE3D8;
-  scrollbar-width: thin;
+  body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-color: #ffffff;
+    color: oklch(0.145 0 0);
+    font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: rgba(80, 149, 137, 0.24);
+    color: #5B0B05;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -116,11 +128,11 @@ html {
 
 ::-webkit-scrollbar-thumb {
   background-color: #98AEA8;
-  border-radius: 4px;
   border: 2px solid #EAE3D8;
+  border-radius: 999px;
 }
 
-/* ── ISR utility classes ─────────────────────────────────────────── */
+/* Shared ISR layout utilities */
 @utility container-isr {
   max-width: 80rem;
   margin-inline: auto;
@@ -128,11 +140,15 @@ html {
 }
 
 @media (min-width: 640px) {
-  .container-isr { padding-inline: 1.5rem; }
+  .container-isr {
+    padding-inline: 1.5rem;
+  }
 }
 
 @media (min-width: 1024px) {
-  .container-isr { padding-inline: 2rem; }
+  .container-isr {
+    padding-inline: 2rem;
+  }
 }
 
 @utility text-gradient {
@@ -140,6 +156,82 @@ html {
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
+}
+
+@layer components {
+  .isr-card {
+    border: 1px solid rgba(152, 174, 168, 0.3);
+    border-radius: 1.5rem;
+    background: #ffffff;
+    box-shadow: 0 8px 30px rgba(91, 11, 5, 0.06);
+  }
+
+  .isr-card-interactive {
+    transition:
+      transform 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .isr-card-interactive:hover {
+    transform: translateY(-4px);
+    border-color: rgba(80, 149, 137, 0.55);
+    box-shadow: 0 14px 38px rgba(91, 11, 5, 0.1);
+  }
+
+  .isr-button-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #509589;
+    padding: 0.75rem 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    transition:
+      background-color 180ms ease,
+      transform 180ms ease;
+  }
+
+  .isr-button-primary:hover {
+    background: #5B0B05;
+    transform: translateY(-1px);
+  }
+
+  .isr-button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #5B0B05;
+    border-radius: 999px;
+    padding: calc(0.75rem - 2px) calc(1.5rem - 2px);
+    font-weight: 700;
+    color: #5B0B05;
+    transition:
+      background-color 180ms ease,
+      color 180ms ease,
+      transform 180ms ease;
+  }
+
+  .isr-button-secondary:hover {
+    background: #5B0B05;
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
+
+  .isr-text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #509589;
+    transition: color 180ms ease;
+  }
+
+  .isr-text-link:hover {
+    color: #5B0B05;
+  }
 }
 
 /* Global keyboard focus visibility */
@@ -170,5 +262,11 @@ html {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .isr-card-interactive:hover,
+  .isr-button-primary:hover,
+  .isr-button-secondary:hover {
+    transform: none;
   }
 }

@@ -1,73 +1,82 @@
 import Link from 'next/link'
+import SectionHeading from '@/components/SectionHeading'
 
 const supportAreas = [
   {
     title: 'New to RMIT',
     description:
-      'Orientation information for Muslim students beginning at RMIT.',
+      'Orientation and community guidance for Muslim students beginning at RMIT.',
   },
   {
     title: 'Wellbeing and Chaplaincy',
     description:
-      'Verified university and community support pathways.',
+      'Faith-sensitive wellbeing, pastoral and university support pathways.',
   },
   {
     title: 'Religious Accommodations',
     description:
-      'Guidance for prayer, fasting, assessments and university participation.',
+      'Guidance for prayer, fasting, assessments, placements and university participation.',
   },
   {
     title: 'Report Discrimination',
     description:
-      'Clear pathways for reporting Islamophobia, harassment or discrimination.',
+      'Initial guidance for responding to Islamophobia, harassment or discrimination.',
   },
 ]
 
 export default function StudentSupportPreview() {
   return (
-    <section className="bg-white px-4 py-16 sm:py-20">
+    <section
+      aria-labelledby="student-support-preview-heading"
+      className="bg-white px-4 py-16 sm:py-20"
+    >
       <div className="container-isr mx-auto max-w-6xl">
-        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-turquoise">
-              Student support
-            </p>
+        <div className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
+          <div className="lg:sticky lg:top-28">
+            <SectionHeading
+              eyebrow="Student support"
+              title="Support beyond events"
+              description="ISR helps Muslim students identify appropriate pathways for faith, wellbeing, university participation and belonging."
+              id="student-support-preview-heading"
+            />
 
-            <h2 className="mt-2 text-3xl font-bold text-isr-dark-red sm:text-4xl">
-              Support beyond events
-            </h2>
-
-            <p className="mt-4 leading-relaxed text-gray-700">
-              ISR aims to help Muslim students navigate university life,
-              wellbeing, faith and belonging.
-            </p>
-
-            <p className="mt-5 rounded-xl bg-isr-yellow/50 p-4 text-sm text-isr-dark-red">
-              Contact details and university processes remain subject to
+            <div className="mt-6 rounded-2xl border border-isr-yellow bg-isr-yellow/40 p-4 text-sm leading-relaxed text-isr-dark-red">
+              Contact routes and university processes remain subject to
               verification before publication.
-            </p>
+            </div>
 
-            <Link
-              href="/support"
-              className="mt-6 inline-flex rounded-full bg-isr-turquoise px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-isr-dark-red"
-            >
-              View Student Support
+            <Link href="/support" className="isr-button-primary mt-7">
+              View student support
             </Link>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            {supportAreas.map((area) => (
+            {supportAreas.map((area, index) => (
               <Link
                 key={area.title}
                 href="/support"
-                className="rounded-2xl border border-isr-light-blue/30 bg-isr-cream/40 p-5 transition hover:border-isr-turquoise/40 hover:bg-isr-cream"
+                className="isr-card isr-card-interactive group p-5 sm:p-6"
               >
-                <h3 className="font-bold text-isr-dark-red">{area.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-gray-700">
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-isr-turquoise">
+                  0{index + 1}
+                </p>
+
+                <h3 className="mt-4 text-lg font-bold text-isr-dark-red">
+                  {area.title}
+                </h3>
+
+                <p className="mt-3 text-sm leading-relaxed text-gray-700">
                   {area.description}
                 </p>
-                <span className="mt-4 inline-block text-sm font-semibold text-isr-turquoise">
-                  Learn more →
+
+                <span className="isr-text-link mt-5">
+                  Learn more
+                  <span
+                    aria-hidden="true"
+                    className="transition-transform group-hover:translate-x-1"
+                  >
+                    →
+                  </span>
                 </span>
               </Link>
             ))}
