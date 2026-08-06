@@ -2,63 +2,107 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
+
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/pray', label: 'Pray at RMIT' },
+  { href: '/events', label: 'Events' },
+  { href: '/announcements', label: 'Announcements' },
+  { href: '/support', label: 'Student Support' },
+  { href: '/about', label: 'About ISR' },
+  { href: '/contact', label: 'Contact' },
+]
+
+function isCurrentPath(pathname: string, href: string) {
+  if (href === '/') return pathname === '/'
+  return pathname === href || pathname.startsWith(`${href}/`)
+}
 
 export default function Navbar() {
+  const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
   const [logoFailed, setLogoFailed] = useState(false)
 
-  const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/pray', label: 'Pray at RMIT' },
-    { href: '/events', label: 'Events' },
-    { href: '/announcements', label: 'Announcements' },
-    { href: '/support', label: 'Student Support' },
-    { href: '/about', label: 'About ISR' },
-    { href: '/governance', label: 'Governance' },
-    { href: '/contact', label: 'Contact' },
-  ]
+  useEffect(() => {
+    setIsOpen(false)
+  }, [pathname])
+
+  useEffect(() => {
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('keydown', handleEscape)
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [])
 
   return (
-    <nav className="sticky top-0 z-50 px-4 pb-2 pt-4">
-      <div className="relative h-14">
-        <div className="absolute inset-x-0 top-0 overflow-hidden rounded-[1.75rem] border border-isr-light-blue/30 bg-isr-cream/70 shadow-lg backdrop-blur-md">
-          <div className="relative z-10 flex h-14 items-center justify-between px-4 sm:px-6">
-            <Link href="/" className="flex items-center gap-3">
+    <nav
+      aria-label="Primary navigation"
+      className="sticky top-0 z-50 px-3 pb-2 pt-3 sm:px-4 sm:pt-4"
+    >
+      <div className="container-isr mx-auto max-w-7xl">
+        <div className="overflow-hidden rounded-[1.6rem] border border-isr-light-blue/30 bg-white/95 shadow-[0_10px_35px_rgba(91,11,5,0.10)] backdrop-blur-md">
+          <div className="flex min-h-16 items-center justify-between gap-4 px-4 sm:px-6">
+            <Link
+              href="/"
+              aria-label="Islamic Society of RMIT home"
+              className="flex min-w-0 items-center gap-3"
+            >
               {!logoFailed ? (
                 <Image
                   src="/images/isr_logo_transparent.png"
-                  alt="Islamic Society of RMIT logo"
-                  width={40}
-                  height={40}
-                  className="object-contain"
+                  alt=""
+                  width={42}
+                  height={42}
+                  className="h-10 w-10 shrink-0 object-contain"
+                  priority
                   onError={() => setLogoFailed(true)}
                 />
               ) : (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-isr-turquoise">
-                  <span className="text-sm font-bold text-white">ISR</span>
-                </div>
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-isr-turquoise text-sm font-bold text-white">
+                  ISR
+                </span>
               )}
 
-              <span className="hidden text-lg font-bold text-isr-dark-red sm:inline">
+              <span className="hidden truncate text-base font-bold text-isr-dark-red sm:block xl:text-lg">
                 Islamic Society of RMIT
               </span>
             </Link>
 
-            <div className="hidden items-center gap-5 lg:flex">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-sm font-medium text-gray-700 transition-colors hover:text-isr-turquoise"
-                >
-                  {link.label}
-                </Link>
-              ))}
+            <div className="hidden items-center gap-1 xl:flex">
+              {navLinks.map((link) => {
+                const active = isCurrentPath(pathname, link.href)
+
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    aria-current={active ? 'page' : undefined}
+                    className={`rounded-full px-3 py-2 text-sm font-semibold transition-colors ${
+                      active
+                        ? 'bg-isr-turquoise/15 text-isr-dark-red'
+                        : 'text-gray-700 hover:bg-isr-cream hover:text-isr-dark-red'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              })}
 
               <Link
                 href="/join"
-                className="rounded-full bg-isr-turquoise px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-isr-dark-red"
+                aria-current={
+                  isCurrentPath(pathname, '/join') ? 'page' : undefined
+                }
+                className="ml-2 rounded-full bg-isr-turquoise px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-isr-dark-red"
               >
                 Join ISR
               </Link>
@@ -66,11 +110,11 @@ export default function Navbar() {
 
             <button
               type="button"
-              className="p-2 text-isr-turquoise lg:hidden"
               onClick={() => setIsOpen((current) => !current)}
               aria-expanded={isOpen}
               aria-controls="mobile-navigation"
-              aria-label={isOpen ? 'Close menu' : 'Open menu'}
+              aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-isr-dark-red transition hover:bg-isr-cream xl:hidden"
             >
               <svg
                 className="h-6 w-6"
@@ -98,43 +142,55 @@ export default function Navbar() {
             </button>
           </div>
 
-          <div
-            id="mobile-navigation"
-            className={`grid transition-[grid-template-rows] duration-300 ease-out lg:hidden ${
-              isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-            }`}
-          >
-            <div className="overflow-hidden">
-              <div
-                className={`border-t border-isr-light-blue/30 px-4 pb-4 transition-all duration-300 ${
-                  isOpen
-                    ? 'translate-y-0 opacity-100'
-                    : '-translate-y-2 opacity-0'
-                }`}
-              >
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className="block px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:text-isr-turquoise"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+          {isOpen && (
+            <div
+              id="mobile-navigation"
+              className="border-t border-isr-light-blue/30 px-4 pb-5 pt-3 xl:hidden"
+            >
+              <div className="grid gap-1 sm:grid-cols-2">
+                {navLinks.map((link) => {
+                  const active = isCurrentPath(pathname, link.href)
 
-                <div className="px-4 pt-3">
-                  <Link
-                    href="/join"
-                    onClick={() => setIsOpen(false)}
-                    className="block rounded-full bg-isr-turquoise px-4 py-2 text-center text-sm font-semibold text-white transition-colors hover:bg-isr-dark-red"
-                  >
-                    Join ISR
-                  </Link>
-                </div>
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      aria-current={active ? 'page' : undefined}
+                      className={`rounded-xl px-4 py-3 text-sm font-semibold transition ${
+                        active
+                          ? 'bg-isr-turquoise/15 text-isr-dark-red'
+                          : 'text-gray-700 hover:bg-isr-cream hover:text-isr-dark-red'
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  )
+                })}
+              </div>
+
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                <Link
+                  href="/governance"
+                  aria-current={
+                    isCurrentPath(pathname, '/governance') ? 'page' : undefined
+                  }
+                  className="rounded-full border border-isr-dark-red/20 px-4 py-3 text-center text-sm font-semibold text-isr-dark-red transition hover:bg-isr-cream"
+                >
+                  Governance
+                </Link>
+
+                <Link
+                  href="/join"
+                  aria-current={
+                    isCurrentPath(pathname, '/join') ? 'page' : undefined
+                  }
+                  className="rounded-full bg-isr-turquoise px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-isr-dark-red"
+                >
+                  Join ISR
+                </Link>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </nav>
