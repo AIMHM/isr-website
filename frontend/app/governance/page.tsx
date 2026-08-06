@@ -99,7 +99,7 @@ export default function GovernancePage() {
     <div className="min-h-screen bg-gradient-to-b from-isr-cream via-white to-isr-yellow/20">
       <Navbar />
 
-      <main className="px-4 py-16 sm:py-20">
+      <main id="main-content" className="px-4 py-14 sm:py-20">
         <div className="container-isr mx-auto max-w-6xl">
           <header className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-isr-turquoise">
@@ -116,8 +116,8 @@ export default function GovernancePage() {
             </p>
 
             <div className="mt-6 rounded-2xl border border-isr-bright-red/20 bg-isr-yellow/50 p-4 text-sm font-semibold text-isr-dark-red">
-              This local prototype does not yet contain final approved ISR
-              policies or governing documents.
+              Final approved ISR policies and governing documents have not yet
+              been added to this local preview.
             </div>
           </header>
 

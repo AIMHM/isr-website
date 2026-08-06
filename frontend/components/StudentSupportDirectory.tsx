@@ -6,7 +6,7 @@ type SupportItem = {
   action: string
   href: string
   external?: boolean
-  verificationRequired?: boolean
+  status?: string
 }
 
 const supportItems: SupportItem[] = [
@@ -17,7 +17,7 @@ const supportItems: SupportItem[] = [
     action: 'Contact ISR for guidance',
     href: 'mailto:isr@rmit.edu.au?subject=Wellbeing%20and%20Chaplaincy%20Support',
     external: true,
-    verificationRequired: true,
+    status: 'Contact pathway under review',
   },
   {
     title: 'Religious Accommodations',
@@ -26,7 +26,7 @@ const supportItems: SupportItem[] = [
     action: 'Ask about accommodations',
     href: 'mailto:isr@rmit.edu.au?subject=Religious%20Accommodation%20Enquiry',
     external: true,
-    verificationRequired: true,
+    status: 'Guidance under review',
   },
   {
     title: 'Report Islamophobia or Discrimination',
@@ -35,16 +35,16 @@ const supportItems: SupportItem[] = [
     action: 'Request reporting guidance',
     href: 'mailto:isr@rmit.edu.au?subject=Confidential%20Reporting%20Guidance',
     external: true,
-    verificationRequired: true,
+    status: 'Reporting pathway under review',
   },
   {
     title: 'International Student Support',
     description:
-      'Find appropriate assistance for settling into university, understanding services and connecting with community.',
+      'Find assistance for settling into university, understanding services and connecting with community.',
     action: 'Contact ISR',
     href: 'mailto:isr@rmit.edu.au?subject=International%20Student%20Support',
     external: true,
-    verificationRequired: true,
+    status: 'Contact pathway under review',
   },
   {
     title: 'Brothers’ Welfare Pathway',
@@ -53,7 +53,7 @@ const supportItems: SupportItem[] = [
     action: 'Use the general ISR contact',
     href: 'mailto:isr@rmit.edu.au?subject=Brothers%20Welfare%20Support',
     external: true,
-    verificationRequired: true,
+    status: 'Dedicated contact pending',
   },
   {
     title: 'Sisters’ Welfare Pathway',
@@ -62,7 +62,7 @@ const supportItems: SupportItem[] = [
     action: 'Use the general ISR contact',
     href: 'mailto:isr@rmit.edu.au?subject=Sisters%20Welfare%20Support',
     external: true,
-    verificationRequired: true,
+    status: 'Dedicated contact pending',
   },
 ]
 
@@ -71,7 +71,7 @@ const accommodationExamples = [
   'Ramadan fasting and assessment arrangements',
   'Jumu’ah attendance and timetable conflicts',
   'Religious dress and personal modesty requirements',
-  'Access to appropriate prayer and ablution facilities',
+  'Access to suitable prayer and ablution facilities',
   'Islamic holidays and compulsory university activities',
 ]
 
@@ -83,15 +83,17 @@ export default function StudentSupportDirectory() {
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-turquoise">
             Support pathways
           </p>
+
           <h2
             id="support-pathways"
             className="mt-2 text-3xl font-bold text-isr-dark-red sm:text-4xl"
           >
             Find the right support
           </h2>
+
           <p className="mt-4 leading-relaxed text-gray-700">
-            ISR can help students identify an appropriate pathway, but it is not
-            a medical, legal, counselling or emergency service.
+            ISR can help identify an appropriate pathway, but it is not a
+            medical, legal, counselling or emergency service.
           </p>
         </div>
 
@@ -101,9 +103,9 @@ export default function StudentSupportDirectory() {
               key={item.title}
               className="flex flex-col rounded-3xl border border-isr-light-blue/30 bg-white p-6 shadow-sm"
             >
-              {item.verificationRequired && (
+              {item.status && (
                 <p className="text-xs font-semibold uppercase tracking-wide text-isr-bright-red">
-                  Contact pathway under review
+                  {item.status}
                 </p>
               )}
 
@@ -140,6 +142,7 @@ export default function StudentSupportDirectory() {
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-turquoise">
             Religious accommodations
           </p>
+
           <h2 className="mt-3 text-2xl font-bold text-isr-dark-red">
             Matters students may need help raising
           </h2>
@@ -156,7 +159,7 @@ export default function StudentSupportDirectory() {
           </ul>
 
           <p className="mt-6 text-sm leading-relaxed text-gray-600">
-            Final guidance must align with current RMIT processes and should be
+            Guidance must align with current RMIT processes and should be
             reviewed whenever university policy changes.
           </p>
         </article>
@@ -165,6 +168,7 @@ export default function StudentSupportDirectory() {
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-turquoise">
             Confidentiality
           </p>
+
           <h2 className="mt-3 text-2xl font-bold text-isr-dark-red">
             Understand the limits before sharing information
           </h2>
@@ -174,20 +178,22 @@ export default function StudentSupportDirectory() {
               ISR should handle sensitive enquiries respectfully and only share
               information with those who need it to respond.
             </p>
+
             <p>
               Absolute confidentiality cannot be promised where there is a
               serious risk of harm, a legal obligation, a child-safety concern
               or a need to escalate an emergency.
             </p>
+
             <p>
-              Students should avoid sending detailed medical records, identity
-              documents or highly sensitive evidence through ordinary email
-              unless an appropriate secure process has been confirmed.
+              Avoid sending medical records, identity documents or highly
+              sensitive evidence through ordinary email unless a secure process
+              has been confirmed.
             </p>
           </div>
 
           <p className="mt-6 rounded-xl bg-white/80 p-4 text-sm font-semibold text-isr-dark-red">
-            The final confidentiality statement requires formal ISR approval.
+            Final confidentiality wording requires formal ISR approval.
           </p>
         </article>
       </section>
@@ -196,13 +202,14 @@ export default function StudentSupportDirectory() {
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-yellow">
           Immediate danger or emergency
         </p>
+
         <h2 className="mt-3 text-3xl font-bold">
           ISR is not an emergency-response service
         </h2>
+
         <p className="mt-4 max-w-3xl leading-relaxed text-white/80">
           In an immediate emergency, contact the appropriate emergency service
-          or campus security rather than waiting for an ISR response. Verified
-          RMIT emergency and crisis contacts will be added before publication.
+          or campus security rather than waiting for an ISR response.
         </p>
 
         <div className="mt-6 flex flex-wrap gap-3">
@@ -226,6 +233,7 @@ export default function StudentSupportDirectory() {
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-turquoise">
           Content governance
         </p>
+
         <h2 className="mt-3 text-2xl font-bold text-isr-dark-red">
           Support information must remain current
         </h2>
@@ -244,6 +252,7 @@ export default function StudentSupportDirectory() {
               <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                 {label}
               </dt>
+
               <dd className="mt-2 text-sm font-semibold text-isr-dark-red">
                 {value}
               </dd>

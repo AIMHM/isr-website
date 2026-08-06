@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import PrayerSpaceDirectory from '@/components/PrayerSpaceDirectory'
@@ -14,7 +14,7 @@ export default function PrayPage() {
     <div className="min-h-screen bg-gradient-to-b from-isr-cream via-white to-isr-yellow/20">
       <Navbar />
 
-      <main className="px-4 py-16 sm:py-20">
+      <main id="main-content" className="px-4 py-14 sm:py-20">
         <div className="container-isr mx-auto max-w-6xl">
           <header className="mb-12 max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-isr-turquoise">
@@ -28,8 +28,8 @@ export default function PrayPage() {
               campus-specific prayer-space guidance.
             </p>
             <div className="mt-6 rounded-2xl border border-isr-bright-red/20 bg-isr-yellow/50 p-4 text-sm font-semibold text-isr-dark-red">
-              This is a local prototype. Campus and Jumu&apos;ah details remain
-              unverified and must not be treated as official information.
+              Campus prayer-space and Jumu&apos;ah details shown in this local preview
+              require confirmation before publication.
             </div>
           </header>
 

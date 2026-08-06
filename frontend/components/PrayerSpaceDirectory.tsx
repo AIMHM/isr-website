@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState } from 'react'
 import {
@@ -117,9 +117,8 @@ export default function PrayerSpaceDirectory() {
               </div>
 
               <p className="mt-4 text-xs leading-relaxed text-gray-500">
-                Local prototype data. Calculation method, verified iqamah times,
-                last-updated information and stale-data warnings will be added
-                before publication.
+                Calculation method, verified iqamah times, last-updated information
+                and stale-data warnings must be confirmed before publication.
               </p>
             </>
           )}
@@ -158,7 +157,7 @@ export default function PrayerSpaceDirectory() {
           </dl>
 
           <p className="mt-6 rounded-xl border border-isr-bright-red/20 bg-white/80 p-4 text-sm font-semibold text-isr-dark-red">
-            Do not rely on this prototype when planning to attend Jumu&apos;ah.
+            Confirm current Jumu&apos;ah arrangements before travelling to campus.
           </p>
         </article>
       </section>
