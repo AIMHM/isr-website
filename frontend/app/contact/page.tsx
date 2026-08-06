@@ -1,245 +1,213 @@
-'use client'
-
-import { useState } from 'react'
+import type { Metadata } from 'next'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import { MailIcon, WhatsappIcon, InstagramIcon, LocationIcon } from '@/components/Icons'
-import NewsletterSignup from '@/components/NewsletterSignup'
+import {
+  MailIcon,
+  WhatsappIcon,
+  InstagramIcon,
+  LocationIcon,
+} from '@/components/Icons'
 
-type FormState = 'idle' | 'submitting' | 'success' | 'error'
+export const metadata: Metadata = {
+  title: 'Contact ISR | Islamic Society of RMIT',
+  description:
+    'Contact the Islamic Society of RMIT for student support, events, partnerships and general enquiries.',
+}
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000'
+const enquiryTypes = [
+  {
+    title: 'General Enquiries',
+    description:
+      'Membership, community access, general questions and information about ISR.',
+    subject: 'General ISR Enquiry',
+  },
+  {
+    title: 'Events and Programs',
+    description:
+      'Questions about registrations, event access, cancellations or program information.',
+    subject: 'ISR Event Enquiry',
+  },
+  {
+    title: 'Prayer and Facilities',
+    description:
+      'Prayer-space access, Jumuah information, facilities or campus prayer concerns.',
+    subject: 'Prayer and Facilities Enquiry',
+  },
+  {
+    title: 'Student Support',
+    description:
+      'Initial guidance regarding wellbeing, accommodations or university support pathways.',
+    subject: 'Student Support Enquiry',
+  },
+  {
+    title: 'Partnerships and Sponsorships',
+    description:
+      'Collaboration proposals, sponsorships, community partnerships and external invitations.',
+    subject: 'Partnership or Sponsorship Enquiry',
+  },
+  {
+    title: 'Website Correction',
+    description:
+      'Report outdated, inaccessible, inaccurate or broken website information.',
+    subject: 'ISR Website Correction',
+  },
+]
 
 export default function ContactPage() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [subject, setSubject] = useState('')
-  const [message, setMessage] = useState('')
-  const [formState, setFormState] = useState<FormState>('idle')
-  const [errorMessage, setErrorMessage] = useState('')
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setFormState('submitting')
-    setErrorMessage('')
-
-    try {
-      const res = await fetch(`${API_URL}/api/contact`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, subject, message }),
-      })
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        throw new Error(data.error ?? 'Something went wrong. Please try again.')
-      }
-
-      setFormState('success')
-      setName('')
-      setEmail('')
-      setSubject('')
-      setMessage('')
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
-      setFormState('error')
-    }
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-isr-cream via-white to-isr-yellow/30">
+    <div className="min-h-screen bg-gradient-to-b from-isr-cream via-white to-isr-yellow/20">
       <Navbar />
 
-      <main>
-        {/* Page Header */}
-        <section className="px-4 pb-16 pt-24 sm:pt-28">
-          <div className="container-isr text-center">
-            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-isr-turquoise">
-              Contact Us
+      <main id="main-content" className="px-4 py-16 sm:py-20">
+        <div className="container-isr mx-auto max-w-6xl">
+          <header className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-isr-turquoise">
+              Contact ISR
             </p>
-            <h1 className="mb-5 text-4xl font-bold text-isr-dark-red md:text-5xl">
-              Get In Touch
+
+            <h1 className="mt-3 text-4xl font-bold text-isr-dark-red sm:text-5xl">
+              Find the right contact pathway
             </h1>
-            <div className="mx-auto mb-8 h-1 w-16 bg-isr-bright-red" />
-            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-gray-600">
-              Have a question, want to get involved, or just want to say salam? We'd love to hear from you.
+
+            <p className="mt-5 text-lg leading-relaxed text-gray-700">
+              Choose the enquiry category that best matches what you need so
+              the matter can be directed appropriately.
             </p>
-          </div>
-        </section>
+          </header>
 
-        {/* Contact Info + Form */}
-        <section className="px-4 pb-20">
-          <div className="container-isr mx-auto max-w-5xl">
-            <div className="grid gap-10 md:grid-cols-2">
+          <section className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {enquiryTypes.map((enquiry) => (
+              <a
+                key={enquiry.title}
+                href={`mailto:isr@rmit.edu.au?subject=${encodeURIComponent(
+                  enquiry.subject,
+                )}`}
+                className="flex flex-col rounded-3xl border border-isr-light-blue/30 bg-white p-6 shadow-sm transition hover:border-isr-turquoise/50 hover:shadow-md"
+              >
+                <h2 className="text-xl font-bold text-isr-dark-red">
+                  {enquiry.title}
+                </h2>
 
-              {/* Left — contact details */}
-              <div className="space-y-8">
-                <div>
-                  <h2 className="mb-6 text-2xl font-bold text-isr-dark-red">Contact Information</h2>
-                  <div className="space-y-5">
-                    <div className="flex gap-4 items-start">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-isr-cream text-isr-turquoise">
-                        <MailIcon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">Email</p>
-                        <a href="mailto:isr@rmit.edu.au" className="text-sm text-isr-turquoise hover:text-isr-bright-red transition-colors">
-                          isr@rmit.edu.au
-                        </a>
-                      </div>
-                    </div>
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-gray-700">
+                  {enquiry.description}
+                </p>
 
-                    <div className="flex gap-4 items-start">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-isr-cream text-isr-turquoise">
-                        <WhatsappIcon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">WhatsApp</p>
-                        <a href="https://api.whatsapp.com/send?phone=61418835013" className="text-sm text-isr-turquoise hover:text-isr-bright-red transition-colors">
-                          Message us on WhatsApp
-                        </a>
-                      </div>
-                    </div>
+                <span className="mt-6 text-sm font-semibold text-isr-turquoise">
+                  Email ISR →
+                </span>
+              </a>
+            ))}
+          </section>
 
-                    <div className="flex gap-4 items-start">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-isr-cream text-isr-turquoise">
-                        <InstagramIcon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">Instagram</p>
-                        <a
-                          href="https://www.instagram.com/islamicsocietyofrmit?igsh=enZoZnM0ZnVydHY="
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-sm text-isr-turquoise hover:text-isr-bright-red transition-colors"
-                        >
-                          @islamicsocietyofrmit
-                        </a>
-                      </div>
-                    </div>
+          <section className="mt-16 grid gap-8 lg:grid-cols-2">
+            <article className="rounded-3xl border border-isr-light-blue/30 bg-isr-cream/50 p-6 sm:p-8">
+              <h2 className="text-2xl font-bold text-isr-dark-red">
+                Official contact channels
+              </h2>
 
-                    <div className="flex gap-4 items-start">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-isr-cream text-isr-turquoise">
-                        <LocationIcon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">Location</p>
-                        <p className="text-sm text-gray-700">RMIT University, Melbourne</p>
-                      </div>
-                    </div>
-                  </div>
+              <div className="mt-6 space-y-5">
+                <a
+                  href="mailto:isr@rmit.edu.au"
+                  className="flex items-start gap-4"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-isr-turquoise">
+                    <MailIcon className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <span className="block font-semibold text-isr-dark-red">
+                      Email
+                    </span>
+                    <span className="text-sm text-isr-turquoise">
+                      isr@rmit.edu.au
+                    </span>
+                  </span>
+                </a>
+
+                <a
+                  href="https://api.whatsapp.com/send?phone=61418835013"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-4"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-isr-turquoise">
+                    <WhatsappIcon className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <span className="block font-semibold text-isr-dark-red">
+                      WhatsApp
+                    </span>
+                    <span className="text-sm text-isr-turquoise">
+                      Message ISR
+                    </span>
+                  </span>
+                </a>
+
+                <a
+                  href="https://www.instagram.com/islamicsocietyofrmit/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-4"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-isr-turquoise">
+                    <InstagramIcon className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <span className="block font-semibold text-isr-dark-red">
+                      Instagram
+                    </span>
+                    <span className="text-sm text-isr-turquoise">
+                      @islamicsocietyofrmit
+                    </span>
+                  </span>
+                </a>
+
+                <div className="flex items-start gap-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-isr-turquoise">
+                    <LocationIcon className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <span className="block font-semibold text-isr-dark-red">
+                      Location
+                    </span>
+                    <span className="text-sm text-gray-700">
+                      RMIT University, Melbourne
+                    </span>
+                  </span>
                 </div>
               </div>
+            </article>
 
-              {/* Right — form */}
-              <div className="rounded-2xl bg-white p-8 shadow-[0_12px_32px_rgba(91,11,5,0.08)] ring-1 ring-black/5">
-                {formState === 'success' ? (
-                  <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-isr-cream">
-                      <svg className="h-8 w-8 text-isr-turquoise" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <h3 className="mb-2 text-xl font-bold text-isr-dark-red">Message Sent!</h3>
-                    <p className="mb-6 text-gray-600">
-                      Jazakallah khayran for reaching out. We'll get back to you soon, in sha Allah.
-                    </p>
-                    <button
-                      onClick={() => setFormState('idle')}
-                      className="rounded-lg bg-isr-turquoise px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-isr-dark-red"
-                    >
-                      Send another message
-                    </button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit} noValidate className="space-y-5">
-                    <h2 className="text-xl font-bold text-isr-dark-red">Send us a message</h2>
+            <article className="rounded-3xl border border-isr-bright-red/20 bg-isr-yellow/40 p-6 sm:p-8">
+              <h2 className="text-2xl font-bold text-isr-dark-red">
+                Before sending sensitive information
+              </h2>
 
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <div>
-                        <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-gray-700">
-                          Name <span className="text-isr-bright-red">*</span>
-                        </label>
-                        <input
-                          id="name"
-                          type="text"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          required
-                          placeholder="Your name"
-                          className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-isr-turquoise focus:outline-none focus:ring-1 focus:ring-isr-turquoise"
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-gray-700">
-                          Email <span className="text-isr-bright-red">*</span>
-                        </label>
-                        <input
-                          id="email"
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          required
-                          placeholder="you@example.com"
-                          className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-isr-turquoise focus:outline-none focus:ring-1 focus:ring-isr-turquoise"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label htmlFor="subject" className="mb-1.5 block text-sm font-medium text-gray-700">
-                        Subject <span className="text-isr-bright-red">*</span>
-                      </label>
-                      <input
-                        id="subject"
-                        type="text"
-                        value={subject}
-                        onChange={(e) => setSubject(e.target.value)}
-                        required
-                        placeholder="What's this about?"
-                        className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-isr-turquoise focus:outline-none focus:ring-1 focus:ring-isr-turquoise"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-gray-700">
-                        Message <span className="text-isr-bright-red">*</span>
-                      </label>
-                      <textarea
-                        id="message"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        required
-                        rows={5}
-                        placeholder="Write your message here..."
-                        className="w-full resize-none rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-isr-turquoise focus:outline-none focus:ring-1 focus:ring-isr-turquoise"
-                      />
-                    </div>
-
-                    {formState === 'error' && (
-                      <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-isr-bright-red">
-                        {errorMessage}
-                      </p>
-                    )}
-
-                    <button
-                      type="submit"
-                      disabled={formState === 'submitting'}
-                      className="w-full rounded-lg bg-isr-turquoise px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-isr-dark-red disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {formState === 'submitting' ? 'Sending…' : 'Send Message'}
-                    </button>
-                  </form>
-                )}
+              <div className="mt-5 space-y-4 text-sm leading-relaxed text-gray-700">
+                <p>
+                  Do not send identity documents, detailed medical records,
+                  passwords, payment-card information or highly sensitive
+                  evidence through ordinary email.
+                </p>
+                <p>
+                  ISR is not an emergency, medical, legal or counselling
+                  service. Urgent matters should be directed to the appropriate
+                  professional or emergency service.
+                </p>
+                <p>
+                  Response-time commitments and inbox ownership must be formally
+                  confirmed before they are published.
+                </p>
               </div>
-            </div>
 
-            <div className="mt-12 max-w-xl mx-auto">
-              <NewsletterSignup />
-            </div>
-          </div>
-        </section>
+              <a
+                href="/privacy"
+                className="mt-6 inline-block text-sm font-semibold text-isr-turquoise hover:text-isr-dark-red"
+              >
+                Read the privacy notice →
+              </a>
+            </article>
+          </section>
+        </div>
       </main>
 
       <Footer />

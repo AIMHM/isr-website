@@ -6,36 +6,24 @@ const baseUrl =
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date()
 
-  return [
-    {
-      url: baseUrl,
-      lastModified,
-      changeFrequency: 'weekly',
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/events`,
-      lastModified,
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/announcements`,
-      lastModified,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-  ]
+  const pages = [
+    { path: '', frequency: 'weekly', priority: 1 },
+    { path: '/pray', frequency: 'daily', priority: 0.95 },
+    { path: '/events', frequency: 'weekly', priority: 0.9 },
+    { path: '/announcements', frequency: 'weekly', priority: 0.85 },
+    { path: '/support', frequency: 'monthly', priority: 0.8 },
+    { path: '/join', frequency: 'monthly', priority: 0.8 },
+    { path: '/about', frequency: 'monthly', priority: 0.75 },
+    { path: '/governance', frequency: 'monthly', priority: 0.7 },
+    { path: '/contact', frequency: 'monthly', priority: 0.7 },
+    { path: '/privacy', frequency: 'yearly', priority: 0.4 },
+    { path: '/accessibility', frequency: 'yearly', priority: 0.4 },
+  ] as const
+
+  return pages.map((page) => ({
+    url: `${baseUrl}${page.path}`,
+    lastModified,
+    changeFrequency: page.frequency,
+    priority: page.priority,
+  }))
 }
