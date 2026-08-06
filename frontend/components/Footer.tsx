@@ -1,70 +1,121 @@
-import { InstagramIcon, WhatsappIcon, MailIcon } from '@/components/Icons'
-import NewsletterSignup from '@/components/NewsletterSignup'
+import Link from 'next/link'
+import {
+  InstagramIcon,
+  WhatsappIcon,
+  MailIcon,
+} from '@/components/Icons'
+
+const navigationLinks = [
+  { href: '/pray', label: 'Pray at RMIT' },
+  { href: '/events', label: 'Events' },
+  { href: '/announcements', label: 'Announcements' },
+  { href: '/support', label: 'Student Support' },
+]
+
+const organisationLinks = [
+  { href: '/about', label: 'About ISR' },
+  { href: '/join', label: 'Join ISR' },
+  { href: '/governance', label: 'Governance' },
+  { href: '/contact', label: 'Contact' },
+]
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-isr-dark-red text-white py-12 px-4">
-      <div className="container-isr max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
-          {/* About */}
+    <footer className="bg-isr-dark-red px-4 py-12 text-white">
+      <div className="container-isr mx-auto max-w-6xl">
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <h4 className="font-bold text-lg mb-4">ISR</h4>
-            <p className="text-sm text-gray-300">
-              Islamic Society of RMIT - Supporting Muslim students at RMIT University.
+            <h2 className="text-xl font-bold">Islamic Society of RMIT</h2>
+            <p className="mt-3 text-sm leading-relaxed text-white/75">
+              The home of Muslim students at RMIT.
+            </p>
+            <p className="mt-2 text-sm text-white/75">
+              Representing Muslims on campus.
             </p>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <h4 className="font-bold text-lg mb-4">Quick Links</h4>
-            <ul className="text-sm text-gray-300 space-y-2">
-              <li><a href="/" className="hover:text-white transition-colors">Home</a></li>
-              <li><a href="/#hero" className="hover:text-white transition-colors">Prayer Times</a></li>
-              <li><a href="/events" className="hover:text-white transition-colors">Events</a></li>
-              <li><a href="/about" className="hover:text-white transition-colors">About</a></li>
+            <h2 className="font-bold">Student information</h2>
+            <ul className="mt-4 space-y-2 text-sm text-white/75">
+              {navigationLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="transition hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Resources */}
           <div>
-            <h4 className="font-bold text-lg mb-4">Resources</h4>
-            <ul className="text-sm text-gray-300 space-y-2">
-              <li><a href="/contact" className="hover:text-white transition-colors">Contact</a></li>
-              <li><a href="https://campus.hellorubric.com/?s=10733" className="hover:text-white transition-colors">Membership</a></li>
-              <li><a href="/sitemap.xml" className="hover:text-white transition-colors">Sitemap</a></li>
+            <h2 className="font-bold">ISR</h2>
+            <ul className="mt-4 space-y-2 text-sm text-white/75">
+              {organisationLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="transition hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+
+              <li>
+                <Link
+                  href="/sitemap.xml"
+                  className="transition hover:text-white"
+                >
+                  Sitemap
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Newsletter */}
-          <div className="md:col-span-2 lg:col-span-1">
-            <NewsletterSignup variant="footer" />
-          </div>
-
-          {/* Social */}
           <div>
-            <h4 className="font-bold text-lg mb-4">Follow Us</h4>
-            <div className="flex flex-wrap gap-2">
-              <a href="https://www.instagram.com/islamicsocietyofrmit/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/15 transition-colors" aria-label="Instagram">
-                <InstagramIcon className="w-4 h-4 text-white" />
-                <span className="hidden sm:inline">Instagram</span>
+            <h2 className="font-bold">Contact and community</h2>
+
+            <div className="mt-4 flex flex-col gap-3">
+              <a
+                href="mailto:isr@rmit.edu.au"
+                className="inline-flex items-center gap-2 text-sm text-white/75 transition hover:text-white"
+              >
+                <MailIcon className="h-4 w-4" />
+                isr@rmit.edu.au
               </a>
-              <a href="https://api.whatsapp.com/send?phone=61418835013" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/15 transition-colors" aria-label="WhatsApp">
-                <WhatsappIcon className="w-4 h-4 text-white" />
-                <span className="hidden sm:inline">WhatsApp</span>
+
+              <a
+                href="https://www.instagram.com/islamicsocietyofrmit/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-white/75 transition hover:text-white"
+              >
+                <InstagramIcon className="h-4 w-4" />
+                Instagram
               </a>
-              <a href="mailto:isr@rmit.edu.au" className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/15 transition-colors" aria-label="Email">
-                <MailIcon className="w-4 h-4 text-white" />
-                <span className="hidden sm:inline">Mail</span>
+
+              <a
+                href="https://api.whatsapp.com/send?phone=61418835013"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-white/75 transition hover:text-white"
+              >
+                <WhatsappIcon className="h-4 w-4" />
+                WhatsApp
               </a>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-white border-opacity-20 pt-8 text-center text-sm text-gray-300">
+        <div className="mt-10 border-t border-white/20 pt-6 text-sm text-white/65">
           <p>
-            © {currentYear} Islamic Society of RMIT. All rights reserved. Affiliated with RUSU (RMIT University Students Union).
+            © {currentYear} Islamic Society of RMIT. Affiliated with RUSU.
+            Relationship and independence wording requires final verification.
           </p>
         </div>
       </div>
