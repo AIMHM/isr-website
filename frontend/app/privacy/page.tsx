@@ -3,7 +3,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'Privacy | Islamic Society of RMIT',
+  title: 'Privacy',
   description:
     'Privacy information for the Islamic Society of RMIT website and services.',
 }
@@ -40,7 +40,7 @@ export default function PrivacyPage() {
     <div className="min-h-screen bg-gradient-to-b from-isr-cream via-white to-isr-yellow/20">
       <Navbar />
 
-      <main id="main-content" className="px-4 py-16 sm:py-20">
+      <main id="main-content" className="px-4 py-14 sm:py-20">
         <div className="container-isr mx-auto max-w-4xl">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-isr-turquoise">
             Information handling

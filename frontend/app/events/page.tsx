@@ -4,7 +4,7 @@ import Footer from '@/components/Footer'
 import EventsTimeline from '@/components/EventsTimeline'
 
 export const metadata: Metadata = {
-  title: 'Events | Islamic Society of RMIT',
+  title: 'Events',
   description:
     'Upcoming and past events from the Islamic Society of RMIT.',
 }
@@ -14,7 +14,7 @@ export default function EventsPage() {
     <div className="min-h-screen bg-gradient-to-b from-isr-cream via-white to-isr-yellow/30">
       <Navbar />
 
-      <main id="main-content" className="px-4 py-16 sm:py-20">
+      <main id="main-content" className="px-4 py-14 sm:py-20">
         <div className="container-isr mx-auto max-w-5xl">
           <header className="mb-12 text-center">
             <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-isr-turquoise">
@@ -34,17 +34,6 @@ export default function EventsPage() {
           </header>
 
           <EventsTimeline />
-
-          <div className="mx-auto mt-16 max-w-2xl rounded-2xl border border-isr-light-blue/30 bg-white p-6 text-center">
-            <h2 className="text-xl font-bold text-isr-dark-red">
-              Event updates
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-gray-700">
-              A genuine mailing-list service will be added only after
-              subscription consent, storage, ownership and unsubscribe
-              processes are confirmed.
-            </p>
-          </div>
         </div>
       </main>
 

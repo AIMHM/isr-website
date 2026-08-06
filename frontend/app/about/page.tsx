@@ -4,7 +4,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'About ISR | Islamic Society of RMIT',
+  title: 'About ISR',
   description:
     'Learn about the purpose, services and governance of the Islamic Society of RMIT.',
 }
@@ -81,7 +81,7 @@ export default function AboutPage() {
       <Navbar />
 
       <main id="main-content">
-        <section className="px-4 py-16 sm:py-20">
+        <section className="px-4 py-14 sm:py-20">
           <div className="container-isr mx-auto max-w-6xl">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-isr-turquoise">
@@ -227,7 +227,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="px-4 py-16 sm:py-20">
+        <section className="px-4 py-14 sm:py-20">
           <div className="container-isr mx-auto max-w-6xl rounded-3xl bg-isr-dark-red px-6 py-8 text-white sm:px-8">
             <h2 className="text-3xl font-bold">Take part in ISR</h2>
             <p className="mt-4 max-w-2xl leading-relaxed text-white/80">
