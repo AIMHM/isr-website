@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -14,6 +14,7 @@ export default function Navbar() {
   { href: '/', label: 'Home' },
   { href: '/events', label: 'Events' },
   { href: '/announcements', label: 'Announcements' },
+    { href: '/support', label: 'Student Support' },
   { href: '/about', label: 'About ISR' },
   { href: '/contact', label: 'Contact' },
   ]
