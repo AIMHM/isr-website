@@ -2,11 +2,12 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import SectionHeading from '@/components/SectionHeading'
 
 export const metadata: Metadata = {
   title: 'About ISR',
   description:
-    'Learn about the purpose, services and governance of the Islamic Society of RMIT.',
+    'Learn about the purpose, services and organisational structure of the Islamic Society of RMIT.',
 }
 
 const serviceAreas = [
@@ -18,17 +19,17 @@ const serviceAreas = [
   {
     title: 'Islamic Learning',
     description:
-      'Delivering talks, workshops, reminders and educational programs for students.',
+      'Delivering talks, workshops, reminders and educational opportunities for students.',
   },
   {
     title: 'Community and Belonging',
     description:
-      'Creating welcoming opportunities for Muslim students to connect and build lasting relationships.',
+      'Creating welcoming opportunities for Muslim students to connect and build meaningful relationships.',
   },
   {
     title: 'Student Representation',
     description:
-      'Representing Muslim student needs and raising campus concerns through appropriate university channels.',
+      'Raising Muslim student needs and campus concerns through appropriate university channels.',
   },
   {
     title: 'Welfare and Support',
@@ -42,36 +43,69 @@ const serviceAreas = [
   },
 ]
 
+const values = [
+  {
+    title: 'Faith-centred',
+    description:
+      'Programs and conduct should remain consistent with ISR’s Islamic purpose.',
+  },
+  {
+    title: 'Student-focused',
+    description:
+      'Services should respond to genuine Muslim student needs across RMIT.',
+  },
+  {
+    title: 'Accountable',
+    description:
+      'Decisions, approvals and responsibilities should remain clear and auditable.',
+  },
+  {
+    title: 'Welcoming',
+    description:
+      'Students should be treated respectfully regardless of background or level of involvement.',
+  },
+  {
+    title: 'Collaborative',
+    description:
+      'ISR should work constructively with students, university stakeholders and appropriate community partners.',
+  },
+  {
+    title: 'Sustainable',
+    description:
+      'Records, policies and role systems should support smooth leadership transitions.',
+  },
+]
+
 const structureAreas = [
   {
     title: 'Executive Committee',
     description:
-      'Responsible for strategic direction, governance, approvals and organisational accountability.',
+      'Strategic direction, governance, approvals and organisational accountability.',
   },
   {
     title: 'Administration',
     description:
-      'Maintains meetings, records, correspondence, policies, notices and institutional knowledge.',
+      'Meetings, records, correspondence, policies, notices and institutional knowledge.',
   },
   {
     title: 'Finance and Partnerships',
     description:
-      'Supports budgeting, financial controls, reimbursements, grants, sponsorships and acquittals.',
+      'Budgets, financial controls, reimbursements, grants, sponsorships and acquittals.',
   },
   {
     title: 'Religious Affairs',
     description:
-      'Supports prayer facilities, Jumuah, Islamic programs and religious-content oversight.',
+      'Prayer facilities, Jumuah, Islamic programs and religious-content oversight.',
   },
   {
     title: 'Events and Community',
     description:
-      'Plans and delivers social, educational, cultural and community programs.',
+      'Social, educational, cultural and community programs.',
   },
   {
     title: 'Media and Communications',
     description:
-      'Maintains ISR branding, public communications, campaigns and digital platforms.',
+      'Branding, public communications, campaigns and digital platforms.',
   },
 ]
 
@@ -88,50 +122,48 @@ export default function AboutPage() {
                 About ISR
               </p>
 
-              <h1 className="mt-3 text-4xl font-bold text-isr-dark-red sm:text-5xl">
+              <h1 className="mt-3 text-4xl font-bold text-isr-dark-red sm:text-5xl lg:text-6xl">
                 The home of Muslim students at RMIT
               </h1>
 
-              <p className="mt-5 text-lg leading-relaxed text-gray-700">
+              <p className="mt-6 text-lg leading-relaxed text-gray-700">
                 The Islamic Society of RMIT supports Muslim students through
                 worship, learning, community, representation, welfare and
-                leadership opportunities.
+                opportunities to serve.
               </p>
 
-              <div className="mt-6 rounded-2xl border border-isr-bright-red/20 bg-isr-yellow/50 p-4 text-sm font-semibold text-isr-dark-red">
-                ISR historical dates and milestone claims require documentary
-                verification before publication.
+              <div className="mt-7 rounded-2xl border border-isr-yellow bg-isr-yellow/50 p-4 text-sm font-semibold leading-relaxed text-isr-dark-red">
+                Historical dates, establishment claims and organisational
+                milestones will only be published after documentary
+                verification.
               </div>
             </div>
           </div>
         </section>
 
-        <section className="bg-white px-4 py-16 sm:py-20">
+        <section
+          aria-labelledby="about-purpose"
+          className="bg-white px-4 py-16 sm:py-20"
+        >
           <div className="container-isr mx-auto max-w-6xl">
-            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-turquoise">
-                  Our purpose
-                </p>
-
-                <h2 className="mt-3 text-3xl font-bold text-isr-dark-red">
-                  Supporting Muslim student life
-                </h2>
-
-                <p className="mt-4 leading-relaxed text-gray-700">
-                  ISR exists to help Muslim students practise their faith,
-                  connect with community, participate fully in university life
-                  and contribute positively to RMIT.
-                </p>
-              </div>
+            <div className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
+              <SectionHeading
+                eyebrow="Our purpose"
+                title="Supporting Muslim student life"
+                description="ISR aims to help Muslim students practise their faith, connect with community, participate confidently in university life and contribute positively to RMIT."
+                id="about-purpose"
+              />
 
               <div className="grid gap-4 sm:grid-cols-2">
                 {serviceAreas.map((area) => (
                   <article
                     key={area.title}
-                    className="rounded-2xl border border-isr-light-blue/30 bg-isr-cream/40 p-5"
+                    className="isr-card p-5 sm:p-6"
                   >
-                    <h3 className="font-bold text-isr-dark-red">{area.title}</h3>
+                    <h3 className="font-bold text-isr-dark-red">
+                      {area.title}
+                    </h3>
+
                     <p className="mt-2 text-sm leading-relaxed text-gray-700">
                       {area.description}
                     </p>
@@ -144,51 +176,33 @@ export default function AboutPage() {
 
         <section
           id="mission-and-values"
+          aria-labelledby="values-heading"
           className="bg-isr-light-blue/10 px-4 py-16 sm:py-20"
         >
           <div className="container-isr mx-auto max-w-6xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-turquoise">
-              Mission and values
-            </p>
+            <SectionHeading
+              eyebrow="Mission and values"
+              title="Faith, service and responsibility"
+              description="These principles describe the direction of the local redesign and should be aligned with the final approved constitution and policies before publication."
+              id="values-heading"
+            />
 
-            <h2 className="mt-3 text-3xl font-bold text-isr-dark-red">
-              Faith, service and responsibility
-            </h2>
-
-            <div className="mt-8 grid gap-5 md:grid-cols-3">
-              {[
-                [
-                  'Faith-centred',
-                  'ISR programs and conduct should remain consistent with its Islamic purpose.',
-                ],
-                [
-                  'Student-focused',
-                  'Services should respond to genuine student needs across RMIT campuses.',
-                ],
-                [
-                  'Accountable',
-                  'Decisions, approvals and responsibilities should remain transparent and auditable.',
-                ],
-                [
-                  'Welcoming',
-                  'Students should be treated respectfully regardless of background or level of involvement.',
-                ],
-                [
-                  'Collaborative',
-                  'ISR should work constructively with students, university stakeholders and appropriate community partners.',
-                ],
-                [
-                  'Sustainable',
-                  'Policies, records and role systems should support smooth leadership transitions.',
-                ],
-              ].map(([title, description]) => (
+            <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {values.map((value, index) => (
                 <article
-                  key={title}
-                  className="rounded-2xl border border-isr-light-blue/30 bg-white p-6"
+                  key={value.title}
+                  className="isr-card p-6"
                 >
-                  <h3 className="font-bold text-isr-dark-red">{title}</h3>
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-isr-turquoise">
+                    0{index + 1}
+                  </p>
+
+                  <h3 className="mt-4 text-lg font-bold text-isr-dark-red">
+                    {value.title}
+                  </h3>
+
                   <p className="mt-2 text-sm leading-relaxed text-gray-700">
-                    {description}
+                    {value.description}
                   </p>
                 </article>
               ))}
@@ -196,23 +210,28 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="bg-white px-4 py-16 sm:py-20">
+        <section
+          aria-labelledby="structure-heading"
+          className="bg-white px-4 py-16 sm:py-20"
+        >
           <div className="container-isr mx-auto max-w-6xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-turquoise">
-              Organisational structure
-            </p>
+            <SectionHeading
+              eyebrow="Organisational structure"
+              title="How ISR delivers its work"
+              description="ISR work is distributed across committee portfolios and operational teams. Final role names and responsibilities require annual verification."
+              id="structure-heading"
+            />
 
-            <h2 className="mt-3 text-3xl font-bold text-isr-dark-red">
-              How ISR delivers its work
-            </h2>
-
-            <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {structureAreas.map((area) => (
                 <article
                   key={area.title}
-                  className="rounded-2xl border border-isr-light-blue/30 bg-isr-cream/40 p-5"
+                  className="isr-card p-5 sm:p-6"
                 >
-                  <h3 className="font-bold text-isr-dark-red">{area.title}</h3>
+                  <h3 className="font-bold text-isr-dark-red">
+                    {area.title}
+                  </h3>
+
                   <p className="mt-2 text-sm leading-relaxed text-gray-700">
                     {area.description}
                   </p>
@@ -220,42 +239,53 @@ export default function AboutPage() {
               ))}
             </div>
 
-            <p className="mt-6 rounded-2xl bg-isr-yellow/50 p-4 text-sm text-isr-dark-red">
-              Final team names, office holders, role descriptions and term
-              dates require annual verification.
-            </p>
+            <div className="mt-8 rounded-2xl border border-isr-yellow bg-isr-yellow/45 p-5 text-sm leading-relaxed text-isr-dark-red">
+              Committee office holders, team names, role descriptions and term
+              dates should be controlled through an annually reviewed register.
+            </div>
           </div>
         </section>
 
         <section className="px-4 py-14 sm:py-20">
-          <div className="container-isr mx-auto max-w-6xl rounded-3xl bg-isr-dark-red px-6 py-8 text-white sm:px-8">
-            <h2 className="text-3xl font-bold">Take part in ISR</h2>
-            <p className="mt-4 max-w-2xl leading-relaxed text-white/80">
-              Become a member, volunteer, attend an event or learn more about
-              how ISR is governed.
-            </p>
+          <div className="container-isr mx-auto max-w-6xl">
+            <div className="overflow-hidden rounded-[2rem] bg-isr-dark-red px-6 py-9 text-white shadow-[0_20px_55px_rgba(91,11,5,0.16)] sm:px-9 lg:flex lg:items-center lg:justify-between lg:gap-10">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-yellow">
+                  Take part
+                </p>
 
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                href="/join"
-                className="rounded-full bg-white px-5 py-2.5 font-semibold text-isr-dark-red hover:bg-isr-yellow"
-              >
-                Join ISR
-              </Link>
+                <h2 className="mt-3 text-3xl font-bold">
+                  Become part of the ISR community
+                </h2>
 
-              <Link
-                href="/governance"
-                className="rounded-full border border-white/30 px-5 py-2.5 font-semibold text-white hover:bg-white/10"
-              >
-                View Governance
-              </Link>
+                <p className="mt-4 max-w-2xl leading-relaxed text-white/80">
+                  Join as a member, volunteer your skills, attend an event or
+                  learn more about how ISR is governed.
+                </p>
+              </div>
 
-              <Link
-                href="/contact"
-                className="rounded-full border border-white/30 px-5 py-2.5 font-semibold text-white hover:bg-white/10"
-              >
-                Contact ISR
-              </Link>
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row lg:mt-0 lg:shrink-0">
+                <Link
+                  href="/join"
+                  className="rounded-full bg-white px-6 py-3 text-center font-semibold text-isr-dark-red transition hover:bg-isr-yellow"
+                >
+                  Join ISR
+                </Link>
+
+                <Link
+                  href="/governance"
+                  className="rounded-full border border-white/30 px-6 py-3 text-center font-semibold text-white transition hover:bg-white/10"
+                >
+                  Governance
+                </Link>
+
+                <Link
+                  href="/contact"
+                  className="rounded-full border border-white/30 px-6 py-3 text-center font-semibold text-white transition hover:bg-white/10"
+                >
+                  Contact ISR
+                </Link>
+              </div>
             </div>
           </div>
         </section>

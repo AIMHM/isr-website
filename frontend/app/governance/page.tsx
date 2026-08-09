@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import SectionHeading from '@/components/SectionHeading'
 
 export const metadata: Metadata = {
-  title: 'Governance | Islamic Society of RMIT',
+  title: 'Governance',
   description:
     'Governance, accountability and policy information for the Islamic Society of RMIT.',
 }
@@ -12,19 +14,19 @@ const governanceItems = [
   {
     title: 'Constitution',
     description:
-      'The current approved ISR constitution and amendment history.',
+      'Current approved governing document and controlled amendment history.',
     status: 'Document upload required',
   },
   {
     title: 'Committee and Office Holders',
     description:
-      'Current executive roles, committee responsibilities and official term dates.',
+      'Current executive roles, responsibilities and official term dates.',
     status: 'Annual verification required',
   },
   {
     title: 'Annual General Meeting',
     description:
-      'AGM notices, agendas, confirmed minutes and election outcomes.',
+      'Meeting notices, agendas, confirmed minutes and election outcomes.',
     status: 'Publication process required',
   },
   {
@@ -36,7 +38,7 @@ const governanceItems = [
   {
     title: 'Code of Conduct',
     description:
-      'Behavioural expectations for members, volunteers, committee and event participants.',
+      'Behavioural expectations for members, volunteers, committee and participants.',
     status: 'Approved policy required',
   },
   {
@@ -48,31 +50,33 @@ const governanceItems = [
   {
     title: 'Privacy',
     description:
-      'How ISR collects, uses, stores, shares and deletes personal information.',
-    status: 'Privacy notice required',
+      'How personal information is collected, used, stored, shared and deleted.',
+    status: 'Final policy required',
+    href: '/privacy',
   },
   {
     title: 'Accessibility',
     description:
-      'ISR commitments and the process for requesting reasonable adjustments.',
-    status: 'Accessibility statement required',
+      'Website and event accessibility commitments and adjustment pathways.',
+    status: 'Final process required',
+    href: '/accessibility',
   },
   {
     title: 'Photography and Media',
     description:
-      'Consent, event photography, child-safe practice and removal requests.',
+      'Consent, event photography, removal requests and safeguarding requirements.',
     status: 'Approved policy required',
   },
   {
     title: 'Child Safety and Safeguarding',
     description:
-      'Requirements when minors participate, including supervision, reporting and screening.',
+      'Supervision, reporting, screening and risk controls when minors participate.',
     status: 'Applicable policy required',
   },
   {
     title: 'Financial Approvals',
     description:
-      'High-level transparency regarding approvals, reimbursements and authorised spending.',
+      'High-level controls for expenditure, reimbursement and authorised spending.',
     status: 'Governance summary required',
   },
   {
@@ -86,12 +90,21 @@ const governanceItems = [
 const controlFields = [
   ['Document owner', 'Named committee role'],
   ['Approver', 'Authorised ISR body'],
+  ['Version', 'Controlled revision number'],
   ['Effective date', 'Date policy begins'],
   ['Review date', 'Scheduled reassessment'],
-  ['Version number', 'Controlled revision number'],
-  ['Superseded version', 'Archived, not deleted'],
-  ['Publication status', 'Draft or approved'],
-  ['Emergency update', 'Named escalation process'],
+  ['Status', 'Draft or approved'],
+  ['Superseded copy', 'Archived, not deleted'],
+  ['Emergency update', 'Defined escalation process'],
+]
+
+const governancePrinciples = [
+  'Decisions should identify who approved them and when.',
+  'Confirmed minutes should provide an auditable record of material decisions.',
+  'Financial commitments should follow delegated approval limits.',
+  'Policies should have owners, versions and scheduled review dates.',
+  'Access to records and systems should follow role responsibilities.',
+  'Outgoing office holders should complete structured handovers.',
 ]
 
 export default function GovernancePage() {
@@ -111,52 +124,122 @@ export default function GovernancePage() {
             </h1>
 
             <p className="mt-5 text-lg leading-relaxed text-gray-700">
-              Understand how ISR is led, how decisions are recorded and how
-              members can raise questions or concerns.
+              A public reference point for how ISR is led, how decisions are
+              controlled and how organisational information should be kept
+              current.
             </p>
 
-            <div className="mt-6 rounded-2xl border border-isr-bright-red/20 bg-isr-yellow/50 p-4 text-sm font-semibold text-isr-dark-red">
-              Final approved ISR policies and governing documents have not yet
-              been added to this local preview.
+            <div className="mt-6 rounded-2xl border border-isr-yellow bg-isr-yellow/50 p-4 text-sm font-semibold leading-relaxed text-isr-dark-red">
+              This local page is a governance framework. Final approved
+              constitutions, policies, minutes and procedures have not yet been
+              published here.
             </div>
           </header>
 
-          <section className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {governanceItems.map((item) => (
-              <article
-                key={item.title}
-                className="rounded-3xl border border-isr-light-blue/30 bg-white p-6 shadow-sm"
-              >
-                <p className="text-xs font-semibold uppercase tracking-wide text-isr-bright-red">
-                  {item.status}
-                </p>
+          <section
+            aria-labelledby="governance-library"
+            className="mt-14"
+          >
+            <SectionHeading
+              eyebrow="Governance library"
+              title="Documents and accountability"
+              description="Each item should eventually link to an approved, controlled and current document or register."
+              id="governance-library"
+            />
 
-                <h2 className="mt-3 text-xl font-bold text-isr-dark-red">
-                  {item.title}
-                </h2>
+            <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {governanceItems.map((item) => {
+                const content = (
+                  <>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-isr-bright-red">
+                      {item.status}
+                    </p>
 
-                <p className="mt-3 text-sm leading-relaxed text-gray-700">
-                  {item.description}
-                </p>
-              </article>
-            ))}
+                    <h3 className="mt-3 text-xl font-bold text-isr-dark-red">
+                      {item.title}
+                    </h3>
+
+                    <p className="mt-3 flex-1 text-sm leading-relaxed text-gray-700">
+                      {item.description}
+                    </p>
+
+                    {item.href && (
+                      <span className="isr-text-link mt-6">
+                        Open page
+                        <span aria-hidden="true">→</span>
+                      </span>
+                    )}
+                  </>
+                )
+
+                return item.href ? (
+                  <Link
+                    key={item.title}
+                    href={item.href}
+                    className="isr-card isr-card-interactive flex flex-col p-6"
+                  >
+                    {content}
+                  </Link>
+                ) : (
+                  <article
+                    key={item.title}
+                    className="isr-card flex flex-col p-6"
+                  >
+                    {content}
+                  </article>
+                )
+              })}
+            </div>
           </section>
 
-          <section className="mt-16 rounded-3xl border border-isr-light-blue/30 bg-isr-cream/50 p-6 sm:p-8">
+          <section
+            aria-labelledby="governance-principles"
+            className="mt-16"
+          >
+            <SectionHeading
+              eyebrow="Good governance"
+              title="Operating principles"
+              description="These controls support continuity, transparency and accountable student-society administration."
+              id="governance-principles"
+            />
+
+            <ol className="mt-8 grid gap-4 md:grid-cols-2">
+              {governancePrinciples.map((principle, index) => (
+                <li
+                  key={principle}
+                  className="isr-card flex gap-4 p-5"
+                >
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-isr-turquoise text-sm font-bold text-white">
+                    {index + 1}
+                  </span>
+
+                  <span className="text-sm font-semibold leading-relaxed text-isr-dark-red">
+                    {principle}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          <section className="isr-card mt-16 bg-isr-cream/50 p-6 sm:p-8">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-turquoise">
               Document control
             </p>
 
             <h2 className="mt-3 text-3xl font-bold text-isr-dark-red">
-              Every policy needs an owner and review cycle
+              Every controlled document needs an owner and review cycle
             </h2>
 
             <dl className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {controlFields.map(([label, value]) => (
-                <div key={label} className="rounded-2xl bg-white p-4">
+                <div
+                  key={label}
+                  className="rounded-2xl bg-white p-4"
+                >
                   <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                     {label}
                   </dt>
+
                   <dd className="mt-2 text-sm font-semibold text-isr-dark-red">
                     {value}
                   </dd>
@@ -165,21 +248,25 @@ export default function GovernancePage() {
             </dl>
           </section>
 
-          <section className="mt-16 rounded-3xl bg-isr-dark-red px-6 py-8 text-white sm:px-8">
-            <h2 className="text-3xl font-bold">
-              Governance enquiry or complaint
+          <section className="mt-16 overflow-hidden rounded-[2rem] bg-isr-dark-red px-6 py-8 text-white shadow-[0_20px_55px_rgba(91,11,5,0.14)] sm:px-8">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-yellow">
+              Governance enquiries
+            </p>
+
+            <h2 className="mt-3 text-3xl font-bold">
+              Raise a governance question
             </h2>
 
             <p className="mt-4 max-w-3xl leading-relaxed text-white/80">
-              Until a dedicated complaints process is approved and published,
-              governance enquiries may be directed to the official ISR email.
-              Sensitive matters should ultimately use an approved,
+              Until a dedicated complaints and governance process is approved,
+              general governance enquiries may be directed to the official ISR
+              email. Sensitive complaints should ultimately use an approved,
               access-controlled process.
             </p>
 
             <a
               href="mailto:isr@rmit.edu.au?subject=ISR%20Governance%20Enquiry"
-              className="mt-6 inline-block rounded-full bg-white px-5 py-2.5 font-semibold text-isr-dark-red transition hover:bg-isr-yellow"
+              className="mt-6 inline-flex rounded-full bg-white px-6 py-3 font-semibold text-isr-dark-red transition hover:bg-isr-yellow"
             >
               Contact ISR
             </a>

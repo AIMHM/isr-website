@@ -4,8 +4,6 @@ const baseUrl =
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://theisr.com.au'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date()
-
   const pages = [
     { path: '', frequency: 'weekly', priority: 1 },
     { path: '/pray', frequency: 'daily', priority: 0.95 },
@@ -22,7 +20,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return pages.map((page) => ({
     url: `${baseUrl}${page.path}`,
-    lastModified,
     changeFrequency: page.frequency,
     priority: page.priority,
   }))
