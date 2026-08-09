@@ -1,6 +1,10 @@
 import { API_BASE_URL } from '@/lib/api'
 import { MOCK_EVENTS } from '@/lib/mockData'
 import { IS_LOCAL_MOCK_DATA } from '@/lib/mockMode'
+import {
+  IS_LOCAL_ADMIN_MODE,
+  localAdminApiUrl,
+} from '@/lib/localAdminMode'
 
 export type EventStatus =
   | 'scheduled'
@@ -253,66 +257,159 @@ function fetchOptions(): RequestInit | undefined {
 export async function fetchEvents(
   filter: EventsFilter = 'all',
 ): Promise<Event[]> {
+  if (IS_LOCAL_ADMIN_MODE) {
+    const query =
+      filter === 'all'
+        ? ''
+        : `?filter=${filter}`
+
+    const response =
+      await fetch(
+        localAdminApiUrl(
+          `/events${query}`,
+        ),
+        {
+          cache: 'no-store',
+        },
+      )
+
+    if (!response.ok) {
+      throw new Error(
+        'Failed to fetch local events',
+      )
+    }
+
+    const json =
+      (await response.json()) as EventsResponse
+
+    return sortEventsForDisplay(
+      json.data,
+    )
+  }
+
   if (IS_LOCAL_MOCK_DATA) {
-    const events = MOCK_EVENTS.map((event) => ({
-      ...event,
-    })) as Event[]
+    const events = MOCK_EVENTS.map(
+      (event) => ({
+        ...event,
+      }),
+    ) as Event[]
 
-    const filtered = events.filter((event) => {
-      const status = getEventStatus(event)
+    const filtered =
+      events.filter((event) => {
+        const status =
+          getEventStatus(event)
 
-      if (filter === 'upcoming') {
-        return status !== 'completed'
-      }
+        if (
+          filter === 'upcoming'
+        ) {
+          return (
+            status !==
+            'completed'
+          )
+        }
 
-      if (filter === 'past') {
-        return status === 'completed'
-      }
+        if (filter === 'past') {
+          return (
+            status ===
+            'completed'
+          )
+        }
 
-      return true
-    })
+        return true
+      })
 
-    return sortEventsForDisplay(filtered)
+    return sortEventsForDisplay(
+      filtered,
+    )
   }
 
   const query =
-    filter === 'all' ? '' : `?filter=${filter}`
+    filter === 'all'
+      ? ''
+      : `?filter=${filter}`
 
-  const response = await fetch(
-    `${API_BASE_URL}/api/events${query}`,
-    fetchOptions(),
-  )
+  const response =
+    await fetch(
+      `${API_BASE_URL}/api/events${query}`,
+      fetchOptions(),
+    )
 
   if (!response.ok) {
-    throw new Error('Failed to fetch events')
+    throw new Error(
+      'Failed to fetch events',
+    )
   }
 
   const json =
     (await response.json()) as EventsResponse
 
-  return sortEventsForDisplay(json.data)
+  return sortEventsForDisplay(
+    json.data,
+  )
 }
 
 export async function fetchEventById(
   id: number,
 ): Promise<Event | null> {
-  if (IS_LOCAL_MOCK_DATA) {
-    const event = MOCK_EVENTS.find(
-      (item) => item.id === id,
-    )
+  if (IS_LOCAL_ADMIN_MODE) {
+    const response =
+      await fetch(
+        localAdminApiUrl(
+          `/events/${id}`,
+        ),
+        {
+          cache: 'no-store',
+        },
+      )
 
-    return event ? ({ ...event } as Event) : null
+    if (
+      response.status === 404
+    ) {
+      return null
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        'Failed to fetch local event',
+      )
+    }
+
+    const json =
+      (await response.json()) as EventResponse
+
+    return json.data
   }
 
-  const response = await fetch(
-    `${API_BASE_URL}/api/events/${id}`,
-    fetchOptions(),
-  )
+  if (IS_LOCAL_MOCK_DATA) {
+    const event =
+      MOCK_EVENTS.find(
+        (item) =>
+          item.id === id,
+      )
 
-  if (response.status === 404) return null
+    return event
+      ? ({
+          ...event,
+        } as Event)
+      : null
+  }
+
+  const response =
+    await fetch(
+      `${API_BASE_URL}/api/events/${id}`,
+      fetchOptions(),
+    )
+
+  if (
+    response.status === 404
+  ) {
+    return null
+  }
 
   if (!response.ok) {
-    throw new Error('Failed to fetch event')
+    throw new Error(
+      'Failed to fetch event',
+    )
   }
 
   const json =

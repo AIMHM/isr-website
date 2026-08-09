@@ -1,6 +1,10 @@
 import { API_BASE_URL } from '@/lib/api'
 import { MOCK_ANNOUNCEMENTS } from '@/lib/mockData'
 import { IS_LOCAL_MOCK_DATA } from '@/lib/mockMode'
+import {
+  IS_LOCAL_ADMIN_MODE,
+  localAdminApiUrl,
+} from '@/lib/localAdminMode'
 
 export type AnnouncementPriority =
   | 'normal'
@@ -94,6 +98,36 @@ function fetchOptions(): RequestInit | undefined {
 export async function fetchAnnouncements(): Promise<
   Announcement[]
 > {
+  if (IS_LOCAL_ADMIN_MODE) {
+    const response =
+      await fetch(
+        localAdminApiUrl(
+          '/announcements',
+        ),
+        {
+          cache: 'no-store',
+        },
+      )
+
+    if (!response.ok) {
+      throw new Error(
+        'Failed to fetch local ISR updates',
+      )
+    }
+
+    const json =
+      (await response.json()) as AnnouncementsResponse
+
+    return sortAnnouncements(
+      json.data.filter(
+        (announcement) =>
+          !isAnnouncementExpired(
+            announcement,
+          ),
+      ),
+    )
+  }
+
   if (IS_LOCAL_MOCK_DATA) {
     const announcements =
       MOCK_ANNOUNCEMENTS.map(
@@ -105,15 +139,18 @@ export async function fetchAnnouncements(): Promise<
     return sortAnnouncements(
       announcements.filter(
         (announcement) =>
-          !isAnnouncementExpired(announcement),
+          !isAnnouncementExpired(
+            announcement,
+          ),
       ),
     )
   }
 
-  const response = await fetch(
-    `${API_BASE_URL}/api/announcements`,
-    fetchOptions(),
-  )
+  const response =
+    await fetch(
+      `${API_BASE_URL}/api/announcements`,
+      fetchOptions(),
+    )
 
   if (!response.ok) {
     throw new Error(
@@ -127,7 +164,9 @@ export async function fetchAnnouncements(): Promise<
   return sortAnnouncements(
     json.data.filter(
       (announcement) =>
-        !isAnnouncementExpired(announcement),
+        !isAnnouncementExpired(
+          announcement,
+        ),
     ),
   )
 }

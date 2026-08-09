@@ -28,3 +28,6 @@ Thumbs.db
 # Supabase
 supabase/.temp/
 .cursor/settings.json
+
+# Local ISR admin sandbox
+frontend/.local-data/
