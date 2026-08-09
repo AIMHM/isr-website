@@ -14,31 +14,31 @@ export default function AnnouncementsPage() {
     <div className="min-h-screen bg-gradient-to-b from-isr-cream via-white to-isr-yellow/20">
       <Navbar />
 
-      <main
-        id="main-content"
-        className="px-4 py-16 sm:py-20"
-      >
-        <div className="container-isr mx-auto max-w-5xl">
-          <header className="mb-12 text-center">
+      <main id="main-content" className="px-4 py-14 sm:py-20">
+        <div className="container-isr mx-auto max-w-6xl">
+          <header className="mx-auto max-w-3xl text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-isr-turquoise">
               Notices and updates
             </p>
 
-            <h1 className="mt-3 text-4xl font-bold text-isr-dark-red md:text-5xl">
+            <h1 className="mt-3 text-4xl font-bold text-isr-dark-red sm:text-5xl">
               Announcements
             </h1>
 
-            <div className="mx-auto mt-5 h-1 w-16 bg-isr-bright-red" />
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-gray-700">
+              Current operational notices, event updates and important
+              information from ISR.
+            </p>
 
-            <p className="mx-auto mt-6 max-w-2xl text-gray-700">
-              Current ISR notices are shown here.
-              Time-sensitive announcements may expire
-              automatically when they are no longer
-              relevant.
+            <p className="mx-auto mt-5 max-w-2xl rounded-2xl border border-isr-yellow bg-isr-yellow/40 p-4 text-sm leading-relaxed text-isr-dark-red">
+              Time-sensitive notices may be removed automatically after they
+              expire.
             </p>
           </header>
 
-          <AnnouncementsList />
+          <div className="mt-12">
+            <AnnouncementsList />
+          </div>
         </div>
       </main>
 

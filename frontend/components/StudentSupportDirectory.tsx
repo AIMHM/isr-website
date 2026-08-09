@@ -1,12 +1,12 @@
 import Link from 'next/link'
+import SectionHeading from '@/components/SectionHeading'
 
 type SupportItem = {
   title: string
   description: string
   action: string
   href: string
-  external?: boolean
-  status?: string
+  status: string
 }
 
 const supportItems: SupportItem[] = [
@@ -16,7 +16,6 @@ const supportItems: SupportItem[] = [
       'Find appropriate faith-sensitive wellbeing, pastoral and university support pathways.',
     action: 'Contact ISR for guidance',
     href: 'mailto:isr@rmit.edu.au?subject=Wellbeing%20and%20Chaplaincy%20Support',
-    external: true,
     status: 'Contact pathway under review',
   },
   {
@@ -25,7 +24,6 @@ const supportItems: SupportItem[] = [
       'Seek guidance regarding prayer, fasting, assessments, placements, classes and religious observance.',
     action: 'Ask about accommodations',
     href: 'mailto:isr@rmit.edu.au?subject=Religious%20Accommodation%20Enquiry',
-    external: true,
     status: 'Guidance under review',
   },
   {
@@ -34,7 +32,6 @@ const supportItems: SupportItem[] = [
       'Receive initial guidance on reporting harassment, discrimination, vilification or Islamophobia.',
     action: 'Request reporting guidance',
     href: 'mailto:isr@rmit.edu.au?subject=Confidential%20Reporting%20Guidance',
-    external: true,
     status: 'Reporting pathway under review',
   },
   {
@@ -43,25 +40,22 @@ const supportItems: SupportItem[] = [
       'Find assistance for settling into university, understanding services and connecting with community.',
     action: 'Contact ISR',
     href: 'mailto:isr@rmit.edu.au?subject=International%20Student%20Support',
-    external: true,
     status: 'Contact pathway under review',
   },
   {
-    title: 'Brothers’ Welfare Pathway',
+    title: "Brothers' Welfare Pathway",
     description:
-      'A dedicated brothers’ welfare contact and escalation process will be listed after formal confirmation.',
+      "A dedicated brothers' welfare contact and escalation process will be listed after formal confirmation.",
     action: 'Use the general ISR contact',
     href: 'mailto:isr@rmit.edu.au?subject=Brothers%20Welfare%20Support',
-    external: true,
     status: 'Dedicated contact pending',
   },
   {
-    title: 'Sisters’ Welfare Pathway',
+    title: "Sisters' Welfare Pathway",
     description:
-      'A dedicated sisters’ welfare contact and escalation process will be listed after formal confirmation.',
+      "A dedicated sisters' welfare contact and escalation process will be listed after formal confirmation.",
     action: 'Use the general ISR contact',
     href: 'mailto:isr@rmit.edu.au?subject=Sisters%20Welfare%20Support',
-    external: true,
     status: 'Dedicated contact pending',
   },
 ]
@@ -69,7 +63,7 @@ const supportItems: SupportItem[] = [
 const accommodationExamples = [
   'Prayer during classes, laboratories or placements',
   'Ramadan fasting and assessment arrangements',
-  'Jumu’ah attendance and timetable conflicts',
+  "Jumu'ah attendance and timetable conflicts",
   'Religious dress and personal modesty requirements',
   'Access to suitable prayer and ablution facilities',
   'Islamic holidays and compulsory university activities',
@@ -79,35 +73,22 @@ export default function StudentSupportDirectory() {
   return (
     <>
       <section aria-labelledby="support-pathways">
-        <div className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-turquoise">
-            Support pathways
-          </p>
-
-          <h2
-            id="support-pathways"
-            className="mt-2 text-3xl font-bold text-isr-dark-red sm:text-4xl"
-          >
-            Find the right support
-          </h2>
-
-          <p className="mt-4 leading-relaxed text-gray-700">
-            ISR can help identify an appropriate pathway, but it is not a
-            medical, legal, counselling or emergency service.
-          </p>
-        </div>
+        <SectionHeading
+          eyebrow="Support pathways"
+          title="Find the right support"
+          description="ISR can help identify an appropriate pathway, but it is not a medical, legal, counselling or emergency service."
+          id="support-pathways"
+        />
 
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {supportItems.map((item) => (
             <article
               key={item.title}
-              className="flex flex-col rounded-3xl border border-isr-light-blue/30 bg-white p-6 shadow-sm"
+              className="isr-card isr-card-interactive flex flex-col p-6"
             >
-              {item.status && (
-                <p className="text-xs font-semibold uppercase tracking-wide text-isr-bright-red">
-                  {item.status}
-                </p>
-              )}
+              <p className="text-xs font-semibold uppercase tracking-wide text-isr-bright-red">
+                {item.status}
+              </p>
 
               <h3 className="mt-3 text-xl font-bold text-isr-dark-red">
                 {item.title}
@@ -117,28 +98,20 @@ export default function StudentSupportDirectory() {
                 {item.description}
               </p>
 
-              {item.external ? (
-                <a
-                  href={item.href}
-                  className="mt-6 inline-flex items-center text-sm font-semibold text-isr-turquoise hover:text-isr-dark-red"
-                >
-                  {item.action} →
-                </a>
-              ) : (
-                <Link
-                  href={item.href}
-                  className="mt-6 inline-flex items-center text-sm font-semibold text-isr-turquoise hover:text-isr-dark-red"
-                >
-                  {item.action} →
-                </Link>
-              )}
+              <a
+                href={item.href}
+                className="isr-text-link mt-6"
+              >
+                {item.action}
+                <span aria-hidden="true">→</span>
+              </a>
             </article>
           ))}
         </div>
       </section>
 
       <section className="mt-16 grid gap-6 lg:grid-cols-2">
-        <article className="rounded-3xl border border-isr-light-blue/30 bg-isr-cream/50 p-6 sm:p-8">
+        <article className="isr-card bg-isr-cream/50 p-6 sm:p-8">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-turquoise">
             Religious accommodations
           </p>
@@ -151,7 +124,7 @@ export default function StudentSupportDirectory() {
             {accommodationExamples.map((example) => (
               <li
                 key={example}
-                className="rounded-xl border border-isr-light-blue/20 bg-white px-4 py-3 text-sm text-gray-700"
+                className="rounded-xl border border-isr-light-blue/20 bg-white px-4 py-3 text-sm leading-relaxed text-gray-700"
               >
                 {example}
               </li>
@@ -164,9 +137,9 @@ export default function StudentSupportDirectory() {
           </p>
         </article>
 
-        <article className="rounded-3xl border border-isr-bright-red/20 bg-isr-yellow/40 p-6 sm:p-8">
+        <article className="isr-card border-isr-yellow bg-isr-yellow/40 p-6 sm:p-8">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-turquoise">
-            Confidentiality
+            Privacy and safety
           </p>
 
           <h2 className="mt-3 text-2xl font-bold text-isr-dark-red">
@@ -175,8 +148,8 @@ export default function StudentSupportDirectory() {
 
           <div className="mt-6 space-y-4 text-sm leading-relaxed text-gray-700">
             <p>
-              ISR should handle sensitive enquiries respectfully and only share
-              information with those who need it to respond.
+              Sensitive enquiries should be handled respectfully and shared
+              only with those required to respond.
             </p>
 
             <p>
@@ -192,13 +165,19 @@ export default function StudentSupportDirectory() {
             </p>
           </div>
 
-          <p className="mt-6 rounded-xl bg-white/80 p-4 text-sm font-semibold text-isr-dark-red">
-            Final confidentiality wording requires formal ISR approval.
+          <p className="mt-6 rounded-xl bg-white/80 p-4 text-sm font-semibold leading-relaxed text-isr-dark-red">
+            Final confidentiality, escalation and child-safety wording requires
+            formal ISR approval.
           </p>
+
+          <Link href="/privacy" className="isr-text-link mt-5">
+            Read the privacy notice
+            <span aria-hidden="true">→</span>
+          </Link>
         </article>
       </section>
 
-      <section className="mt-16 rounded-3xl bg-isr-dark-red px-6 py-8 text-white sm:px-8">
+      <section className="mt-16 overflow-hidden rounded-[2rem] bg-isr-dark-red px-6 py-8 text-white shadow-[0_20px_55px_rgba(91,11,5,0.14)] sm:px-8">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-yellow">
           Immediate danger or emergency
         </p>
@@ -229,7 +208,7 @@ export default function StudentSupportDirectory() {
         </div>
       </section>
 
-      <section className="mt-16 rounded-3xl border border-isr-light-blue/30 bg-white p-6 sm:p-8">
+      <section className="isr-card mt-16 p-6 sm:p-8">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-turquoise">
           Content governance
         </p>

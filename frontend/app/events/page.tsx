@@ -15,25 +15,25 @@ export default function EventsPage() {
       <Navbar />
 
       <main id="main-content" className="px-4 py-14 sm:py-20">
-        <div className="container-isr mx-auto max-w-5xl">
-          <header className="mb-12 text-center">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-isr-turquoise">
+        <div className="container-isr mx-auto max-w-6xl">
+          <header className="mx-auto max-w-3xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-isr-turquoise">
               Community and activities
             </p>
 
-            <h1 className="mb-4 text-4xl font-bold text-isr-dark-red md:text-5xl">
-              Events
+            <h1 className="mt-3 text-4xl font-bold text-isr-dark-red sm:text-5xl">
+              ISR Events
             </h1>
 
-            <div className="mx-auto mb-6 h-1 w-16 bg-isr-bright-red" />
-
-            <p className="mx-auto max-w-2xl text-gray-700">
-              View upcoming programs and a record of activities ISR has hosted
-              for the student community.
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-gray-700">
+              Discover upcoming programs, registrations and a record of
+              activities serving the Muslim student community.
             </p>
           </header>
 
-          <EventsTimeline />
+          <div className="mt-12">
+            <EventsTimeline />
+          </div>
         </div>
       </main>
 

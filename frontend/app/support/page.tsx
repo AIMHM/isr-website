@@ -16,7 +16,7 @@ export default function SupportPage() {
 
       <main id="main-content" className="px-4 py-14 sm:py-20">
         <div className="container-isr mx-auto max-w-6xl">
-          <header className="mb-12 max-w-3xl">
+          <header className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-isr-turquoise">
               Guidance and welfare
             </p>
@@ -27,16 +27,18 @@ export default function SupportPage() {
 
             <p className="mt-5 text-lg leading-relaxed text-gray-700">
               Find pathways for wellbeing, religious accommodations,
-              discrimination reporting and student welfare.
+              discrimination reporting and Muslim student welfare.
             </p>
 
-            <div className="mt-6 rounded-2xl border border-isr-bright-red/20 bg-isr-yellow/50 p-4 text-sm font-semibold text-isr-dark-red">
-              Contact details and university procedures shown in this local
-              preview require confirmation before publication.
+            <div className="mt-6 rounded-2xl border border-isr-bright-red/20 bg-isr-yellow/50 p-4 text-sm font-semibold leading-relaxed text-isr-dark-red">
+              Contact details and university procedures in this local preview
+              require confirmation before publication.
             </div>
           </header>
 
-          <StudentSupportDirectory />
+          <div className="mt-12">
+            <StudentSupportDirectory />
+          </div>
         </div>
       </main>
 
