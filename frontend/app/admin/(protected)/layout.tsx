@@ -1,13 +1,29 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import {
+  useEffect,
+  useState,
+} from 'react'
+import {
+  usePathname,
+  useRouter,
+} from 'next/navigation'
 import Link from 'next/link'
-import { getToken, removeToken } from '@/lib/auth'
+import {
+  getToken,
+  removeToken,
+} from '@/lib/auth'
+import { getMe } from '@/lib/admin-api'
 
 const NAV_LINKS = [
-  { href: '/admin/events', label: 'Events' },
-  { href: '/admin/announcements', label: 'Announcements' },
+  {
+    href: '/admin/events',
+    label: 'Events',
+  },
+  {
+    href: '/admin/announcements',
+    label: 'ISR Updates',
+  },
 ]
 
 export default function AdminProtectedLayout({
@@ -17,20 +33,45 @@ export default function AdminProtectedLayout({
 }) {
   const router = useRouter()
   const pathname = usePathname()
-  const [ready, setReady] = useState(false)
+
+  const [ready, setReady] =
+    useState(false)
 
   useEffect(() => {
-    if (!getToken()) {
+    let active = true
+
+    const token = getToken()
+
+    if (!token) {
       router.replace('/admin/login')
-    } else {
-      setReady(true)
+      return
+    }
+
+    getMe(token)
+      .then(() => {
+        if (active) {
+          setReady(true)
+        }
+      })
+      .catch(() => {
+        removeToken()
+
+        if (active) {
+          router.replace(
+            '/admin/login',
+          )
+        }
+      })
+
+    return () => {
+      active = false
     }
   }, [router])
 
   if (!ready) {
     return (
-      <div className="min-h-screen bg-isr-cream flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-isr-dark-red border-t-transparent rounded-full animate-spin" />
+      <div className="flex min-h-screen items-center justify-center bg-isr-cream">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-isr-dark-red border-t-transparent" />
       </div>
     )
   }
@@ -43,31 +84,38 @@ export default function AdminProtectedLayout({
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-isr-dark-red shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14">
-            <div className="flex items-center gap-8">
-              <span className="font-bold text-isr-cream tracking-wide text-sm">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex min-h-14 items-center justify-between gap-6">
+            <div className="flex items-center gap-6">
+              <span className="text-sm font-bold tracking-wide text-isr-cream">
                 ISR Admin
               </span>
+
               <div className="flex gap-1">
-                {NAV_LINKS.map(({ href, label }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                      pathname.startsWith(href)
-                        ? 'bg-white/15 text-white'
-                        : 'text-isr-cream/70 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    {label}
-                  </Link>
-                ))}
+                {NAV_LINKS.map(
+                  ({ href, label }) => (
+                    <Link
+                      key={href}
+                      href={href}
+                      className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                        pathname.startsWith(
+                          href,
+                        )
+                          ? 'bg-white/15 text-white'
+                          : 'text-isr-cream/70 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      {label}
+                    </Link>
+                  ),
+                )}
               </div>
             </div>
+
             <button
+              type="button"
               onClick={handleLogout}
-              className="text-sm text-isr-cream/70 hover:text-white transition-colors"
+              className="text-sm text-isr-cream/70 transition hover:text-white"
             >
               Log out
             </button>
@@ -75,7 +123,7 @@ export default function AdminProtectedLayout({
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {children}
       </main>
     </div>

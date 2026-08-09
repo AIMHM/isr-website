@@ -1,29 +1,33 @@
-import 'dotenv/config';
-import { prisma } from '../lib/prisma';
+import "dotenv/config";
+import { prisma } from "../lib/prisma";
 
 async function main() {
+  if (
+    process.env.ALLOW_DEMO_SEED !== "true"
+  ) {
+    throw new Error(
+      "Refusing to seed. Set ALLOW_DEMO_SEED=true only for an isolated development database.",
+    );
+  }
+
   await prisma.announcement.create({
     data: {
-      title: 'Welcome to ISR!',
-      body: 'The Islamic Society of RMIT is excited to kick off Semester 2, 2026. Stay tuned for upcoming events, prayer times, and community updates.',
+      title: "Demo ISR update",
+      body:
+        "Development-only sample content. Replace this with verified ISR information.",
       pinned: true,
+      priority: "important",
     },
   });
 
-  await prisma.announcement.create({
-    data: {
-      title: 'Friday Prayer Location Update',
-      body: 'Jumu\'ah this week will be held in Building 8, Level 3, Room 9 at 1:15 PM. All are welcome.',
-      pinned: false,
-    },
-  });
-
-  console.log('Seeded 2 announcements.');
+  console.log(
+    "Seeded development-only sample content.",
+  );
 }
 
 main()
-  .catch((e) => {
-    console.error(e);
+  .catch((error) => {
+    console.error(error);
     process.exit(1);
   })
   .finally(async () => {

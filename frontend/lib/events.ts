@@ -170,13 +170,24 @@ export function isEventPast(isoDate: string): boolean {
 export function getEventStatus(
   event: Event,
 ): EventStatus {
-  if (event.status) return event.status
+  const effectiveEnd =
+    event.endDate ?? event.date
 
-  return isEventPast(event.endDate ?? event.date)
+  if (
+    event.status === 'scheduled' &&
+    isEventPast(effectiveEnd)
+  ) {
+    return 'completed'
+  }
+
+  if (event.status) {
+    return event.status
+  }
+
+  return isEventPast(effectiveEnd)
     ? 'completed'
     : 'scheduled'
 }
-
 export function getEventStatusLabel(
   status: EventStatus,
 ): string {
