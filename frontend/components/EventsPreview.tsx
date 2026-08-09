@@ -2,11 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import SectionHeading from '@/components/SectionHeading'
 import {
   fetchEvents,
@@ -61,7 +57,7 @@ function EventImage({ event }: { event: Event }) {
   )
 }
 
-function EventPreviewCard({ event }: { event: Event }) {
+function EventCard({ event }: { event: Event }) {
   const { date, time } = formatEventDate(event.date)
   const status = getEventStatus(event)
 
@@ -98,21 +94,11 @@ function EventPreviewCard({ event }: { event: Event }) {
 
           <p className="text-gray-600">
             {time}
-            {event.endDate
-              ? ` – ${formatEventTime(event.endDate)}`
-              : ''}
+            {event.endDate ? ` – ${formatEventTime(event.endDate)}` : ''}
           </p>
 
-          {event.venue && (
-            <p className="text-gray-600">{event.venue}</p>
-          )}
+          {event.venue && <p className="text-gray-600">{event.venue}</p>}
         </div>
-
-        {event.statusNote && (
-          <p className="mt-4 rounded-xl bg-isr-yellow/50 px-3 py-2 text-xs font-semibold leading-relaxed text-isr-dark-red">
-            {event.statusNote}
-          </p>
-        )}
 
         <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-gray-700">
           {event.description}
@@ -122,7 +108,7 @@ function EventPreviewCard({ event }: { event: Event }) {
           href={`/events/${event.id}`}
           className="isr-text-link mt-auto pt-6"
         >
-          View event details
+          View event
           <span aria-hidden="true">→</span>
         </Link>
       </div>
@@ -130,37 +116,21 @@ function EventPreviewCard({ event }: { event: Event }) {
   )
 }
 
-function EventPreviewSkeleton() {
-  return (
-    <div className="animate-pulse overflow-hidden rounded-3xl border border-isr-light-blue/20 bg-white">
-      <div className="aspect-[4/3] bg-isr-yellow/70" />
-
-      <div className="space-y-3 p-6">
-        <div className="h-5 w-24 rounded bg-isr-light-blue/30" />
-        <div className="h-7 w-4/5 rounded bg-isr-light-blue/30" />
-        <div className="h-4 w-1/2 rounded bg-isr-light-blue/20" />
-        <div className="h-4 w-full rounded bg-isr-light-blue/20" />
-        <div className="h-4 w-5/6 rounded bg-isr-light-blue/20" />
-      </div>
-    </div>
-  )
-}
-
 export default function EventsPreview() {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState(false)
 
   const loadEvents = useCallback(async () => {
     setLoading(true)
-    setError(null)
+    setError(false)
 
     try {
       const data = await fetchEvents('upcoming')
       setEvents(data.slice(0, 3))
     } catch {
       setEvents([])
-      setError('Unable to load upcoming events.')
+      setError(true)
     } finally {
       setLoading(false)
     }
@@ -177,31 +147,36 @@ export default function EventsPreview() {
     >
       <div className="container-isr mx-auto max-w-6xl">
         <SectionHeading
-          eyebrow="Community and activities"
+          eyebrow="What's happening"
           title="Upcoming events"
-          description="Explore upcoming ISR programs, registrations and community activities."
+          description="Come along, meet people and take part in the Muslim student community."
           align="center"
           id="upcoming-events-heading"
         />
 
         {loading && (
-          <div
-            className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3"
-            aria-live="polite"
-            aria-busy="true"
-          >
+          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[0, 1, 2].map((index) => (
-              <EventPreviewSkeleton key={index} />
+              <div
+                key={index}
+                className="animate-pulse overflow-hidden rounded-3xl border border-isr-light-blue/20 bg-white"
+              >
+                <div className="aspect-[4/3] bg-isr-yellow/70" />
+                <div className="space-y-3 p-6">
+                  <div className="h-5 w-24 rounded bg-isr-light-blue/30" />
+                  <div className="h-7 w-4/5 rounded bg-isr-light-blue/30" />
+                  <div className="h-4 w-1/2 rounded bg-isr-light-blue/20" />
+                </div>
+              </div>
             ))}
           </div>
         )}
 
         {!loading && error && (
-          <div
-            role="alert"
-            className="mx-auto mt-10 max-w-xl rounded-2xl border border-isr-bright-red/20 bg-isr-yellow/60 px-6 py-8 text-center"
-          >
-            <p className="text-sm text-isr-dark-red">{error}</p>
+          <div className="mx-auto mt-10 max-w-xl rounded-2xl border border-isr-bright-red/20 bg-isr-yellow/60 px-6 py-8 text-center">
+            <p className="text-sm text-isr-dark-red">
+              Upcoming events could not be loaded right now.
+            </p>
 
             <button
               type="button"
@@ -216,14 +191,11 @@ export default function EventsPreview() {
         {!loading && !error && events.length === 0 && (
           <div className="mx-auto mt-10 max-w-xl rounded-2xl border border-isr-light-blue/30 bg-white px-6 py-10 text-center">
             <p className="font-semibold text-isr-dark-red">
-              No upcoming events are currently published.
+              No upcoming events are currently listed.
             </p>
 
-            <Link
-              href="/announcements"
-              className="isr-text-link mt-4"
-            >
-              Check announcements
+            <Link href="/updates" className="isr-text-link mt-4">
+              Check ISR updates
               <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -232,7 +204,7 @@ export default function EventsPreview() {
         {!loading && !error && events.length > 0 && (
           <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {events.map((event) => (
-              <EventPreviewCard key={event.id} event={event} />
+              <EventCard key={event.id} event={event} />
             ))}
           </div>
         )}

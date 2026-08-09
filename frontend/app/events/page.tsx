@@ -18,7 +18,7 @@ export default function EventsPage() {
         <div className="container-isr mx-auto max-w-6xl">
           <header className="mx-auto max-w-3xl text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-isr-turquoise">
-              Community and activities
+              What's happening
             </p>
 
             <h1 className="mt-3 text-4xl font-bold text-isr-dark-red sm:text-5xl">
@@ -26,8 +26,8 @@ export default function EventsPage() {
             </h1>
 
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-gray-700">
-              Discover upcoming programs, registrations and a record of
-              activities serving the Muslim student community.
+              Find something happening, bring a friend and become part of the
+              community.
             </p>
           </header>
 

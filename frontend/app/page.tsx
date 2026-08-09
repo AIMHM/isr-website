@@ -1,10 +1,11 @@
 import Navbar from '@/components/Navbar'
 import Hero from '@/components/Hero'
-import TodayAtISR from '@/components/TodayAtISR'
 import QuickActions from '@/components/QuickActions'
+import TodayAtISR from '@/components/TodayAtISR'
 import EventsPreview from '@/components/EventsPreview'
 import PrayerSpacesPreview from '@/components/PrayerSpacesPreview'
-import StudentSupportPreview from '@/components/StudentSupportPreview'
+import NewStudentPreview from '@/components/NewStudentPreview'
+import ParticipationJourney from '@/components/ParticipationJourney'
 import WhatISRDoes from '@/components/WhatISRDoes'
 import Footer from '@/components/Footer'
 
@@ -15,11 +16,12 @@ export default function Home() {
 
       <main id="main-content">
         <Hero />
-        <TodayAtISR />
         <QuickActions />
+        <TodayAtISR />
         <EventsPreview />
         <PrayerSpacesPreview />
-        <StudentSupportPreview />
+        <NewStudentPreview />
+        <ParticipationJourney />
         <WhatISRDoes />
       </main>
 

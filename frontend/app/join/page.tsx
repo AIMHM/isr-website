@@ -3,91 +3,117 @@ import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import SectionHeading from '@/components/SectionHeading'
+import { ISR_PUBLIC, mailto } from '@/lib/siteContent'
 
 export const metadata: Metadata = {
   title: 'Join ISR',
   description:
-    'Join, volunteer and participate in the Islamic Society of RMIT.',
+    'Join the Muslim community, become a member and volunteer with the Islamic Society of RMIT.',
 }
+
+const membershipHref =
+  ISR_PUBLIC.membership.verified
+    ? ISR_PUBLIC.membership.url
+    : mailto('ISR Membership Enquiry')
+
+const membershipAction =
+  ISR_PUBLIC.membership.verified
+    ? 'Become a member'
+    : 'Ask about current membership'
+
+const communityHref =
+  ISR_PUBLIC.community.verified && ISR_PUBLIC.community.url
+    ? ISR_PUBLIC.community.url
+    : mailto('ISR Community Access')
 
 const pathways = [
   {
-    title: 'Formal Membership',
+    id: 'community',
+    title: 'Join the community',
     description:
-      'Become an official ISR member through the approved RMIT and RUSU membership process.',
-    action: 'Become a member',
-    href: 'https://campus.hellorubric.com/?s=10733',
-    external: true,
-    status: 'Available',
+      'Stay connected with Muslim students and hear about ISR activities and opportunities.',
+    action: 'Join the community',
+    href: communityHref,
   },
   {
-    title: 'Join the ISR Community',
+    id: 'membership',
+    title: 'Become an ISR member',
     description:
-      'Connect through the official ISR community and receive relevant updates and opportunities.',
-    action: 'Request the current link',
-    href: 'mailto:isr@rmit.edu.au?subject=ISR%20Community%20Access',
-    external: true,
-    status: 'Link verification required',
+      'Join ISR formally and become part of the society through the current membership system.',
+    action: membershipAction,
+    href: membershipHref,
   },
   {
-    title: 'Volunteer with ISR',
+    id: 'attend',
+    title: 'Attend',
     description:
-      'Assist with events, administration, religious programs, media, logistics and student support.',
-    action: 'Express interest',
-    href: 'mailto:isr@rmit.edu.au?subject=ISR%20Volunteer%20Expression%20of%20Interest',
-    external: true,
-    status: 'Application pathway under review',
-  },
-  {
-    title: 'Join a Subcommittee',
-    description:
-      'Contribute regularly within an ISR team and develop practical leadership experience.',
-    action: 'Ask about current openings',
-    href: 'mailto:isr@rmit.edu.au?subject=ISR%20Subcommittee%20Opportunities',
-    external: true,
-    status: 'Positions vary by semester',
-  },
-  {
-    title: 'Committee Elections',
-    description:
-      'Learn about eligibility, nomination requirements, election notices and committee responsibilities.',
-    action: 'View governance information',
-    href: '/governance',
-    external: false,
-    status: 'Annual review required',
-  },
-  {
-    title: 'Attend Public Events',
-    description:
-      'Many ISR activities may be open to non-members, subject to audience, capacity and registration rules.',
-    action: 'View upcoming events',
+      'Come to events, workshops, halaqaat and community activities.',
+    action: 'See upcoming events',
     href: '/events',
-    external: false,
-    status: 'Check each event listing',
+  },
+  {
+    id: 'volunteer',
+    title: 'Volunteer',
+    description:
+      'Give some of your time and skills to help ISR serve Muslim students.',
+    action: 'Express interest',
+    href: mailto('ISR Volunteer Expression of Interest'),
+  },
+  {
+    id: 'team',
+    title: 'Join a team',
+    description:
+      'Take on recurring responsibility and contribute within an ISR team.',
+    action: 'Ask about opportunities',
+    href: mailto('ISR Team Opportunities'),
+  },
+  {
+    id: 'lead',
+    title: 'Lead',
+    description:
+      'Build experience, take responsibility and help shape the future of the community.',
+    action: 'Ask about leadership pathways',
+    href: mailto('ISR Leadership Pathways'),
   },
 ]
 
 const volunteerAreas = [
   'Events and logistics',
-  'Media and marketing',
+  'Media and communications',
   'Religious programs',
-  'Administration and governance',
-  'Partnerships and sponsorships',
-  'Student support and welfare',
-  'Technology and website systems',
   'Community engagement',
+  'Administration',
+  'Technology and digital systems',
 ]
 
-const inductionSteps = [
-  'Receive a written role description and named team lead',
-  'Review the ISR code of conduct and communication expectations',
-  'Complete child-safety and risk requirements where relevant',
-  'Verify a Working With Children Check where the role requires it',
-  'Receive access only to the systems and information needed',
-  'Understand finance, privacy and approval restrictions',
-  'Complete task-specific training before working independently',
-  'Provide a handover when responsibilities change or conclude',
-]
+function Action({
+  href,
+  children,
+}: {
+  href: string
+  children: React.ReactNode
+}) {
+  if (href.startsWith('/')) {
+    return (
+      <Link href={href} className="isr-text-link mt-6">
+        {children}
+        <span aria-hidden="true">→</span>
+      </Link>
+    )
+  }
+
+  return (
+    <a
+      href={href}
+      target={href.startsWith('http') ? '_blank' : undefined}
+      rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+      className="isr-text-link mt-6"
+    >
+      {children}
+      <span aria-hidden="true">→</span>
+    </a>
+  )
+}
 
 export default function JoinPage() {
   return (
@@ -98,7 +124,7 @@ export default function JoinPage() {
         <div className="container-isr mx-auto max-w-6xl">
           <header className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-isr-turquoise">
-              Membership and service
+              Become part of the community
             </p>
 
             <h1 className="mt-3 text-4xl font-bold text-isr-dark-red sm:text-5xl">
@@ -106,155 +132,86 @@ export default function JoinPage() {
             </h1>
 
             <p className="mt-5 text-lg leading-relaxed text-gray-700">
-              Become a member, volunteer your skills, join a team or take part
-              in the Muslim student community at RMIT.
+              Attend, join, volunteer or take on responsibility at the level
+              that suits you.
             </p>
           </header>
 
-          <section
-            aria-labelledby="join-pathways"
-            className="mt-12"
-          >
-            <h2 id="join-pathways" className="sr-only">
-              Ways to join and participate
-            </h2>
-
-            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {pathways.map((pathway) => {
-                const classes =
-                  'isr-card isr-card-interactive group flex flex-col p-6'
-
-                const content = (
-                  <>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-isr-bright-red">
-                      {pathway.status}
-                    </p>
-
-                    <h3 className="mt-3 text-xl font-bold text-isr-dark-red">
-                      {pathway.title}
-                    </h3>
-
-                    <p className="mt-3 flex-1 text-sm leading-relaxed text-gray-700">
-                      {pathway.description}
-                    </p>
-
-                    <span className="isr-text-link mt-6">
-                      {pathway.action}
-                      <span
-                        aria-hidden="true"
-                        className="transition-transform group-hover:translate-x-1"
-                      >
-                        →
-                      </span>
+          <section className="mt-12">
+            <div className="flex flex-wrap gap-2">
+              {['Discover', 'Attend', 'Join', 'Volunteer', 'Lead'].map(
+                (step, index) => (
+                  <div
+                    key={step}
+                    className="flex items-center gap-2 rounded-full bg-white px-4 py-2 shadow-sm ring-1 ring-isr-light-blue/30"
+                  >
+                    <span className="text-xs font-bold text-isr-turquoise">
+                      {index + 1}
                     </span>
-                  </>
-                )
 
-                return pathway.external ? (
-                  <a
-                    key={pathway.title}
-                    href={pathway.href}
-                    target={
-                      pathway.href.startsWith('http')
-                        ? '_blank'
-                        : undefined
-                    }
-                    rel={
-                      pathway.href.startsWith('http')
-                        ? 'noopener noreferrer'
-                        : undefined
-                    }
-                    className={classes}
-                  >
-                    {content}
-                  </a>
-                ) : (
-                  <Link
-                    key={pathway.title}
-                    href={pathway.href}
-                    className={classes}
-                  >
-                    {content}
-                  </Link>
-                )
-              })}
+                    <span className="text-sm font-semibold text-isr-dark-red">
+                      {step}
+                    </span>
+                  </div>
+                ),
+              )}
             </div>
           </section>
 
-          <section className="mt-16 grid gap-10 lg:grid-cols-[0.82fr_1.18fr]">
-            <div>
-              <SectionHeading
-                eyebrow="Volunteer opportunities"
-                title="Contribute according to your strengths"
-                description="Volunteers should receive a clear role, responsible team lead, code-of-conduct expectations, task instructions and an appropriate induction."
-              />
+          <section className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {pathways.map((pathway) => (
+              <article
+                id={pathway.id}
+                key={pathway.id}
+                className="isr-card flex scroll-mt-32 flex-col p-6"
+              >
+                <h2 className="text-xl font-bold text-isr-dark-red">
+                  {pathway.title}
+                </h2>
 
-              <div className="mt-6 rounded-2xl border border-isr-yellow bg-isr-yellow/50 p-5 text-sm leading-relaxed text-isr-dark-red">
-                Roles involving children, sensitive information, finances or
-                higher-risk activities may require additional screening,
-                approval, training or Working With Children Check verification.
-              </div>
-            </div>
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-gray-700">
+                  {pathway.description}
+                </p>
 
-            <ul className="grid gap-3 sm:grid-cols-2">
+                <Action href={pathway.href}>
+                  {pathway.action}
+                </Action>
+              </article>
+            ))}
+          </section>
+
+          <section className="mt-16 grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+            <SectionHeading
+              eyebrow="Volunteer with ISR"
+              title="Contribute according to your strengths"
+              description="ISR needs people willing to learn, contribute and work with others."
+            />
+
+            <div className="grid gap-3 sm:grid-cols-2">
               {volunteerAreas.map((area) => (
-                <li
+                <div
                   key={area}
                   className="isr-card px-5 py-4 font-semibold text-isr-dark-red"
                 >
                   {area}
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           </section>
 
-          <section
-            aria-labelledby="volunteer-induction"
-            className="isr-card mt-16 p-6 sm:p-8"
-          >
-            <SectionHeading
-              eyebrow="Volunteer induction"
-              title="What should happen before a volunteer begins"
-              description="A consistent induction protects students, volunteers and the society while making responsibilities clear."
-              id="volunteer-induction"
-            />
-
-            <ol className="mt-8 grid gap-4 md:grid-cols-2">
-              {inductionSteps.map((step, index) => (
-                <li
-                  key={step}
-                  className="flex gap-4 rounded-2xl bg-isr-cream/55 p-4"
-                >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-isr-turquoise text-sm font-bold text-white">
-                    {index + 1}
-                  </span>
-
-                  <span className="text-sm font-semibold leading-relaxed text-isr-dark-red">
-                    {step}
-                  </span>
-                </li>
-              ))}
-            </ol>
-          </section>
-
-          <section className="mt-16 overflow-hidden rounded-[2rem] bg-isr-dark-red px-6 py-8 text-white shadow-[0_20px_55px_rgba(91,11,5,0.14)] sm:px-8">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-yellow">
-              Not sure where to begin?
-            </p>
-
-            <h2 className="mt-3 text-3xl font-bold">
-              Tell ISR how you would like to contribute
+          <section className="mt-16 rounded-[2rem] bg-isr-dark-red px-6 py-9 text-white sm:px-9">
+            <h2 className="text-3xl font-bold">
+              Not sure where you fit?
             </h2>
 
-            <p className="mt-4 max-w-3xl leading-relaxed text-white/80">
-              Include your campus, availability, interests and relevant
-              experience. Do not send sensitive identity documents through
-              ordinary email unless requested through an approved process.
+            <p className="mt-4 max-w-2xl leading-relaxed text-white/80">
+              Tell us what you are interested in and how much time you can
+              realistically contribute.
             </p>
 
             <a
-              href="mailto:isr@rmit.edu.au?subject=Joining%20or%20Volunteering%20with%20ISR"
-              className="mt-6 inline-flex rounded-full bg-white px-6 py-3 font-semibold text-isr-dark-red transition hover:bg-isr-yellow"
+              href={mailto('Joining ISR')}
+              className="mt-7 inline-flex rounded-full bg-white px-6 py-3 font-semibold text-isr-dark-red transition hover:bg-isr-yellow"
             >
               Contact ISR
             </a>

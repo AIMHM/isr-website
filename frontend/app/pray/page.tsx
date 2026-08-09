@@ -6,7 +6,7 @@ import PrayerSpaceDirectory from '@/components/PrayerSpaceDirectory'
 export const metadata: Metadata = {
   title: 'Pray at RMIT',
   description:
-    'Prayer times, Jumuah information and prayer-space guidance for Muslim students at RMIT.',
+    "Prayer spaces, Jumu'ah information and prayer times for Muslim students at RMIT.",
 }
 
 export default function PrayPage() {
@@ -26,13 +26,13 @@ export default function PrayPage() {
             </h1>
 
             <p className="mt-5 text-lg leading-relaxed text-gray-700">
-              Find daily prayer times, Friday prayer updates and
-              campus-specific prayer-space guidance.
+              Find somewhere to pray, check Friday prayer arrangements and view
+              daily prayer times.
             </p>
 
-            <div className="mt-6 rounded-2xl border border-isr-bright-red/20 bg-isr-yellow/50 p-4 text-sm font-semibold leading-relaxed text-isr-dark-red">
-              Prayer-space and Jumu&apos;ah details in this local preview must
-              be verified before publication.
+            <div className="mt-6 rounded-2xl border border-isr-yellow bg-isr-yellow/45 p-4 text-sm leading-relaxed text-isr-dark-red">
+              Campus locations and Jumu&apos;ah arrangements shown in this local
+              prototype must be verified before publication.
             </div>
           </header>
 

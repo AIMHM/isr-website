@@ -6,17 +6,15 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 const navLinks = [
-  { href: '/', label: 'Home' },
+  { href: '/start', label: 'Start Here' },
   { href: '/pray', label: 'Pray at RMIT' },
   { href: '/events', label: 'Events' },
-  { href: '/announcements', label: 'Announcements' },
   { href: '/support', label: 'Student Support' },
   { href: '/about', label: 'About ISR' },
   { href: '/contact', label: 'Contact' },
 ]
 
 function isCurrentPath(pathname: string, href: string) {
-  if (href === '/') return pathname === '/'
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 
@@ -168,22 +166,23 @@ export default function Navbar() {
                 })}
               </div>
 
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 <Link
-                  href="/governance"
-                  aria-current={
-                    isCurrentPath(pathname, '/governance') ? 'page' : undefined
-                  }
+                  href="/updates"
                   className="rounded-full border border-isr-dark-red/20 px-4 py-3 text-center text-sm font-semibold text-isr-dark-red transition hover:bg-isr-cream"
                 >
-                  Governance
+                  ISR Updates
+                </Link>
+
+                <Link
+                  href="/governance"
+                  className="rounded-full border border-isr-dark-red/20 px-4 py-3 text-center text-sm font-semibold text-isr-dark-red transition hover:bg-isr-cream"
+                >
+                  Policies
                 </Link>
 
                 <Link
                   href="/join"
-                  aria-current={
-                    isCurrentPath(pathname, '/join') ? 'page' : undefined
-                  }
                   className="rounded-full bg-isr-turquoise px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-isr-dark-red"
                 >
                   Join ISR

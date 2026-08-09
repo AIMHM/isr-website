@@ -10,28 +10,28 @@ const actions = [
   {
     title: 'Pray at RMIT',
     description:
-      'View prayer times, Jumu’ah guidance and campus prayer spaces.',
+      "Find prayer spaces, Jumu'ah information and daily prayer times.",
     href: '/pray',
     icon: FaithIcon,
   },
   {
-    title: 'Explore Events',
+    title: "What's happening?",
     description:
-      'Discover upcoming ISR programs, activities and registrations.',
+      'See upcoming events, programs and opportunities to connect.',
     href: '/events',
     icon: BookIcon,
   },
   {
-    title: 'Join ISR',
+    title: 'Get involved',
     description:
-      'Explore membership, volunteering and participation pathways.',
+      'Join the community, become a member, volunteer or contribute.',
     href: '/join',
     icon: CommunityIcon,
   },
   {
-    title: 'Get Support',
+    title: 'Need support?',
     description:
-      'Find welfare, accommodation and university support pathways.',
+      'Find the right pathway for faith, wellbeing or university concerns.',
     href: '/support',
     icon: MailIcon,
   },
@@ -41,29 +41,27 @@ export default function QuickActions() {
   return (
     <section
       aria-labelledby="quick-actions-heading"
-      className="bg-isr-dark-red px-4 py-14 text-white sm:py-16"
+      className="bg-white px-4 py-16 sm:py-20"
     >
       <div className="container-isr mx-auto max-w-6xl">
-        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-yellow">
-              Quick access
-            </p>
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-turquoise">
+            Student essentials
+          </p>
 
-            <h2
-              id="quick-actions-heading"
-              className="mt-2 text-2xl font-bold sm:text-3xl"
-            >
-              How can we help?
-            </h2>
-          </div>
+          <h2
+            id="quick-actions-heading"
+            className="mt-3 text-3xl font-bold text-isr-dark-red sm:text-4xl"
+          >
+            What do you need?
+          </h2>
 
-          <p className="max-w-md text-sm leading-relaxed text-white/70">
-            Go directly to the information and services students use most.
+          <p className="mt-4 leading-relaxed text-gray-700">
+            Go straight to the information Muslim students use most.
           </p>
         </div>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {actions.map((action) => {
             const Icon = action.icon
 
@@ -71,19 +69,21 @@ export default function QuickActions() {
               <Link
                 key={action.title}
                 href={action.href}
-                className="group rounded-2xl border border-white/15 bg-white/[0.07] p-5 transition hover:-translate-y-1 hover:border-white/30 hover:bg-white/[0.12]"
+                className="isr-card isr-card-interactive group flex flex-col p-6"
               >
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-isr-yellow">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-isr-turquoise/12 text-isr-turquoise">
                   <Icon className="h-6 w-6" />
                 </span>
 
-                <h3 className="mt-5 font-bold">{action.title}</h3>
+                <h3 className="mt-5 text-xl font-bold text-isr-dark-red">
+                  {action.title}
+                </h3>
 
-                <p className="mt-2 text-sm leading-relaxed text-white/72">
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-gray-700">
                   {action.description}
                 </p>
 
-                <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-isr-yellow">
+                <span className="isr-text-link mt-6">
                   Open
                   <span
                     aria-hidden="true"

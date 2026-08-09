@@ -2,11 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   canRegisterForEvent,
   fetchEvents,
@@ -21,12 +17,8 @@ import {
 } from '@/lib/events'
 import { ArrowRight } from '@/components/Icons'
 
-const FILTERS: {
-  value: EventsFilter
-  label: string
-}[] = [
+const FILTERS: { value: EventsFilter; label: string }[] = [
   { value: 'upcoming', label: 'Upcoming' },
-  { value: 'all', label: 'All events' },
   { value: 'past', label: 'Past' },
 ]
 
@@ -79,11 +71,7 @@ function EventCard({ event }: { event: Event }) {
   const registrationAvailable = canRegisterForEvent(event)
 
   return (
-    <article
-      className={`isr-card isr-card-interactive overflow-hidden ${
-        status === 'completed' ? 'opacity-90' : ''
-      }`}
-    >
+    <article className="isr-card isr-card-interactive overflow-hidden">
       <div className="grid lg:grid-cols-[0.76fr_1.24fr]">
         <EventPoster event={event} />
 
@@ -112,9 +100,7 @@ function EventCard({ event }: { event: Event }) {
 
             <span className="text-sm text-gray-600">
               {time}
-              {event.endDate
-                ? ` – ${formatEventTime(event.endDate)}`
-                : ''}
+              {event.endDate ? ` – ${formatEventTime(event.endDate)}` : ''}
             </span>
           </div>
 
@@ -137,52 +123,25 @@ function EventCard({ event }: { event: Event }) {
             {event.description}
           </p>
 
-          <dl className="mt-6 grid gap-4 text-sm sm:grid-cols-2">
+          <dl className="mt-6 grid gap-4 text-sm sm:grid-cols-3">
             {event.venue && (
               <div>
-                <dt className="font-semibold text-isr-dark-red">
-                  Venue
-                </dt>
-
-                <dd className="mt-1 text-gray-700">
-                  {event.venue}
-                </dd>
+                <dt className="font-semibold text-isr-dark-red">Venue</dt>
+                <dd className="mt-1 text-gray-700">{event.venue}</dd>
               </div>
             )}
 
             {event.audience && (
               <div>
-                <dt className="font-semibold text-isr-dark-red">
-                  Audience
-                </dt>
-
-                <dd className="mt-1 text-gray-700">
-                  {event.audience}
-                </dd>
+                <dt className="font-semibold text-isr-dark-red">Audience</dt>
+                <dd className="mt-1 text-gray-700">{event.audience}</dd>
               </div>
             )}
 
             {event.price && (
               <div>
-                <dt className="font-semibold text-isr-dark-red">
-                  Price
-                </dt>
-
-                <dd className="mt-1 text-gray-700">
-                  {event.price}
-                </dd>
-              </div>
-            )}
-
-            {event.accessibility && (
-              <div>
-                <dt className="font-semibold text-isr-dark-red">
-                  Accessibility
-                </dt>
-
-                <dd className="mt-1 line-clamp-2 text-gray-700">
-                  {event.accessibility}
-                </dd>
+                <dt className="font-semibold text-isr-dark-red">Price</dt>
+                <dd className="mt-1 text-gray-700">{event.price}</dd>
               </div>
             )}
           </dl>
@@ -207,24 +166,6 @@ function EventCard({ event }: { event: Event }) {
                 <ArrowRight />
               </a>
             )}
-
-            {status === 'sold-out' && (
-              <span className="inline-flex items-center rounded-full bg-isr-yellow px-5 py-3 text-sm font-semibold text-isr-dark-red">
-                Registration closed
-              </span>
-            )}
-
-            {status === 'cancelled' && (
-              <span className="inline-flex items-center rounded-full bg-red-100 px-5 py-3 text-sm font-semibold text-red-800">
-                Event cancelled
-              </span>
-            )}
-
-            {status === 'postponed' && (
-              <span className="inline-flex items-center rounded-full bg-amber-100 px-5 py-3 text-sm font-semibold text-amber-900">
-                Registration paused
-              </span>
-            )}
           </div>
         </div>
       </div>
@@ -232,54 +173,26 @@ function EventCard({ event }: { event: Event }) {
   )
 }
 
-function EventSkeleton() {
-  return (
-    <div className="animate-pulse overflow-hidden rounded-3xl border border-isr-light-blue/20 bg-white">
-      <div className="grid lg:grid-cols-[0.76fr_1.24fr]">
-        <div className="aspect-[4/3] bg-isr-yellow/60" />
-
-        <div className="space-y-4 p-8">
-          <div className="h-5 w-32 rounded bg-isr-light-blue/30" />
-          <div className="h-8 w-4/5 rounded bg-isr-light-blue/30" />
-          <div className="h-4 w-full rounded bg-isr-light-blue/20" />
-          <div className="h-4 w-5/6 rounded bg-isr-light-blue/20" />
-          <div className="h-12 w-36 rounded-full bg-isr-light-blue/20" />
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export default function EventsTimeline() {
-  const [filter, setFilter] =
-    useState<EventsFilter>('upcoming')
+  const [filter, setFilter] = useState<EventsFilter>('upcoming')
+  const [events, setEvents] = useState<Event[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
-  const [events, setEvents] =
-    useState<Event[]>([])
+  const loadEvents = useCallback(async (selectedFilter: EventsFilter) => {
+    setLoading(true)
+    setError(false)
 
-  const [loading, setLoading] =
-    useState(true)
-
-  const [error, setError] =
-    useState<string | null>(null)
-
-  const loadEvents = useCallback(
-    async (selectedFilter: EventsFilter) => {
-      setLoading(true)
-      setError(null)
-
-      try {
-        const data = await fetchEvents(selectedFilter)
-        setEvents(sortEventsForDisplay(data))
-      } catch {
-        setEvents([])
-        setError('Unable to load events right now.')
-      } finally {
-        setLoading(false)
-      }
-    },
-    [],
-  )
+    try {
+      const data = await fetchEvents(selectedFilter)
+      setEvents(sortEventsForDisplay(data))
+    } catch {
+      setEvents([])
+      setError(true)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
     void loadEvents(filter)
@@ -287,50 +200,39 @@ export default function EventsTimeline() {
 
   return (
     <div>
-      <div
-        className="mb-10 flex flex-wrap justify-center gap-2"
-        aria-label="Filter events"
-      >
-        {FILTERS.map(({ value, label }) => {
-          const active = filter === value
-
-          return (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setFilter(value)}
-              className={`rounded-full px-5 py-2.5 text-sm font-semibold transition ${
-                active
-                  ? 'bg-isr-turquoise text-white shadow-sm'
-                  : 'bg-white text-gray-700 ring-1 ring-isr-light-blue/40 hover:text-isr-dark-red'
-              }`}
-              aria-pressed={active}
-            >
-              {label}
-            </button>
-          )
-        })}
+      <div className="mb-10 flex justify-center gap-2" aria-label="Filter events">
+        {FILTERS.map(({ value, label }) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setFilter(value)}
+            aria-pressed={filter === value}
+            className={`rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+              filter === value
+                ? 'bg-isr-turquoise text-white'
+                : 'bg-white text-gray-700 ring-1 ring-isr-light-blue/40 hover:text-isr-dark-red'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       {loading && (
-        <div
-          className="space-y-7"
-          aria-live="polite"
-          aria-busy="true"
-        >
+        <div className="space-y-7">
           {[0, 1, 2].map((index) => (
-            <EventSkeleton key={index} />
+            <div
+              key={index}
+              className="h-72 animate-pulse rounded-3xl bg-white ring-1 ring-isr-light-blue/20"
+            />
           ))}
         </div>
       )}
 
       {!loading && error && (
-        <div
-          role="alert"
-          className="mx-auto max-w-xl rounded-2xl border border-isr-bright-red/20 bg-isr-yellow/60 px-6 py-8 text-center"
-        >
+        <div className="mx-auto max-w-xl rounded-2xl bg-isr-yellow/60 px-6 py-8 text-center">
           <p className="text-sm text-isr-dark-red">
-            {error}
+            Events could not be loaded right now.
           </p>
 
           <button
@@ -344,25 +246,15 @@ export default function EventsTimeline() {
       )}
 
       {!loading && !error && events.length === 0 && (
-        <div className="mx-auto max-w-xl rounded-2xl border border-isr-light-blue/30 bg-white px-6 py-12 text-center shadow-sm">
+        <div className="mx-auto max-w-xl rounded-2xl border border-isr-light-blue/30 bg-white px-6 py-12 text-center">
           <p className="text-lg font-semibold text-isr-dark-red">
             {filter === 'upcoming'
-              ? 'No upcoming events are currently published'
-              : filter === 'past'
-                ? 'No completed events are available'
-                : 'No events are currently published'}
+              ? 'No upcoming events are currently listed'
+              : 'No past events are currently available'}
           </p>
 
-          <p className="mt-2 text-sm leading-relaxed text-gray-600">
-            Check announcements and official ISR social channels for further
-            updates.
-          </p>
-
-          <Link
-            href="/announcements"
-            className="isr-button-primary mt-6 text-sm"
-          >
-            View announcements
+          <Link href="/updates" className="isr-button-primary mt-6 text-sm">
+            Check ISR updates
           </Link>
         </div>
       )}
@@ -370,10 +262,7 @@ export default function EventsTimeline() {
       {!loading && !error && events.length > 0 && (
         <div className="space-y-7">
           {events.map((event) => (
-            <EventCard
-              key={event.id}
-              event={event}
-            />
+            <EventCard key={event.id} event={event} />
           ))}
         </div>
       )}

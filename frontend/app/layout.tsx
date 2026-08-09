@@ -10,7 +10,10 @@ const geist = Geist({
 })
 
 const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://theisr.com.au'
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+
+const publicDeployment =
+  siteUrl.startsWith('https://theisr.com.au')
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -21,7 +24,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    'Prayer, community, student support and opportunities for Muslim students at RMIT University.',
+    'The home of Muslim students at RMIT. Prayer, events, community, support and opportunities to get involved.',
 
   applicationName: 'Islamic Society of RMIT',
 
@@ -34,7 +37,7 @@ export const metadata: Metadata = {
     siteName: 'Islamic Society of RMIT',
     title: 'Islamic Society of RMIT',
     description:
-      'The home of Muslim students at RMIT. Prayer, community, student support and opportunities.',
+      'The home of Muslim students at RMIT.',
     url: '/',
   },
 
@@ -46,8 +49,8 @@ export const metadata: Metadata = {
   },
 
   robots: {
-    index: true,
-    follow: true,
+    index: publicDeployment,
+    follow: publicDeployment,
   },
 }
 

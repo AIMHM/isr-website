@@ -1,29 +1,30 @@
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
 import {
   InstagramIcon,
   WhatsappIcon,
   MailIcon,
 } from '@/components/Icons'
+import { ISR_PUBLIC } from '@/lib/siteContent'
 
 const studentLinks = [
+  { href: '/start', label: 'Start Here' },
   { href: '/pray', label: 'Pray at RMIT' },
   { href: '/events', label: 'Events' },
-  { href: '/announcements', label: 'Announcements' },
   { href: '/support', label: 'Student Support' },
+  { href: '/updates', label: 'ISR Updates' },
 ]
 
 const organisationLinks = [
-  { href: '/about', label: 'About ISR' },
   { href: '/join', label: 'Join ISR' },
-  { href: '/governance', label: 'Governance' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/about', label: 'About ISR' },
+  { href: '/contact', label: 'Contact ISR' },
 ]
 
 const policyLinks = [
+  { href: '/governance', label: 'Governance & Policies' },
   { href: '/privacy', label: 'Privacy' },
   { href: '/accessibility', label: 'Accessibility' },
-  { href: '/sitemap.xml', label: 'Sitemap' },
 ]
 
 export default function Footer() {
@@ -37,7 +38,7 @@ export default function Footer() {
             <Link
               href="/"
               className="inline-flex items-center gap-3"
-              aria-label="Islamic Society of RMIT home"
+              aria-label={`${ISR_PUBLIC.name} home`}
             >
               <span className="rounded-xl bg-white p-2">
                 <Image
@@ -56,17 +57,16 @@ export default function Footer() {
             </Link>
 
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/75">
-              The home of Muslim students at RMIT, supporting worship,
-              learning, community, representation and service.
+              {ISR_PUBLIC.tagline}.
             </p>
 
             <p className="mt-4 text-sm font-semibold text-isr-yellow">
-              Representing Muslims on campus.
+              {ISR_PUBLIC.representationTagline}
             </p>
           </div>
 
           <div>
-            <h2 className="font-bold">Student information</h2>
+            <h2 className="font-bold">For students</h2>
 
             <ul className="mt-4 space-y-3 text-sm text-white/75">
               {studentLinks.map((link) => (
@@ -83,7 +83,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h2 className="font-bold">About ISR</h2>
+            <h2 className="font-bold">ISR</h2>
 
             <ul className="mt-4 space-y-3 text-sm text-white/75">
               {organisationLinks.map((link) => (
@@ -115,19 +115,19 @@ export default function Footer() {
           </div>
 
           <div>
-            <h2 className="font-bold">Contact and community</h2>
+            <h2 className="font-bold">Stay connected</h2>
 
             <div className="mt-4 flex flex-col gap-4">
               <a
-                href="mailto:isr@rmit.edu.au"
+                href={`mailto:${ISR_PUBLIC.email}`}
                 className="inline-flex items-center gap-3 text-sm text-white/75 transition hover:text-white"
               >
                 <MailIcon className="h-5 w-5 shrink-0" />
-                <span className="break-all">isr@rmit.edu.au</span>
+                <span className="break-all">{ISR_PUBLIC.email}</span>
               </a>
 
               <a
-                href="https://www.instagram.com/islamicsocietyofrmit/"
+                href={ISR_PUBLIC.instagram.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 text-sm text-white/75 transition hover:text-white"
@@ -137,7 +137,7 @@ export default function Footer() {
               </a>
 
               <a
-                href="https://api.whatsapp.com/send?phone=61418835013"
+                href={ISR_PUBLIC.whatsapp.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 text-sm text-white/75 transition hover:text-white"
@@ -146,22 +146,13 @@ export default function Footer() {
                 WhatsApp
               </a>
             </div>
-
-            <Link
-              href="/contact"
-              className="mt-6 inline-block rounded-full border border-white/30 px-5 py-2.5 text-sm font-semibold transition hover:bg-white hover:text-isr-dark-red"
-            >
-              Contact ISR
-            </Link>
           </div>
         </div>
 
         <div className="mt-10 flex flex-col gap-3 border-t border-white/20 pt-6 text-sm text-white/65 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {currentYear} Islamic Society of RMIT.</p>
+          <p>© {currentYear} {ISR_PUBLIC.name}.</p>
 
-          <p>
-            Organisational relationship wording is pending formal verification.
-          </p>
+          <p>{ISR_PUBLIC.tagline}.</p>
         </div>
       </div>
     </footer>

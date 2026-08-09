@@ -42,17 +42,13 @@ export async function generateMetadata({
   const eventId = Number(id)
 
   if (!Number.isInteger(eventId)) {
-    return {
-      title: 'Event Not Found',
-    }
+    return { title: 'Event Not Found' }
   }
 
   const event = await getEvent(eventId)
 
   if (!event) {
-    return {
-      title: 'Event Not Found',
-    }
+    return { title: 'Event Not Found' }
   }
 
   return {
@@ -87,21 +83,15 @@ function EventPoster({ event }: { event: Event }) {
   )
 }
 
-export default async function EventDetailPage({
-  params,
-}: PageProps) {
+export default async function EventDetailPage({ params }: PageProps) {
   const { id } = await params
   const eventId = Number(id)
 
-  if (!Number.isInteger(eventId)) {
-    notFound()
-  }
+  if (!Number.isInteger(eventId)) notFound()
 
   const event = await getEvent(eventId)
 
-  if (!event) {
-    notFound()
-  }
+  if (!event) notFound()
 
   const { date, time } = formatEventDate(event.date)
   const status = getEventStatus(event)
@@ -141,92 +131,49 @@ export default async function EventDetailPage({
               </h1>
 
               {event.statusNote && (
-                <div
-                  role="status"
-                  className="mt-6 rounded-2xl border border-isr-bright-red/20 bg-isr-yellow/60 p-4 font-semibold leading-relaxed text-isr-dark-red"
-                >
+                <div className="mt-6 rounded-2xl bg-isr-yellow/60 p-4 font-semibold leading-relaxed text-isr-dark-red">
                   {event.statusNote}
                 </div>
               )}
 
               <dl className="mt-8 grid gap-5 rounded-2xl bg-isr-cream/50 p-6 sm:grid-cols-2 lg:grid-cols-3">
                 <div>
-                  <dt className="text-sm font-semibold text-isr-dark-red">
-                    Date
-                  </dt>
-
-                  <dd className="mt-1 text-gray-700">
-                    {date}
-                  </dd>
+                  <dt className="text-sm font-semibold text-isr-dark-red">Date</dt>
+                  <dd className="mt-1 text-gray-700">{date}</dd>
                 </div>
 
                 <div>
-                  <dt className="text-sm font-semibold text-isr-dark-red">
-                    Time
-                  </dt>
-
+                  <dt className="text-sm font-semibold text-isr-dark-red">Time</dt>
                   <dd className="mt-1 text-gray-700">
                     {time}
-                    {event.endDate
-                      ? ` – ${formatEventTime(event.endDate)}`
-                      : ''}
+                    {event.endDate ? ` – ${formatEventTime(event.endDate)}` : ''}
                   </dd>
                 </div>
 
                 {event.venue && (
                   <div>
-                    <dt className="text-sm font-semibold text-isr-dark-red">
-                      Venue
-                    </dt>
-
-                    <dd className="mt-1 text-gray-700">
-                      {event.venue}
-                    </dd>
-                  </div>
-                )}
-
-                {event.campus && (
-                  <div>
-                    <dt className="text-sm font-semibold text-isr-dark-red">
-                      Campus
-                    </dt>
-
-                    <dd className="mt-1 text-gray-700">
-                      {event.campus}
-                    </dd>
+                    <dt className="text-sm font-semibold text-isr-dark-red">Venue</dt>
+                    <dd className="mt-1 text-gray-700">{event.venue}</dd>
                   </div>
                 )}
 
                 {event.audience && (
                   <div>
-                    <dt className="text-sm font-semibold text-isr-dark-red">
-                      Audience
-                    </dt>
-
-                    <dd className="mt-1 text-gray-700">
-                      {event.audience}
-                    </dd>
+                    <dt className="text-sm font-semibold text-isr-dark-red">Audience</dt>
+                    <dd className="mt-1 text-gray-700">{event.audience}</dd>
                   </div>
                 )}
 
                 {event.price && (
                   <div>
-                    <dt className="text-sm font-semibold text-isr-dark-red">
-                      Price
-                    </dt>
-
-                    <dd className="mt-1 text-gray-700">
-                      {event.price}
-                    </dd>
+                    <dt className="text-sm font-semibold text-isr-dark-red">Price</dt>
+                    <dd className="mt-1 text-gray-700">{event.price}</dd>
                   </div>
                 )}
               </dl>
 
-              <section className="mt-9" aria-labelledby="about-event">
-                <h2
-                  id="about-event"
-                  className="text-2xl font-bold text-isr-dark-red"
-                >
+              <section className="mt-9">
+                <h2 className="text-2xl font-bold text-isr-dark-red">
                   About this event
                 </h2>
 
@@ -245,10 +192,7 @@ export default async function EventDetailPage({
                     {event.accessibility}
                   </p>
 
-                  <Link
-                    href="/accessibility"
-                    className="isr-text-link mt-4"
-                  >
+                  <Link href="/accessibility" className="isr-text-link mt-4">
                     Accessibility information
                     <span aria-hidden="true">→</span>
                   </Link>
@@ -281,7 +225,7 @@ export default async function EventDetailPage({
 
                 {status === 'postponed' && (
                   <span className="rounded-full bg-amber-100 px-6 py-3 font-semibold text-amber-900">
-                    Registration paused pending a new date
+                    Registration paused
                   </span>
                 )}
 
@@ -290,24 +234,6 @@ export default async function EventDetailPage({
                     This event has finished
                   </span>
                 )}
-              </div>
-
-              <div className="mt-10 border-t border-isr-light-blue/30 pt-6 text-xs leading-relaxed text-gray-500">
-                <p>
-                  Content owner:{' '}
-                  {event.contentOwner ?? 'Verification required'}
-                </p>
-
-                <p className="mt-1">
-                  Last reviewed:{' '}
-                  {event.reviewedAt
-                    ? new Intl.DateTimeFormat('en-AU', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                      }).format(new Date(event.reviewedAt))
-                    : 'Verification required'}
-                </p>
               </div>
             </div>
           </article>
