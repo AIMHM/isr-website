@@ -28,7 +28,7 @@ function AnnouncementAction({
     return (
       <Link href={url} className={classes}>
         {label}
-        <span aria-hidden="true">→</span>
+        <span aria-hidden="true">â†’</span>
       </Link>
     )
   }
@@ -41,7 +41,7 @@ function AnnouncementAction({
       className={classes}
     >
       {label}
-      <span aria-hidden="true">→</span>
+      <span aria-hidden="true">â†’</span>
     </a>
   )
 }
@@ -131,7 +131,7 @@ export default function TodayAtISR() {
         <SectionHeading
           eyebrow="Essential information"
           title="Today at ISR"
-          description="Prayer information, Jumu’ah updates and important notices in one place."
+          description="Prayer information, Jumuâ€™ah updates and important notices in one place."
           id="today-at-isr-heading"
         />
 
@@ -163,7 +163,7 @@ export default function TodayAtISR() {
                   </p>
 
                   <p className="mt-1 text-xs text-gray-500">
-                    Melbourne · {prayerData.meta.timezone}
+                    Melbourne Â· {prayerData.meta.timezone}
                   </p>
                 </div>
               </>
@@ -175,7 +175,7 @@ export default function TodayAtISR() {
 
             <Link href="/pray" className="isr-text-link mt-auto pt-6">
               View prayer information
-              <span aria-hidden="true">→</span>
+              <span aria-hidden="true">â†’</span>
             </Link>
           </article>
 
@@ -185,11 +185,11 @@ export default function TodayAtISR() {
             </p>
 
             <h3 className="mt-5 text-2xl font-bold text-isr-dark-red">
-              Jumu’ah details pending confirmation
+              Jumuâ€™ah details pending confirmation
             </h3>
 
             <p className="mt-4 text-sm leading-relaxed text-gray-700">
-              Khutbah time, jama’ah time, venue, access arrangements and
+              Khutbah time, jamaâ€™ah time, venue, access arrangements and
               accessibility information will appear once verified.
             </p>
 
@@ -198,8 +198,8 @@ export default function TodayAtISR() {
             </p>
 
             <Link href="/pray" className="isr-text-link mt-auto pt-6">
-              View Jumu’ah information
-              <span aria-hidden="true">→</span>
+              View Jumuâ€™ah information
+              <span aria-hidden="true">â†’</span>
             </Link>
           </article>
 
@@ -270,7 +270,7 @@ export default function TodayAtISR() {
               className="isr-text-link mt-auto pt-6"
             >
               View all announcements
-              <span aria-hidden="true">→</span>
+              <span aria-hidden="true">â†’</span>
             </Link>
           </article>
         </div>
