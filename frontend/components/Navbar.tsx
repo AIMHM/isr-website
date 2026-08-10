@@ -179,6 +179,14 @@ export default function Navbar() {
 
         <div className="flex items-center gap-2">
           <Link
+            href="/find"
+            aria-label="Search ISR"
+            className="hidden min-h-11 items-center justify-center rounded-full border border-isr-light-blue/35 px-4 text-sm font-bold text-isr-dark-red transition hover:border-isr-turquoise hover:text-isr-turquoise sm:inline-flex"
+          >
+            Search
+          </Link>
+
+          <Link
             href="/join"
             aria-current={
               isActive(

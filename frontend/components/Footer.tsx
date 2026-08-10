@@ -6,6 +6,14 @@ import {
 
 const studentLinks = [
   {
+    href: '/find',
+    label: 'Search ISR',
+  },
+  {
+    href: '/campuses',
+    label: 'Campus Guide',
+  },
+  {
     href: '/start',
     label: 'Start Here',
   },
