@@ -32,8 +32,8 @@ const branch =
 
 assert(
   branch ===
-    'redesign/d4-features',
-  `Expected redesign/d4-features. Current: ${branch}`,
+    'ideas',
+  `Expected ideas. Current: ${branch}`,
 )
 
 const d3Tag =

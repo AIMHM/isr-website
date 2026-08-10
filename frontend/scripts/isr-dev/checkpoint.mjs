@@ -63,7 +63,7 @@ const branch =
 
 assert(
   branch ===
-    'redesign/d4-features',
+    'ideas',
   `Unexpected branch: ${branch}`,
 )
 
@@ -104,9 +104,7 @@ run(
   'git',
   [
     'add',
-    'frontend/app',
-    'frontend/components',
-    'frontend/scripts',
+    'frontend',
   ],
 )
 

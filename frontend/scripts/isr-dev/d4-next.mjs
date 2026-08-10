@@ -1803,7 +1803,7 @@ const branch =
 
 if (
   branch !==
-  'redesign/d4-features'
+  'ideas'
 ) {
   throw new Error(
     'Unexpected branch: ' +
