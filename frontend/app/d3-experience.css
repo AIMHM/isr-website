@@ -405,3 +405,133 @@
     width: 100%;
   }
 }
+
+/* ISR TOOLKIT D4 UTILITIES */
+
+.isr-next-prayer-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.75rem;
+  background:
+    radial-gradient(
+      circle at 88% 10%,
+      rgba(80, 149, 137, 0.34),
+      transparent 38%
+    ),
+    linear-gradient(
+      145deg,
+      #5B0B05,
+      #430805
+    );
+  padding: 1.5rem;
+  box-shadow:
+    0 18px 45px rgba(91, 11, 5, 0.16);
+}
+
+.isr-prayer-tool-stack {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.isr-prayer-quick-nav {
+  border: 1px solid rgba(152, 174, 168, 0.28);
+  border-radius: 1.5rem;
+  background: #ffffff;
+  padding: 1rem;
+  box-shadow:
+    0 8px 26px rgba(91, 11, 5, 0.05);
+}
+
+.isr-prayer-quick-nav-scroll {
+  display: flex;
+  gap: 0.55rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+}
+
+.isr-prayer-quick-nav-pill {
+  display: inline-flex;
+  min-height: 2.65rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: start;
+  border: 1px solid rgba(152, 174, 168, 0.35);
+  border-radius: 9999px;
+  background: rgba(234, 227, 216, 0.45);
+  padding: 0.6rem 1rem;
+  color: #5B0B05;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.isr-prayer-quick-nav-pill:hover {
+  border-color: #509589;
+  background: #509589;
+  color: #ffffff;
+}
+
+.isr-event-tools {
+  border: 1px solid rgba(152, 174, 168, 0.25);
+  border-radius: 1.75rem;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(234, 227, 216, 0.55),
+      rgba(255, 255, 255, 0.98)
+    );
+  padding: 1.5rem;
+  box-shadow:
+    0 10px 32px rgba(91, 11, 5, 0.06);
+}
+
+.isr-event-tool-button {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(152, 174, 168, 0.34);
+  border-radius: 0.9rem;
+  background: #ffffff;
+  padding: 0.75rem 1rem;
+  color: #5B0B05;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.isr-event-tool-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(80, 149, 137, 0.7);
+  background: rgba(234, 227, 216, 0.45);
+}
+
+@media (min-width: 1200px) {
+  .isr-prayer-tool-stack {
+    grid-template-columns:
+      minmax(17rem, 0.72fr)
+      minmax(0, 1.28fr);
+    align-items: start;
+  }
+
+  .isr-next-prayer-card {
+    position: sticky;
+    top: 7rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .isr-event-tool-button {
+    transition: none;
+  }
+
+  .isr-event-tool-button:hover {
+    transform: none;
+  }
+}

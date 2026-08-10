@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
 
+import EventUtilities from '@/components/EventUtilities'
 import {
   useEffect,
   useState,
@@ -375,6 +376,13 @@ export default function EventDetailExperience({
           </article>
         </div>
       </section>
-    </main>
+
+        <section className="bg-white px-4 pb-14 sm:pb-20">
+          <div className="container-isr mx-auto max-w-6xl">
+            <EventUtilities event={event} />
+          </div>
+        </section>
+
+</main>
   )
 }

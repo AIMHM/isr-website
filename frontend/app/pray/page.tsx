@@ -1,3 +1,5 @@
+import PrayerQuickNav from '@/components/PrayerQuickNav'
+import NextPrayerCountdown from '@/components/NextPrayerCountdown'
 import type {
   Metadata,
 } from 'next'
@@ -282,7 +284,11 @@ export default function PrayPage() {
               </p>
             </div>
 
-            <PrayerSpaceDirectory />
+            <PrayerQuickNav />
+
+              <div className="mt-7">
+                <PrayerSpaceDirectory />
+              </div>
           </div>
         </section>
 
@@ -315,7 +321,11 @@ export default function PrayPage() {
                 </p>
               </div>
 
-              <PrayerTimesTable />
+              <div className="isr-prayer-tool-stack">
+                <NextPrayerCountdown />
+
+                <PrayerTimesTable />
+              </div>
             </div>
           </div>
         </section>
