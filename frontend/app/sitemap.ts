@@ -1,27 +1,89 @@
-import type { MetadataRoute } from 'next'
+import type {
+  MetadataRoute,
+} from 'next'
 
 const baseUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  'http://localhost:3000'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default function sitemap():
+  MetadataRoute.Sitemap {
   const pages = [
-    { path: '', frequency: 'weekly', priority: 1 },
-    { path: '/start', frequency: 'monthly', priority: 0.95 },
-    { path: '/pray', frequency: 'daily', priority: 0.95 },
-    { path: '/events', frequency: 'weekly', priority: 0.9 },
-    { path: '/join', frequency: 'monthly', priority: 0.85 },
-    { path: '/support', frequency: 'monthly', priority: 0.85 },
-    { path: '/about', frequency: 'monthly', priority: 0.7 },
-    { path: '/contact', frequency: 'monthly', priority: 0.7 },
-    { path: '/updates', frequency: 'weekly', priority: 0.65 },
-    { path: '/governance', frequency: 'monthly', priority: 0.4 },
-    { path: '/privacy', frequency: 'yearly', priority: 0.3 },
-    { path: '/accessibility', frequency: 'yearly', priority: 0.3 },
+    {
+      path: '',
+      frequency: 'weekly',
+      priority: 1,
+    },
+    {
+      path: '/start',
+      frequency: 'monthly',
+      priority: 0.95,
+    },
+    {
+      path: '/pray',
+      frequency: 'daily',
+      priority: 0.95,
+    },
+    {
+      path: '/events',
+      frequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      path: '/join',
+      frequency: 'monthly',
+      priority: 0.85,
+    },
+    {
+      path: '/support',
+      frequency: 'monthly',
+      priority: 0.85,
+    },
+    {
+      path: '/about',
+      frequency: 'monthly',
+      priority: 0.75,
+    },
+    {
+      path: '/about/history',
+      frequency: 'monthly',
+      priority: 0.72,
+    },
+    {
+      path: '/contact',
+      frequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      path: '/updates',
+      frequency: 'weekly',
+      priority: 0.65,
+    },
+    {
+      path: '/governance',
+      frequency: 'monthly',
+      priority: 0.4,
+    },
+    {
+      path: '/privacy',
+      frequency: 'yearly',
+      priority: 0.3,
+    },
+    {
+      path: '/accessibility',
+      frequency: 'yearly',
+      priority: 0.3,
+    },
   ] as const
 
-  return pages.map((page) => ({
-    url: `${baseUrl}${page.path}`,
-    changeFrequency: page.frequency,
-    priority: page.priority,
-  }))
+  return pages.map(
+    (page) => ({
+      url:
+        `${baseUrl}${page.path}`,
+      changeFrequency:
+        page.frequency,
+      priority:
+        page.priority,
+    }),
+  )
 }
