@@ -11,11 +11,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Switch } from '@/components/ui/switch'
+import {
+  Button,
+} from '@/components/ui/button'
+import {
+  Input,
+} from '@/components/ui/input'
+import {
+  Label,
+} from '@/components/ui/label'
+import {
+  Textarea,
+} from '@/components/ui/textarea'
+import {
+  Switch,
+} from '@/components/ui/switch'
 import {
   fromDatetimeLocalValue,
   toDatetimeLocalValue,
@@ -27,11 +37,66 @@ import type {
 
 interface Props {
   open: boolean
-  announcement: Announcement | null
+  announcement:
+    | Announcement
+    | null
   onClose: () => void
-  onSubmit: (
-    formData: FormData,
-  ) => Promise<void>
+  onSubmit:
+    (
+      formData: FormData,
+    ) => Promise<void>
+}
+
+const PRIORITIES: {
+  value: AnnouncementPriority
+  label: string
+  description: string
+}[] = [
+  {
+    value: 'normal',
+    label: 'Normal',
+    description:
+      'Standard ISR information.',
+  },
+  {
+    value: 'important',
+    label: 'Important',
+    description:
+      'Something students should pay attention to.',
+  },
+  {
+    value: 'urgent',
+    label: 'Urgent',
+    description:
+      'Time-sensitive information requiring prominent display.',
+  },
+]
+
+function validActionUrl(
+  value: string,
+): boolean {
+  if (!value.trim()) {
+    return true
+  }
+
+  if (
+    value.startsWith('/') &&
+    !value.startsWith('//')
+  ) {
+    return true
+  }
+
+  try {
+    const url =
+      new URL(value)
+
+    return (
+      url.protocol === 'http:' ||
+      url.protocol === 'https:'
+    )
+  } catch {
+    return false
+  }
 }
 
 export function AnnouncementModal({
@@ -43,40 +108,94 @@ export function AnnouncementModal({
   const isEdit =
     announcement !== null
 
-  const [title, setTitle] =
+  const [
+    title,
+    setTitle,
+  ] =
     useState('')
-  const [body, setBody] =
+
+  const [
+    body,
+    setBody,
+  ] =
     useState('')
-  const [pinned, setPinned] =
+
+  const [
+    pinned,
+    setPinned,
+  ] =
     useState(false)
-  const [priority, setPriority] =
+
+  const [
+    priority,
+    setPriority,
+  ] =
     useState<AnnouncementPriority>(
       'normal',
     )
-  const [expiresAt, setExpiresAt] =
+
+  const [
+    expiresAt,
+    setExpiresAt,
+  ] =
     useState('')
-  const [actionLabel, setActionLabel] =
+
+  const [
+    actionLabel,
+    setActionLabel,
+  ] =
     useState('')
-  const [actionUrl, setActionUrl] =
+
+  const [
+    actionUrl,
+    setActionUrl,
+  ] =
     useState('')
-  const [imageFile, setImageFile] =
-    useState<File | null>(null)
-  const [error, setError] =
+
+  const [
+    imageFile,
+    setImageFile,
+  ] =
+    useState<File | null>(
+      null,
+    )
+
+  const [
+    imagePreview,
+    setImagePreview,
+  ] =
+    useState<string | null>(
+      null,
+    )
+
+  const [
+    error,
+    setError,
+  ] =
     useState('')
-  const [submitting, setSubmitting] =
+
+  const [
+    submitting,
+    setSubmitting,
+  ] =
     useState(false)
 
   useEffect(() => {
     setTitle(
-      announcement?.title ?? '',
+      announcement?.title ??
+        '',
     )
+
     setBody(
-      announcement?.body ?? '',
+      announcement?.body ??
+        '',
     )
+
     setPinned(
       announcement?.pinned ??
         false,
     )
+
     setPriority(
       announcement?.priority ??
         'normal',
@@ -96,35 +215,151 @@ export function AnnouncementModal({
     )
 
     setActionUrl(
-      announcement?.actionUrl ?? '',
+      announcement?.actionUrl ??
+        '',
     )
 
     setImageFile(null)
-    setError('')
-  }, [announcement, open])
 
-  async function handleSave() {
+    setImagePreview(
+      announcement?.imageUrl ||
+        null,
+    )
+
+    setError('')
+    setSubmitting(false)
+  }, [
+    announcement,
+    open,
+  ])
+
+  useEffect(() => {
+    if (!imageFile) {
+      setImagePreview(
+        announcement?.imageUrl ||
+          null,
+      )
+      return
+    }
+
+    const objectUrl =
+      URL.createObjectURL(
+        imageFile,
+      )
+
+    setImagePreview(
+      objectUrl,
+    )
+
+    return () => {
+      URL.revokeObjectURL(
+        objectUrl,
+      )
+    }
+  }, [
+    imageFile,
+    announcement?.imageUrl,
+  ])
+
+  function handleImage(
+    file:
+      | File
+      | null,
+  ) {
+    if (!file) {
+      setImageFile(null)
+      return
+    }
+
+    if (
+      ![
+        'image/jpeg',
+        'image/png',
+        'image/webp',
+      ].includes(
+        file.type,
+      )
+    ) {
+      setError(
+        'Image must be JPEG, PNG or WebP.',
+      )
+      return
+    }
+
+    if (
+      file.size >
+      5 * 1024 * 1024
+    ) {
+      setError(
+        'Image must be 5 MB or smaller.',
+      )
+      return
+    }
+
+    setError('')
+    setImageFile(file)
+  }
+
+  async function handleSave(
+    submitEvent:
+      React.FormEvent,
+  ) {
+    submitEvent.preventDefault()
+
     if (
       !title.trim() ||
       !body.trim()
     ) {
       setError(
-        'Title and update text are required',
+        'Title and update text are required.',
       )
       return
     }
 
     if (
-      Boolean(actionLabel.trim()) !==
-      Boolean(actionUrl.trim())
+      Boolean(
+        actionLabel.trim(),
+      ) !==
+      Boolean(
+        actionUrl.trim(),
+      )
     ) {
       setError(
-        'Action label and action link must be provided together',
+        'Action label and action link must be provided together.',
       )
       return
     }
 
-    const formData = new FormData()
+    if (
+      !validActionUrl(
+        actionUrl,
+      )
+    ) {
+      setError(
+        'Action link must be a website path such as /pray or a full http/https URL.',
+      )
+      return
+    }
+
+    if (
+      expiresAt &&
+      Number.isNaN(
+        new Date(
+          expiresAt,
+        ).getTime(),
+      )
+    ) {
+      setError(
+        'Expiry date is invalid.',
+      )
+      return
+    }
+
+    setError('')
+    setSubmitting(true)
+
+    const formData =
+      new FormData()
 
     formData.set(
       'title',
@@ -138,7 +373,9 @@ export function AnnouncementModal({
 
     formData.set(
       'pinned',
-      pinned ? 'true' : 'false',
+      pinned
+        ? 'true'
+        : 'false',
     )
 
     formData.set(
@@ -172,17 +409,17 @@ export function AnnouncementModal({
       )
     }
 
-    setSubmitting(true)
-    setError('')
-
     try {
-      await onSubmit(formData)
+      await onSubmit(
+        formData,
+      )
+
       onClose()
     } catch (err) {
       setError(
         err instanceof Error
           ? err.message
-          : 'Something went wrong',
+          : 'The ISR Update could not be saved.',
       )
     } finally {
       setSubmitting(false)
@@ -192,53 +429,87 @@ export function AnnouncementModal({
   return (
     <Dialog
       open={open}
-      onOpenChange={(next) => {
-        if (!next) onClose()
+      onOpenChange={(nextOpen) => {
+        if (
+          !nextOpen &&
+          !submitting
+        ) {
+          onClose()
+        }
       }}
     >
       <DialogContent
-        className="max-h-[90vh] overflow-y-auto sm:max-w-xl"
         showCloseButton={false}
+        className="max-h-[92vh] overflow-y-auto sm:max-w-2xl"
       >
         <DialogHeader>
           <DialogTitle>
             {isEdit
               ? 'Edit ISR Update'
-              : 'New ISR Update'}
+              : 'Create ISR Update'}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-5 py-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="an-title">
-              Title
-            </Label>
+        <form
+          onSubmit={handleSave}
+          className="space-y-7"
+        >
+          <section className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="an-title">
+                Title *
+              </Label>
 
-            <Input
-              id="an-title"
-              value={title}
-              onChange={(e) =>
-                setTitle(e.target.value)
-              }
-            />
-          </div>
+              <Input
+                id="an-title"
+                value={title}
+                onChange={(e) =>
+                  setTitle(
+                    e.target.value,
+                  )
+                }
+                placeholder="e.g. Bundoora Jumu’ah Time Change"
+                disabled={submitting}
+              />
+            </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="an-body">
-              Update
-            </Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="an-body">
+                Update text *
+              </Label>
 
-            <Textarea
-              id="an-body"
-              rows={5}
-              value={body}
-              onChange={(e) =>
-                setBody(e.target.value)
-              }
-            />
-          </div>
+              <Textarea
+                id="an-body"
+                value={body}
+                onChange={(e) =>
+                  setBody(
+                    e.target.value,
+                  )
+                }
+                rows={6}
+                placeholder="What has changed and what should students do?"
+                disabled={submitting}
+              />
 
-          <div className="grid gap-4 sm:grid-cols-2">
+              <p className="text-xs text-muted-foreground">
+                {
+                  body.length
+                } characters
+              </p>
+            </div>
+          </section>
+
+          <section className="space-y-4 border-t pt-6">
+            <div>
+              <h3 className="font-bold text-isr-dark-red">
+                Visibility
+              </h3>
+
+              <p className="mt-1 text-xs text-muted-foreground">
+                Use urgency carefully so genuinely important notices remain meaningful.
+              </p>
+            </div>
+
             <div className="space-y-1.5">
               <Label htmlFor="an-priority">
                 Priority
@@ -253,27 +524,66 @@ export function AnnouncementModal({
                       .value as AnnouncementPriority,
                   )
                 }
-                className="flex h-9 w-full rounded-md border bg-white px-3 text-sm"
+                disabled={submitting}
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <option value="normal">
-                  Normal
-                </option>
-                <option value="important">
-                  Important
-                </option>
-                <option value="urgent">
-                  Urgent
-                </option>
+                {PRIORITIES.map(
+                  (item) => (
+                    <option
+                      key={
+                        item.value
+                      }
+                      value={
+                        item.value
+                      }
+                    >
+                      {
+                        item.label
+                      }
+                    </option>
+                  ),
+                )}
               </select>
+
+              <p className="text-xs text-muted-foreground">
+                {
+                  PRIORITIES.find(
+                    (item) =>
+                      item.value ===
+                      priority,
+                  )?.description
+                }
+              </p>
+            </div>
+
+            <div className="flex items-center justify-between gap-5 rounded-xl border p-4">
+              <div>
+                <p className="text-sm font-semibold text-isr-dark-red">
+                  Pin this update
+                </p>
+
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Pinned updates are prioritised above ordinary notices.
+                </p>
+              </div>
+
+              <Switch
+                checked={pinned}
+                onCheckedChange={
+                  setPinned
+                }
+                disabled={submitting}
+                aria-label="Pin this ISR Update"
+              />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="an-expiry">
-                Expiry
+              <Label htmlFor="an-expires">
+                Expire automatically
               </Label>
 
               <Input
-                id="an-expiry"
+                id="an-expires"
                 type="datetime-local"
                 value={expiresAt}
                 onChange={(e) =>
@@ -281,39 +591,27 @@ export function AnnouncementModal({
                     e.target.value,
                   )
                 }
+                disabled={submitting}
               />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between rounded-lg border px-4 py-3">
-            <div>
-              <p className="text-sm font-medium">
-                Pin update
-              </p>
 
               <p className="text-xs text-muted-foreground">
-                Keeps this above standard updates.
+                Useful for room changes, event notices and other temporary information. Leave blank for no automatic expiry.
+              </p>
+            </div>
+          </section>
+
+          <section className="space-y-4 border-t pt-6">
+            <div>
+              <h3 className="font-bold text-isr-dark-red">
+                Optional action
+              </h3>
+
+              <p className="mt-1 text-xs text-muted-foreground">
+                Add a button only when there is a clear next step.
               </p>
             </div>
 
-            <Switch
-              checked={pinned}
-              onCheckedChange={
-                setPinned
-              }
-            />
-          </div>
-
-          <div className="rounded-xl border bg-gray-50 p-4">
-            <p className="text-sm font-semibold">
-              Optional action
-            </p>
-
-            <p className="mt-1 text-xs text-muted-foreground">
-              Fill in both fields or leave both blank.
-            </p>
-
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label htmlFor="an-action-label">
                   Button text
@@ -327,13 +625,14 @@ export function AnnouncementModal({
                       e.target.value,
                     )
                   }
-                  placeholder="View details"
+                  placeholder="View prayer information"
+                  disabled={submitting}
                 />
               </div>
 
               <div className="space-y-1.5">
                 <Label htmlFor="an-action-url">
-                  Link
+                  Button destination
                 </Label>
 
                 <Input
@@ -345,57 +644,130 @@ export function AnnouncementModal({
                     )
                   }
                   placeholder="/pray or https://..."
+                  disabled={submitting}
                 />
               </div>
             </div>
-          </div>
+          </section>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="an-image">
-              Image
-            </Label>
+          <section className="space-y-4 border-t pt-6">
+            <div>
+              <h3 className="font-bold text-isr-dark-red">
+                Image
+              </h3>
+
+              <p className="mt-1 text-xs text-muted-foreground">
+                Optional. JPEG, PNG or WebP. Maximum 5 MB.
+              </p>
+            </div>
+
+            {imagePreview && (
+              <div className="overflow-hidden rounded-2xl border bg-isr-cream">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={imagePreview}
+                  alt="ISR Update image preview"
+                  className="max-h-72 w-full object-contain"
+                />
+              </div>
+            )}
 
             <Input
               id="an-image"
               type="file"
-              accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+              accept="image/jpeg,image/png,image/webp"
+              disabled={submitting}
               onChange={(e) =>
-                setImageFile(
-                  e.target.files?.[0] ??
+                handleImage(
+                  e.target
+                    .files?.[0] ??
                     null,
                 )
               }
+              className="cursor-pointer"
             />
-          </div>
+
+            {imageFile && (
+              <p className="text-xs font-medium text-isr-turquoise">
+                Selected: {
+                  imageFile.name
+                }
+              </p>
+            )}
+          </section>
+
+          <section className="rounded-2xl bg-isr-cream/60 p-5">
+            <p className="text-xs font-bold uppercase tracking-wide text-isr-turquoise">
+              Preview
+            </p>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-isr-dark-red">
+                {
+                  priority ===
+                  'normal'
+                    ? 'Update'
+                    : priority ===
+                        'important'
+                      ? 'Important'
+                      : 'Urgent'
+                }
+              </span>
+
+              {pinned && (
+                <span className="rounded-full bg-isr-dark-red px-3 py-1 text-xs font-bold text-white">
+                  Pinned
+                </span>
+              )}
+            </div>
+
+            <h3 className="mt-4 text-xl font-bold text-isr-dark-red">
+              {
+                title.trim() ||
+                'ISR Update title'
+              }
+            </h3>
+
+            <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-gray-700">
+              {
+                body.trim() ||
+                'Your update text will appear here.'
+              }
+            </p>
+          </section>
 
           {error && (
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+            <div
+              role="alert"
+              className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+            >
               {error}
-            </p>
+            </div>
           )}
-        </div>
 
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={onClose}
-            disabled={submitting}
-          >
-            Cancel
-          </Button>
+          <DialogFooter className="sticky bottom-0 -mx-6 border-t bg-white px-6 py-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={submitting}
+            >
+              Cancel
+            </Button>
 
-          <Button
-            onClick={handleSave}
-            disabled={submitting}
-            className="bg-isr-dark-red text-isr-cream hover:bg-isr-dark-red/90"
-          >
-            {submitting
-              ? 'Saving...'
-              : isEdit
-                ? 'Save Changes'
-                : 'Create ISR Update'}
-          </Button>
-        </DialogFooter>
+            <Button
+              type="submit"
+              disabled={submitting}
+              className="bg-isr-dark-red text-isr-cream hover:bg-isr-dark-red/90"
+            >
+              {submitting
+                ? 'Saving…'
+                : isEdit
+                  ? 'Save ISR Update'
+                  : 'Publish ISR Update'}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   )

@@ -1,15 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import {
+  useEffect,
+  useState,
+} from 'react'
 import {
   AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 
 interface Props {
@@ -27,32 +30,95 @@ export function ConfirmDeleteDialog({
   onConfirm,
   onCancel,
 }: Props) {
-  const [deleting, setDeleting] = useState(false)
+  const [
+    deleting,
+    setDeleting,
+  ] =
+    useState(false)
+
+  const [
+    error,
+    setError,
+  ] =
+    useState('')
+
+  useEffect(() => {
+    if (open) {
+      setDeleting(false)
+      setError('')
+    }
+  }, [open])
 
   async function handleConfirm() {
+    if (deleting) return
+
     setDeleting(true)
+    setError('')
+
     try {
       await onConfirm()
-    } finally {
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Delete failed. Please try again.',
+      )
+
       setDeleting(false)
     }
   }
 
   return (
-    <AlertDialog open={open} onOpenChange={(o) => { if (!o) onCancel() }}>
+    <AlertDialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (
+          !nextOpen &&
+          !deleting
+        ) {
+          onCancel()
+        }
+      }}
+    >
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+          <AlertDialogTitle>
+            {title}
+          </AlertDialogTitle>
+
+          <AlertDialogDescription>
+            {description}
+          </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={handleConfirm}
-            disabled={deleting}
-            className="bg-isr-bright-red hover:bg-isr-bright-red/90 text-white"
+
+        {error && (
+          <div
+            role="alert"
+            className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
           >
-            {deleting ? 'Deleting…' : 'Delete'}
+            {error}
+          </div>
+        )}
+
+        <AlertDialogFooter>
+          <AlertDialogCancel
+            onClick={onCancel}
+            disabled={deleting}
+          >
+            Cancel
+          </AlertDialogCancel>
+
+          <AlertDialogAction
+            disabled={deleting}
+            onClick={(event) => {
+              event.preventDefault()
+              void handleConfirm()
+            }}
+            className="bg-isr-bright-red text-white hover:bg-isr-bright-red/90"
+          >
+            {deleting
+              ? 'Deleting…'
+              : 'Delete permanently'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
