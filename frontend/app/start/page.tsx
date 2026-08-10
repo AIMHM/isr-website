@@ -1,3 +1,4 @@
+import StartUtilityPanel from '@/components/StartUtilityPanel'
 import type {
   Metadata,
 } from 'next'
@@ -261,7 +262,12 @@ export default function StartPage() {
             </div>
           </div>
         </section>
-      </main>
+
+        <div className="container-isr mx-auto max-w-6xl px-4 pb-16 sm:pb-20">
+          <StartUtilityPanel />
+        </div>
+
+</main>
 
       <Footer />
     </div>

@@ -535,3 +535,183 @@
     transform: none;
   }
 }
+
+/* ISR TOOLKIT D4 SERVICES LAYER */
+
+.isr-updates-control-panel {
+  border: 1px solid rgba(152, 174, 168, 0.28);
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 1rem;
+  box-shadow:
+    0 8px 28px rgba(91, 11, 5, 0.05);
+}
+
+.isr-update-filter-scroll {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+  scrollbar-width: thin;
+  scroll-snap-type: x proximity;
+}
+
+.isr-update-filter-pill {
+  min-height: 2.65rem;
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  border: 1px solid rgba(152, 174, 168, 0.35);
+  border-radius: 9999px;
+  background: #ffffff;
+  padding: 0.6rem 1rem;
+  color: #5B0B05;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.isr-update-filter-pill:hover {
+  border-color: #509589;
+}
+
+.isr-update-filter-pill-active {
+  border-color: #509589;
+  background: #509589;
+  color: #ffffff;
+}
+
+.isr-update-share-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.isr-update-tool-button {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(152, 174, 168, 0.35);
+  border-radius: 9999px;
+  background: #ffffff;
+  padding: 0.5rem 0.9rem;
+  color: #5B0B05;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.isr-update-tool-button:hover {
+  border-color: #509589;
+  color: #509589;
+}
+
+.isr-student-task-panel {
+  overflow: hidden;
+  border: 1px solid rgba(152, 174, 168, 0.28);
+  border-radius: 2rem;
+  background:
+    radial-gradient(
+      circle at 92% 8%,
+      rgba(80, 149, 137, 0.12),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(234, 227, 216, 0.58),
+      #ffffff
+    );
+  padding: 1.5rem;
+  box-shadow:
+    0 14px 42px rgba(91, 11, 5, 0.06);
+}
+
+.isr-student-task-card {
+  display: flex;
+  min-height: 10rem;
+  flex-direction: column;
+  border: 1px solid rgba(152, 174, 168, 0.25);
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1.25rem;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.isr-student-task-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(80, 149, 137, 0.6);
+  box-shadow:
+    0 10px 26px rgba(91, 11, 5, 0.06);
+}
+
+.isr-student-campus-pill {
+  display: inline-flex;
+  min-height: 2.6rem;
+  align-items: center;
+  border-radius: 9999px;
+  background: rgba(80, 149, 137, 0.1);
+  padding: 0.55rem 0.95rem;
+  color: #5B0B05;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.isr-student-campus-pill:hover {
+  background: #509589;
+  color: #ffffff;
+}
+
+.isr-admin-utility-bar {
+  margin-bottom: 1rem;
+  border: 1px solid rgba(152, 174, 168, 0.28);
+  border-radius: 1rem;
+  background: #ffffff;
+  padding: 0.9rem 1rem;
+  box-shadow:
+    0 4px 18px rgba(91, 11, 5, 0.04);
+}
+
+.isr-admin-preview-link {
+  display: inline-flex;
+  min-height: 2.4rem;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 9999px;
+  background: rgba(234, 227, 216, 0.65);
+  padding: 0.5rem 0.85rem;
+  color: #5B0B05;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.isr-admin-preview-link:hover {
+  background: #509589;
+  color: #ffffff;
+}
+
+@media (min-width: 640px) {
+  .isr-updates-control-panel {
+    padding: 1.25rem;
+  }
+
+  .isr-student-task-panel {
+    padding: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .isr-update-filter-pill,
+  .isr-student-task-card {
+    transition: none;
+  }
+
+  .isr-student-task-card:hover {
+    transform: none;
+  }
+}
