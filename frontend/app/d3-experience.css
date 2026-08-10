@@ -1,0 +1,407 @@
+/*
+ * ISR D3 Experience Layer
+ *
+ * Student-facing visual enhancements built on top of
+ * the stable D2 design system.
+ */
+
+.isr-hero-grid {
+  position: relative;
+  isolation: isolate;
+}
+
+.isr-hero-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  opacity: 0.14;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image:
+    linear-gradient(
+      to bottom,
+      black,
+      transparent 82%
+    );
+}
+
+.isr-hero-glow {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 9999px;
+  filter: blur(70px);
+  opacity: 0.28;
+}
+
+.isr-eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.isr-eyebrow::before {
+  content: "";
+  display: block;
+  width: 1.5rem;
+  height: 2px;
+  border-radius: 9999px;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+.isr-utility-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.isr-utility-card::after {
+  content: "→";
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.1rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  transition:
+    transform 180ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .isr-utility-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .isr-utility-card:hover::after {
+    transform: translateX(4px);
+  }
+}
+
+.isr-section-rule {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.isr-section-rule::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background:
+    linear-gradient(
+      to right,
+      rgba(80, 149, 137, 0.34),
+      transparent
+    );
+}
+
+.isr-step-line {
+  position: relative;
+}
+
+@media (min-width: 1024px) {
+  .isr-step-line:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 1.35rem;
+    left: calc(50% + 2.2rem);
+    width: calc(100% - 4.4rem);
+    height: 1px;
+    background:
+      linear-gradient(
+        to right,
+        rgba(80, 149, 137, 0.45),
+        rgba(80, 149, 137, 0.08)
+      );
+  }
+}
+
+.isr-prayer-nav {
+  scrollbar-width: none;
+}
+
+.isr-prayer-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.isr-prayer-summary {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.96),
+      rgba(234, 227, 216, 0.58)
+    );
+}
+
+.isr-campus-pill {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding: 0.7rem 1rem;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.isr-fade-edge {
+  position: relative;
+}
+
+.isr-fade-edge::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2.5rem;
+  height: 100%;
+  background:
+    linear-gradient(
+      to right,
+      transparent,
+      white
+    );
+}
+
+@media (min-width: 640px) {
+  .isr-fade-edge::after {
+    display: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .isr-mobile-card-stack > * {
+    min-width: 82%;
+    scroll-snap-align: start;
+  }
+
+  .isr-mobile-card-stack {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 0.9rem;
+    padding-bottom: 0.35rem;
+    scrollbar-width: none;
+  }
+
+  .isr-mobile-card-stack::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .isr-utility-card,
+  .isr-utility-card::after {
+    transition: none;
+  }
+}
+
+/* =========================================================
+ * ISR D3 Journey Layer
+ * ========================================================= */
+
+.isr-page-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.isr-page-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -12rem -15rem auto;
+  z-index: -1;
+  width: 30rem;
+  height: 30rem;
+  border-radius: 9999px;
+  background: rgba(80, 149, 137, 0.18);
+  filter: blur(80px);
+}
+
+.isr-choice-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.isr-choice-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: #509589;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.isr-choice-card:hover::before,
+.isr-choice-card:focus-within::before {
+  opacity: 1;
+}
+
+.isr-event-poster-frame {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      145deg,
+      #EAE3D8,
+      rgba(235, 232, 203, 0.78)
+    );
+}
+
+.isr-event-poster-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(152, 174, 168, 0.2);
+}
+
+.isr-status-dot {
+  display: inline-block;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 9999px;
+  background: currentColor;
+}
+
+.isr-journey-number {
+  display: flex;
+  width: 2.7rem;
+  height: 2.7rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: rgba(80, 149, 137, 0.1);
+  color: #509589;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.isr-contact-method {
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .isr-contact-method:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.isr-sticky-rail {
+  position: sticky;
+  top: 7rem;
+}
+
+@media (max-width: 1023px) {
+  .isr-sticky-rail {
+    position: static;
+  }
+}
+/* =========================================================
+ * ISR D3 Admin Layer
+ * ========================================================= */
+
+.isr-admin-stat {
+  border: 1px solid rgba(152, 174, 168, 0.22);
+  border-radius: 1rem;
+  background: #ffffff;
+  padding: 1rem;
+  box-shadow: 0 5px 18px rgba(91, 11, 5, 0.04);
+}
+
+.isr-admin-item {
+  border: 1px solid rgba(152, 174, 168, 0.26);
+  border-radius: 1.25rem;
+  background: #ffffff;
+  box-shadow: 0 7px 24px rgba(91, 11, 5, 0.05);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.isr-admin-item:hover {
+  border-color: rgba(80, 149, 137, 0.48);
+  box-shadow: 0 10px 30px rgba(91, 11, 5, 0.08);
+}
+
+.isr-admin-fieldset {
+  border: 1px solid rgba(152, 174, 168, 0.25);
+  border-radius: 1rem;
+  background: rgba(234, 227, 216, 0.22);
+  padding: 1rem;
+}
+
+.isr-admin-fieldset-title {
+  margin-bottom: 0.9rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #509589;
+}
+
+.isr-admin-required::after {
+  content: " *";
+  color: #D43325;
+}
+
+.isr-admin-preview {
+  overflow: hidden;
+  border: 1px solid rgba(152, 174, 168, 0.25);
+  border-radius: 1rem;
+  background: #EAE3D8;
+}
+
+.isr-admin-toolbar {
+  border: 1px solid rgba(152, 174, 168, 0.24);
+  border-radius: 1.25rem;
+  background: #ffffff;
+  padding: 0.9rem;
+  box-shadow: 0 5px 18px rgba(91, 11, 5, 0.04);
+}
+
+.isr-admin-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 9999px;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.7rem;
+  line-height: 1rem;
+  font-weight: 800;
+}
+
+.isr-admin-status::before {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 9999px;
+  background: currentColor;
+}
+
+@media (max-width: 639px) {
+  .isr-admin-mobile-actions > * {
+    width: 100%;
+  }
+}

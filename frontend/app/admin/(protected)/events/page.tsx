@@ -1,5 +1,7 @@
 'use client'
 
+/* eslint-disable @next/next/no-img-element */
+
 import {
   useCallback,
   useEffect,
@@ -8,22 +10,24 @@ import {
 } from 'react'
 import Link from 'next/link'
 import {
+  ExternalLinkIcon,
   PencilIcon,
   PlusIcon,
+  SearchIcon,
   Trash2Icon,
 } from 'lucide-react'
 import {
   Button,
 } from '@/components/ui/button'
 import {
+  Input,
+} from '@/components/ui/input'
+import {
   EventModal,
 } from '@/components/admin/EventModal'
 import {
   ConfirmDeleteDialog,
 } from '@/components/admin/ConfirmDeleteDialog'
-import {
-  AdminFeedback,
-} from '@/components/admin/AdminFeedback'
 import {
   getToken,
 } from '@/lib/auth'
@@ -34,20 +38,40 @@ import {
   updateEvent,
 } from '@/lib/admin-api'
 import {
-  EVENT_STATUS_CLASSES,
-  EVENT_STATUS_LABELS,
-  eventStatus,
   formatEventDate,
-} from '@/lib/eventPresentation'
-import type {
-  Event,
-  EventStatus,
+  getEventStatus,
+  getEventStatusLabel,
+  type Event,
+  type EventStatus,
 } from '@/lib/events'
+import {
+  IS_LOCAL_ADMIN_MODE,
+} from '@/lib/localAdminMode'
+
+const STATUS_CLASSES: Record<
+  EventStatus,
+  string
+> = {
+  scheduled:
+    'bg-emerald-50 text-emerald-700',
+  'sold-out':
+    'bg-amber-50 text-amber-800',
+  postponed:
+    'bg-orange-50 text-orange-800',
+  cancelled:
+    'bg-red-50 text-red-700',
+  completed:
+    'bg-gray-100 text-gray-600',
+}
+
+type StatusFilter =
+  | 'all'
+  | EventStatus
 
 function sortEvents(
-  list: Event[],
+  items: Event[],
 ): Event[] {
-  return [...list].sort(
+  return [...items].sort(
     (a, b) =>
       new Date(
         b.date,
@@ -57,38 +81,6 @@ function sortEvents(
       ).getTime(),
   )
 }
-
-const FILTERS: {
-  value:
-    | 'all'
-    | EventStatus
-  label: string
-}[] = [
-  {
-    value: 'all',
-    label: 'All',
-  },
-  {
-    value: 'scheduled',
-    label: 'Scheduled',
-  },
-  {
-    value: 'sold-out',
-    label: 'Sold out',
-  },
-  {
-    value: 'postponed',
-    label: 'Postponed',
-  },
-  {
-    value: 'cancelled',
-    label: 'Cancelled',
-  },
-  {
-    value: 'completed',
-    label: 'Completed',
-  },
-]
 
 export default function AdminEventsPage() {
   const [
@@ -125,10 +117,15 @@ export default function AdminEventsPage() {
     statusFilter,
     setStatusFilter,
   ] =
-    useState<
-      | 'all'
-      | EventStatus
-    >('all')
+    useState<StatusFilter>(
+      'all',
+    )
+
+  const [
+    campusFilter,
+    setCampusFilter,
+  ] =
+    useState('all')
 
   const [
     modalOpen,
@@ -173,13 +170,18 @@ export default function AdminEventsPage() {
               data,
             ),
           )
-        } catch (err) {
+        }
+        catch (
+          caught
+        ) {
           setLoadError(
-            err instanceof Error
-              ? err.message
+            caught instanceof
+              Error
+              ? caught.message
               : 'Failed to load events.',
           )
-        } finally {
+        }
+        finally {
           setLoading(false)
         }
       },
@@ -190,34 +192,63 @@ export default function AdminEventsPage() {
     void loadEvents()
   }, [loadEvents])
 
-  const filteredEvents =
+  const campuses =
+    useMemo(
+      () =>
+        Array.from(
+          new Set(
+            events
+              .map(
+                (event) =>
+                  event.campus,
+              )
+              .filter(
+                (
+                  value,
+                ): value is string =>
+                  Boolean(
+                    value,
+                  ),
+              ),
+          ),
+        ).sort(),
+      [events],
+    )
+
+  const visibleEvents =
     useMemo(
       () => {
-        const query =
+        const normalized =
           search
             .trim()
             .toLowerCase()
 
         return events.filter(
           (event) => {
-            const status =
-              eventStatus(
+            const effectiveStatus =
+              getEventStatus(
                 event,
               )
 
             const matchesStatus =
               statusFilter ===
                 'all' ||
-              status ===
+              effectiveStatus ===
                 statusFilter
 
-            const text =
+            const matchesCampus =
+              campusFilter ===
+                'all' ||
+              event.campus ===
+                campusFilter
+
+            const searchable =
               [
                 event.name,
+                event.description,
                 event.venue,
                 event.campus,
                 event.audience,
-                event.description,
               ]
                 .filter(
                   Boolean,
@@ -226,13 +257,14 @@ export default function AdminEventsPage() {
                 .toLowerCase()
 
             const matchesSearch =
-              !query ||
-              text.includes(
-                query,
+              !normalized ||
+              searchable.includes(
+                normalized,
               )
 
             return (
               matchesStatus &&
+              matchesCampus &&
               matchesSearch
             )
           },
@@ -242,7 +274,52 @@ export default function AdminEventsPage() {
         events,
         search,
         statusFilter,
+        campusFilter,
       ],
+    )
+
+  const stats =
+    useMemo(
+      () => {
+        const statuses =
+          events.map(
+            (event) =>
+              getEventStatus(
+                event,
+              ),
+          )
+
+        return {
+          total:
+            events.length,
+
+          upcoming:
+            statuses.filter(
+              (status) =>
+                status ===
+                  'scheduled' ||
+                status ===
+                  'sold-out',
+            ).length,
+
+          attention:
+            statuses.filter(
+              (status) =>
+                status ===
+                  'postponed' ||
+                status ===
+                  'cancelled',
+            ).length,
+
+          completed:
+            statuses.filter(
+              (status) =>
+                status ===
+                'completed',
+            ).length,
+        }
+      },
+      [events],
     )
 
   function openCreate() {
@@ -254,10 +331,7 @@ export default function AdminEventsPage() {
   function openEdit(
     event: Event,
   ) {
-    setSelectedEvent(
-      event,
-    )
-
+    setSelectedEvent(event)
     setModalOpen(true)
     setFeedback('')
   }
@@ -265,19 +339,19 @@ export default function AdminEventsPage() {
   function openDelete(
     event: Event,
   ) {
-    setEventToDelete(
-      event,
-    )
-
+    setEventToDelete(event)
     setDeleteOpen(true)
     setFeedback('')
   }
 
+  function closeModal() {
+    setModalOpen(false)
+    setSelectedEvent(null)
+  }
+
   function closeDelete() {
     setDeleteOpen(false)
-    setEventToDelete(
-      null,
-    )
+    setEventToDelete(null)
   }
 
   async function handleSubmit(
@@ -288,11 +362,13 @@ export default function AdminEventsPage() {
 
     if (!token) {
       throw new Error(
-        'Admin session is unavailable. Please sign in again.',
+        'Your admin session has expired. Sign in again.',
       )
     }
 
-    if (selectedEvent) {
+    if (
+      selectedEvent
+    ) {
       const updated =
         await updateEvent(
           token,
@@ -314,9 +390,10 @@ export default function AdminEventsPage() {
       )
 
       setFeedback(
-        `"${updated.name}" was updated.`,
+        `Saved changes to "${updated.name}".`,
       )
-    } else {
+    }
+    else {
       const created =
         await createEvent(
           token,
@@ -332,13 +409,15 @@ export default function AdminEventsPage() {
       )
 
       setFeedback(
-        `"${created.name}" was created.`,
+        `Created "${created.name}".`,
       )
     }
   }
 
   async function handleDelete() {
-    if (!eventToDelete) {
+    if (
+      !eventToDelete
+    ) {
       return
     }
 
@@ -346,164 +425,270 @@ export default function AdminEventsPage() {
       getToken()
 
     if (!token) {
-      throw new Error(
-        'Admin session is unavailable. Please sign in again.',
+      setFeedback(
+        'Your admin session has expired.',
       )
+
+      closeDelete()
+
+      return
     }
 
-    const deleting =
-      eventToDelete
+    const name =
+      eventToDelete.name
 
-    await deleteEvent(
-      token,
-      deleting.id,
-    )
+    try {
+      await deleteEvent(
+        token,
+        eventToDelete.id,
+      )
 
-    setEvents(
-      (previous) =>
-        previous.filter(
-          (event) =>
-            event.id !==
-            deleting.id,
-        ),
-    )
+      setEvents(
+        (previous) =>
+          previous.filter(
+            (event) =>
+              event.id !==
+              eventToDelete.id,
+          ),
+      )
 
-    closeDelete()
-
-    setFeedback(
-      `"${deleting.name}" was deleted.`,
-    )
+      setFeedback(
+        `Deleted "${name}".`,
+      )
+    }
+    catch (
+      caught
+    ) {
+      setFeedback(
+        caught instanceof
+          Error
+          ? caught.message
+          : `Could not delete "${name}".`,
+      )
+    }
+    finally {
+      closeDelete()
+    }
   }
+
+  const hasFilters =
+    Boolean(
+      search.trim(),
+    ) ||
+    statusFilter !==
+      'all' ||
+    campusFilter !==
+      'all'
 
   return (
     <div>
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+      <header className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-sm font-bold uppercase tracking-[0.16em] text-isr-turquoise">
-            Website content
-          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-isr-turquoise">
+              Content management
+            </p>
+
+            {IS_LOCAL_ADMIN_MODE && (
+              <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-amber-900">
+                Local sandbox
+              </span>
+            )}
+          </div>
 
           <h1 className="mt-2 text-3xl font-bold text-isr-dark-red">
             Events
           </h1>
 
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600">
-            Create and maintain the public event listings shown on the ISR website.
+            Create, review and update the event information
+            students see on the public website.
           </p>
         </div>
 
         <Button
-          onClick={openCreate}
-          className="bg-isr-turquoise text-white hover:bg-isr-turquoise/90"
+          onClick={
+            openCreate
+          }
+          className="gap-2 bg-isr-dark-red text-white hover:bg-isr-turquoise"
         >
-          <PlusIcon className="size-4" />
+          <PlusIcon className="h-4 w-4" />
           New event
         </Button>
-      </div>
+      </header>
+
+      <section className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="isr-admin-stat">
+          <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
+            Total
+          </p>
+
+          <p className="mt-2 text-2xl font-bold text-isr-dark-red">
+            {stats.total}
+          </p>
+        </div>
+
+        <div className="isr-admin-stat">
+          <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
+            Active / upcoming
+          </p>
+
+          <p className="mt-2 text-2xl font-bold text-isr-turquoise">
+            {stats.upcoming}
+          </p>
+        </div>
+
+        <div className="isr-admin-stat">
+          <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
+            Needs attention
+          </p>
+
+          <p className="mt-2 text-2xl font-bold text-orange-700">
+            {stats.attention}
+          </p>
+        </div>
+
+        <div className="isr-admin-stat">
+          <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
+            Completed
+          </p>
+
+          <p className="mt-2 text-2xl font-bold text-gray-600">
+            {stats.completed}
+          </p>
+        </div>
+      </section>
 
       {feedback && (
-        <div className="mt-6">
-          <AdminFeedback
-            message={feedback}
-            type="success"
-            onDismiss={() =>
-              setFeedback('')
-            }
-          />
+        <div
+          role="status"
+          className="mt-5 rounded-xl border border-isr-turquoise/25 bg-isr-turquoise/5 px-4 py-3 text-sm font-semibold text-isr-dark-red"
+        >
+          {feedback}
         </div>
       )}
 
-      <div className="mt-6 grid gap-3 rounded-2xl border bg-white p-4 sm:grid-cols-[1fr_auto]">
-        <label className="sr-only" htmlFor="admin-event-search">
-          Search events
-        </label>
+      <section className="isr-admin-toolbar mt-6">
+        <div className="grid gap-3 lg:grid-cols-[1fr_190px_220px_auto]">
+          <label className="relative">
+            <span className="sr-only">
+              Search events
+            </span>
 
-        <input
-          id="admin-event-search"
-          type="search"
-          value={search}
-          onChange={(e) =>
-            setSearch(
-              e.target.value,
-            )
-          }
-          placeholder="Search event name, campus, venue..."
-          className="rounded-xl border border-isr-light-blue/40 px-4 py-2.5 text-sm outline-none focus:border-isr-turquoise focus:ring-2 focus:ring-isr-turquoise/15"
-        />
+            <SearchIcon className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
 
-        <label className="sr-only" htmlFor="admin-event-status">
-          Filter event status
-        </label>
+            <Input
+              value={search}
+              onChange={(
+                event,
+              ) =>
+                setSearch(
+                  event.target.value,
+                )
+              }
+              className="pl-9"
+              placeholder="Search events, venues, audiences…"
+            />
+          </label>
 
-        <select
-          id="admin-event-status"
-          value={statusFilter}
-          onChange={(e) =>
-            setStatusFilter(
-              e.target.value as
-                | 'all'
-                | EventStatus,
-            )
-          }
-          className="rounded-xl border border-isr-light-blue/40 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 outline-none focus:border-isr-turquoise"
-        >
-          {FILTERS.map(
-            (filter) => (
-              <option
-                key={
-                  filter.value
-                }
-                value={
-                  filter.value
-                }
-              >
-                {
-                  filter.label
-                }
-              </option>
-            ),
-          )}
-        </select>
-      </div>
-
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-gray-500">
-        <p>
-          {
-            filteredEvents.length
-          } {
-            filteredEvents.length ===
-            1
-              ? 'event'
-              : 'events'
-          }
-        </p>
-
-        {(search ||
-          statusFilter !==
-            'all') && (
-          <button
-            type="button"
-            onClick={() => {
-              setSearch('')
+          <select
+            value={statusFilter}
+            onChange={(
+              event,
+            ) =>
               setStatusFilter(
-                'all',
+                event.target
+                  .value as StatusFilter,
               )
-            }}
-            className="font-semibold text-isr-turquoise"
+            }
+            aria-label="Filter event status"
+            className="flex h-9 rounded-md border border-input bg-white px-3 text-sm"
           >
-            Clear filters
-          </button>
-        )}
-      </div>
+            <option value="all">
+              All statuses
+            </option>
+
+            <option value="scheduled">
+              Scheduled
+            </option>
+
+            <option value="sold-out">
+              Sold out
+            </option>
+
+            <option value="postponed">
+              Postponed
+            </option>
+
+            <option value="cancelled">
+              Cancelled
+            </option>
+
+            <option value="completed">
+              Completed
+            </option>
+          </select>
+
+          <select
+            value={campusFilter}
+            onChange={(
+              event,
+            ) =>
+              setCampusFilter(
+                event.target.value,
+              )
+            }
+            aria-label="Filter event campus"
+            className="flex h-9 rounded-md border border-input bg-white px-3 text-sm"
+          >
+            <option value="all">
+              All campuses
+            </option>
+
+            {campuses.map(
+              (campus) => (
+                <option
+                  key={campus}
+                  value={campus}
+                >
+                  {campus}
+                </option>
+              ),
+            )}
+          </select>
+
+          {hasFilters && (
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSearch('')
+                setStatusFilter(
+                  'all',
+                )
+                setCampusFilter(
+                  'all',
+                )
+              }}
+            >
+              Clear
+            </Button>
+          )}
+        </div>
+
+        {!loading &&
+          !loadError && (
+            <p className="mt-3 text-xs text-gray-500">
+              Showing {visibleEvents.length} of {events.length} events.
+            </p>
+          )}
+      </section>
 
       {loading && (
-        <div className="mt-8 grid gap-4">
+        <div className="mt-6 space-y-4">
           {[1, 2, 3].map(
             (item) => (
               <div
-                key={
-                  item
-                }
+                key={item}
                 className="h-40 animate-pulse rounded-2xl bg-white"
               />
             ),
@@ -513,13 +698,14 @@ export default function AdminEventsPage() {
 
       {!loading &&
         loadError && (
-          <div className="mt-8">
-            <AdminFeedback
-              message={
-                loadError
-              }
-              type="error"
-            />
+          <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-6">
+            <h2 className="font-bold text-red-900">
+              Events could not be loaded
+            </h2>
+
+            <p className="mt-2 text-sm text-red-800">
+              {loadError}
+            </p>
 
             <Button
               variant="outline"
@@ -535,161 +721,156 @@ export default function AdminEventsPage() {
 
       {!loading &&
         !loadError &&
-        filteredEvents.length ===
+        visibleEvents.length ===
           0 && (
-          <div className="mt-8 rounded-2xl border bg-white p-10 text-center">
+          <div className="mt-6 rounded-2xl border border-isr-light-blue/25 bg-white p-8 text-center">
             <h2 className="text-xl font-bold text-isr-dark-red">
-              No matching events
+              {hasFilters
+                ? 'No events match these filters'
+                : 'No events yet'}
             </h2>
 
             <p className="mt-2 text-sm text-gray-600">
-              Create an event or change the current filters.
+              {hasFilters
+                ? 'Clear the filters or change your search.'
+                : 'Create the first event when you are ready.'}
             </p>
           </div>
         )}
 
       {!loading &&
         !loadError &&
-        filteredEvents.length >
+        visibleEvents.length >
           0 && (
-          <div className="mt-8 space-y-4">
-            {filteredEvents.map(
+          <div className="mt-6 space-y-4">
+            {visibleEvents.map(
               (event) => {
+                const {
+                  date,
+                  time,
+                } =
+                  formatEventDate(
+                    event.date,
+                  )
+
                 const status =
-                  eventStatus(
+                  getEventStatus(
                     event,
                   )
 
                 return (
                   <article
-                    key={
-                      event.id
-                    }
-                    className="overflow-hidden rounded-2xl border bg-white shadow-sm"
+                    key={event.id}
+                    className="isr-admin-item overflow-hidden"
                   >
-                    <div className="grid sm:grid-cols-[130px_1fr] lg:grid-cols-[130px_1fr_auto]">
-                      <div className="flex min-h-32 items-center justify-center bg-isr-cream">
+                    <div className="grid md:grid-cols-[150px_1fr]">
+                      <div className="isr-admin-preview relative min-h-36 rounded-none border-0 md:min-h-full">
                         {event.imageUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
                           <img
-                            src={
-                              event.imageUrl
-                            }
+                            src={event.imageUrl}
                             alt=""
-                            className="h-full max-h-40 w-full object-cover"
+                            className="h-full w-full object-contain p-2"
                           />
                         ) : (
-                          <span className="px-4 text-center text-xs font-bold text-isr-dark-red/40">
+                          <div className="flex h-full min-h-36 items-center justify-center p-4 text-center text-xs font-bold uppercase tracking-wide text-isr-dark-red/50">
                             No poster
-                          </span>
+                          </div>
                         )}
                       </div>
 
                       <div className="p-5">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span
-                            className={`rounded-full px-3 py-1 text-xs font-bold ${EVENT_STATUS_CLASSES[status]}`}
-                          >
-                            {
-                              EVENT_STATUS_LABELS[
-                                status
-                              ]
-                            }
-                          </span>
+                        <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span
+                                className={`isr-admin-status ${STATUS_CLASSES[status]}`}
+                              >
+                                {getEventStatusLabel(
+                                  status,
+                                )}
+                              </span>
 
-                          {event.campus && (
-                            <span className="rounded-full bg-isr-cream px-3 py-1 text-xs font-semibold text-isr-dark-red">
-                              {
-                                event.campus
+                              {event.campus && (
+                                <span className="rounded-full bg-isr-cream px-2.5 py-1 text-xs font-semibold text-isr-dark-red">
+                                  {event.campus}
+                                </span>
+                              )}
+                            </div>
+
+                            <h2 className="mt-3 text-xl font-bold leading-snug text-isr-dark-red">
+                              {event.name}
+                            </h2>
+
+                            <p className="mt-2 text-sm font-semibold text-gray-700">
+                              {date} · {time}
+                            </p>
+
+                            <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-gray-500">
+                              {event.venue && (
+                                <span>
+                                  {event.venue}
+                                </span>
+                              )}
+
+                              {event.audience && (
+                                <span>
+                                  {event.audience}
+                                </span>
+                              )}
+
+                              {event.price && (
+                                <span>
+                                  {event.price}
+                                </span>
+                              )}
+                            </div>
+
+                            {event.statusNote && (
+                              <p className="mt-3 rounded-lg bg-isr-yellow/35 px-3 py-2 text-xs font-semibold leading-relaxed text-isr-dark-red">
+                                {event.statusNote}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="isr-admin-mobile-actions flex shrink-0 flex-col gap-2 sm:flex-row">
+                            <Link
+                              href={`/events/${event.id}`}
+                              target="_blank"
+                              className="inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-sm font-semibold text-isr-dark-red hover:bg-isr-cream"
+                            >
+                              <ExternalLinkIcon className="h-4 w-4" />
+                              Preview
+                            </Link>
+
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                openEdit(
+                                  event,
+                                )
                               }
-                            </span>
-                          )}
+                              className="gap-2"
+                            >
+                              <PencilIcon className="h-4 w-4" />
+                              Edit
+                            </Button>
+
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                openDelete(
+                                  event,
+                                )
+                              }
+                              className="gap-2 border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
+                            >
+                              <Trash2Icon className="h-4 w-4" />
+                              Delete
+                            </Button>
+                          </div>
                         </div>
-
-                        <h2 className="mt-3 text-xl font-bold text-isr-dark-red">
-                          {
-                            event.name
-                          }
-                        </h2>
-
-                        <p className="mt-2 text-sm font-semibold text-isr-turquoise">
-                          {
-                            formatEventDate(
-                              event.date,
-                            )
-                          }
-                        </p>
-
-                        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-gray-600">
-                          {event.venue && (
-                            <span>
-                              {
-                                event.venue
-                              }
-                            </span>
-                          )}
-
-                          {event.audience && (
-                            <span>
-                              {
-                                event.audience
-                              }
-                            </span>
-                          )}
-
-                          {event.price && (
-                            <span className="font-semibold">
-                              {
-                                event.price
-                              }
-                            </span>
-                          )}
-                        </div>
-
-                        {event.statusNote && (
-                          <p className="mt-3 rounded-lg bg-isr-yellow/35 px-3 py-2 text-xs font-medium text-isr-dark-red">
-                            {
-                              event.statusNote
-                            }
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-2 border-t p-4 sm:col-span-2 lg:col-span-1 lg:flex-col lg:justify-center lg:border-l lg:border-t-0">
-                        <Link
-                          href={`/events/${event.id}`}
-                          target="_blank"
-                          className="rounded-lg border px-3 py-2 text-xs font-bold text-gray-700 transition hover:bg-gray-50"
-                        >
-                          Public view ↗
-                        </Link>
-
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() =>
-                            openEdit(
-                              event,
-                            )
-                          }
-                        >
-                          <PencilIcon className="size-4" />
-                          Edit
-                        </Button>
-
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() =>
-                            openDelete(
-                              event,
-                            )
-                          }
-                          className="text-red-700 hover:bg-red-50 hover:text-red-800"
-                        >
-                          <Trash2Icon className="size-4" />
-                          Delete
-                        </Button>
                       </div>
                     </div>
                   </article>
@@ -702,19 +883,16 @@ export default function AdminEventsPage() {
       <EventModal
         open={modalOpen}
         event={selectedEvent}
-        onClose={() =>
-          setModalOpen(false)
-        }
+        onClose={closeModal}
         onSubmit={handleSubmit}
       />
 
       <ConfirmDeleteDialog
         open={deleteOpen}
-        title="Delete event?"
-        description={
-          eventToDelete
-            ? `You are about to permanently delete "${eventToDelete.name}". This removes it from the website and cannot be undone.`
-            : 'This event will be permanently deleted.'
+        title="Permanently delete event?"
+        description={`This will delete "${eventToDelete?.name ?? ''}". This cannot be undone.`}
+        confirmationText={
+          eventToDelete?.name
         }
         onConfirm={handleDelete}
         onCancel={closeDelete}

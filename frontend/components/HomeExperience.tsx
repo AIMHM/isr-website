@@ -22,65 +22,71 @@ import {
   JUMUAH_SERVICES,
 } from '@/lib/siteContent'
 
-const quickActions = [
+const studentActions = [
   {
     number: '01',
+    label: 'Prayer',
     title: 'I need somewhere to pray',
     description:
-      'Find your campus prayer room, wudu information and current Jumu’ah arrangements.',
+      'Find prayer rooms, Jumu’ah information and the daily prayer timetable.',
     href: '/pray',
-    action: 'Pray at RMIT',
   },
   {
     number: '02',
+    label: 'Events',
     title: 'What is happening?',
     description:
-      'See upcoming programs, events, workshops and community activities.',
+      'See upcoming classes, workshops, socials and community programs.',
     href: '/events',
-    action: 'View events',
   },
   {
     number: '03',
-    title: 'I need support',
+    label: 'Support',
+    title: 'I need help',
     description:
       'Raise something affecting your experience as a Muslim student at RMIT.',
     href: '/support',
-    action: 'Talk to ISR',
   },
   {
     number: '04',
+    label: 'Community',
     title: 'I want to get involved',
     description:
       'Join the community, become a member, volunteer or take on a team role.',
     href: '/join',
-    action: 'Join ISR',
   },
 ]
 
-const whatWeDo = [
+const impactAreas = [
   {
     title: 'Prayer & Jumu’ah',
-    text: 'Helping Muslim students find and use prayer spaces across RMIT.',
+    text:
+      'Helping Muslim students worship throughout the university week.',
   },
   {
     title: 'Islamic learning',
-    text: 'Classes, reminders, workshops and opportunities to strengthen knowledge.',
+    text:
+      'Programs that strengthen knowledge, confidence and connection to Islam.',
   },
   {
     title: 'Community',
-    text: 'Events and spaces where Muslim students can meet, connect and belong.',
+    text:
+      'Creating spaces where Muslims meet, build friendships and belong.',
   },
   {
     title: 'Student support',
-    text: 'A starting point when something is affecting your Muslim student experience.',
+    text:
+      'A clear starting point when something is affecting Muslim student life.',
   },
   {
     title: 'Representation',
-    text: 'Representing Muslim student needs and concerns on campus.',
+    text:
+      'Representing Muslim student needs and concerns on campus.',
   },
   {
     title: 'Service & leadership',
-    text: 'Opportunities to volunteer, contribute, develop and lead.',
+    text:
+      'Giving students meaningful ways to contribute, volunteer and lead.',
   },
 ]
 
@@ -97,12 +103,14 @@ function priorityScore(
     'urgent'
   ) {
     score += 30
-  } else if (
+  }
+  else if (
     announcement.priority ===
     'important'
   ) {
     score += 20
-  } else {
+  }
+  else {
     score += 10
   }
 
@@ -154,9 +162,9 @@ export default function HomeExperience() {
         setEvents([])
         setAnnouncements([])
       })
-      .finally(() =>
-        setLoading(false),
-      )
+      .finally(() => {
+        setLoading(false)
+      })
   }, [])
 
   const importantUpdate =
@@ -181,106 +189,112 @@ export default function HomeExperience() {
 
   return (
     <main id="main-content">
-      <section className="relative overflow-hidden bg-isr-dark-red px-4 py-14 text-white sm:py-20 lg:py-24">
+      <section className="isr-hero-grid relative overflow-hidden bg-isr-dark-red px-4 py-14 text-white sm:py-20 lg:py-24">
         <div
           aria-hidden="true"
-          className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-isr-turquoise/20 blur-3xl"
+          className="isr-hero-glow -right-24 -top-16 h-80 w-80 bg-isr-turquoise"
         />
 
         <div
           aria-hidden="true"
-          className="absolute -bottom-32 -left-24 h-80 w-80 rounded-full bg-isr-yellow/10 blur-3xl"
+          className="isr-hero-glow -bottom-28 -left-24 h-72 w-72 bg-isr-yellow"
         />
 
-        <div className="container-isr relative mx-auto grid max-w-7xl gap-9 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-14">
-          <div className="max-w-4xl">
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-isr-yellow sm:text-sm">
+        <div className="container-isr relative mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-14">
+          <div>
+            <p className="isr-eyebrow text-isr-yellow">
               Islamic Society of RMIT
             </p>
 
-            <h1 className="mt-4 max-w-4xl text-4xl font-bold leading-[1.08] sm:text-5xl lg:text-6xl">
-              {ISR_PUBLIC.tagline}
+            <h1 className="mt-5 max-w-4xl text-4xl font-bold leading-[1.04] sm:text-5xl lg:text-6xl xl:text-7xl">
+              A Muslim student
+              <span className="block text-isr-yellow">
+                should always know where to turn.
+              </span>
             </h1>
 
-            <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/80 sm:mt-6 sm:text-xl">
-              Prayer. Islamic learning. Community.
-              Support. Representation. A place to belong
-              throughout your time at RMIT.
+            <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/80 sm:text-xl">
+              Prayer, Islamic learning, community,
+              support and representation throughout
+              your time at RMIT.
             </p>
 
-            <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link
+                href="/start"
+                className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 font-bold text-isr-dark-red transition hover:bg-isr-yellow"
+              >
+                New to RMIT? Start here
+              </Link>
+
               <Link
                 href="/pray"
-                className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 font-bold text-isr-dark-red transition hover:bg-isr-yellow"
+                className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/25 px-6 py-3 font-bold text-white transition hover:bg-white/10"
               >
                 Find a prayer room
               </Link>
-
-              <Link
-                href="/join"
-                className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/25 px-6 py-3 font-bold text-white transition hover:bg-white/10"
-              >
-                Join ISR
-              </Link>
             </div>
 
-            <div className="mt-7 grid max-w-xl grid-cols-1 gap-2 text-sm text-white/70 sm:grid-cols-2 sm:gap-4">
-              <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-                <span className="text-white/60">
-                  Membership
-                </span>
-
-                <strong className="ml-2 text-white">
-                  Free
+            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-white/65">
+              <span>
+                Membership{' '}
+                <strong className="text-white">
+                  free
                 </strong>
-              </div>
+              </span>
 
-              <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-                City • Bundoora • Brunswick
-              </div>
+              <span>City</span>
+              <span>Bundoora</span>
+              <span>Brunswick</span>
             </div>
           </div>
 
-          <aside className="rounded-[1.75rem] border border-white/15 bg-white/10 p-5 backdrop-blur sm:p-7 lg:p-8">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+          <aside className="rounded-[2rem] border border-white/15 bg-white/[0.09] p-5 shadow-2xl backdrop-blur-md sm:p-7">
+            <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-isr-yellow sm:text-sm">
-                  Friday prayer
+                <p className="isr-eyebrow text-isr-yellow">
+                  Friday
                 </p>
 
-                <h2 className="mt-2 text-2xl font-bold">
+                <h2 className="mt-3 text-2xl font-bold sm:text-3xl">
                   Jumu’ah at RMIT
                 </h2>
+
+                <p className="mt-2 text-sm leading-relaxed text-white/60">
+                  Check the campus before you travel.
+                </p>
               </div>
 
               <Link
                 href="/pray#jumuah"
-                className="hidden text-sm font-bold text-isr-yellow sm:inline-flex"
+                className="hidden rounded-full border border-white/15 px-4 py-2 text-xs font-bold text-white sm:inline-flex"
               >
-                Full details →
+                Full details
               </Link>
             </div>
 
-            <div className="mt-5 space-y-3">
+            <div className="mt-6 space-y-3">
               {JUMUAH_SERVICES.map(
                 (service) => (
                   <div
                     key={service.id}
-                    className="rounded-2xl border border-white/10 bg-white/10 p-4 sm:p-5"
+                    className="rounded-2xl border border-white/10 bg-white/[0.08] p-4 sm:p-5"
                   >
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                      <p className="font-bold">
-                        {service.campus}
-                      </p>
+                    <div className="flex items-start justify-between gap-5">
+                      <div>
+                        <p className="font-bold">
+                          {service.campus}
+                        </p>
 
-                      <p className="font-bold text-isr-yellow">
+                        <p className="mt-1 text-sm leading-relaxed text-white/60">
+                          {service.venue}
+                        </p>
+                      </div>
+
+                      <p className="shrink-0 text-right font-bold text-isr-yellow">
                         {service.time}
                       </p>
                     </div>
-
-                    <p className="mt-2 text-sm leading-relaxed text-white/70">
-                      {service.venue}
-                    </p>
                   </div>
                 ),
               )}
@@ -296,52 +310,112 @@ export default function HomeExperience() {
         </div>
       </section>
 
-      <section className="bg-isr-cream/55 px-4 py-14 sm:py-18">
+      <section className="border-b border-isr-light-blue/15 bg-white px-4 py-5">
+        <div className="container-isr mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm font-semibold text-gray-600">
+            Looking for something quickly?
+          </p>
+
+          <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-bold">
+            <Link href="/pray" className="text-isr-turquoise">
+              Prayer rooms
+            </Link>
+
+            <Link href="/events" className="text-isr-turquoise">
+              Events
+            </Link>
+
+            <Link href="/updates" className="text-isr-turquoise">
+              ISR Updates
+            </Link>
+
+            <Link href="/contact" className="text-isr-turquoise">
+              Contact
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {importantUpdate && (
+        <section className="px-4 pt-10 sm:pt-14">
+          <div className="container-isr mx-auto max-w-7xl">
+            <Link
+              href="/updates"
+              className="group block rounded-[1.75rem] border border-isr-yellow bg-isr-yellow/30 p-5 transition hover:bg-isr-yellow/40 sm:p-6"
+            >
+              <div className="grid gap-4 md:grid-cols-[auto_1fr_auto] md:items-center">
+                <span className="w-fit rounded-full bg-isr-dark-red px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
+                  {importantUpdate.priority ===
+                  'urgent'
+                    ? 'Urgent'
+                    : importantUpdate.pinned
+                      ? 'Pinned'
+                      : 'Important'}
+                </span>
+
+                <div>
+                  <h2 className="font-bold text-isr-dark-red sm:text-lg">
+                    {importantUpdate.title}
+                  </h2>
+
+                  <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-gray-700">
+                    {importantUpdate.body}
+                  </p>
+                </div>
+
+                <span className="font-bold text-isr-dark-red transition-transform group-hover:translate-x-1">
+                  View →
+                </span>
+              </div>
+            </Link>
+          </div>
+        </section>
+      )}
+
+      <section className="bg-isr-cream/50 px-4 py-14 sm:py-20">
         <div className="container-isr mx-auto max-w-7xl">
-          <div className="max-w-3xl">
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-isr-turquoise">
-              Find what you need
-            </p>
-
-            <h2 className="mt-3 text-3xl font-bold leading-tight text-isr-dark-red sm:text-4xl">
-              What can ISR help you with?
-            </h2>
-
-            <p className="mt-4 max-w-2xl leading-relaxed text-gray-700">
-              You should not need to know how ISR is
-              structured to find what you need.
+          <div className="isr-section-rule">
+            <p className="isr-eyebrow text-isr-turquoise">
+              Student essentials
             </p>
           </div>
 
-          <div className="mt-8 grid gap-4 sm:mt-10 sm:grid-cols-2 xl:grid-cols-4">
-            {quickActions.map(
+          <div className="mt-5 max-w-3xl">
+            <h2 className="text-3xl font-bold leading-tight text-isr-dark-red sm:text-4xl">
+              What do you need right now?
+            </h2>
+
+            <p className="mt-4 leading-relaxed text-gray-700">
+              You should not need to understand how ISR is
+              structured before finding the right place to go.
+            </p>
+          </div>
+
+          <div className="mt-9 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {studentActions.map(
               (item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="isr-card isr-card-interactive group flex min-h-0 flex-col p-5 sm:min-h-60 sm:p-6"
+                  className="isr-utility-card border border-isr-light-blue/20 bg-white p-5 pr-12 shadow-sm sm:p-6 sm:pr-12"
                 >
-                  <span className="text-xs font-bold text-isr-turquoise">
-                    {item.number}
-                  </span>
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-xs font-bold text-isr-turquoise">
+                      {item.number}
+                    </span>
 
-                  <h3 className="mt-4 text-xl font-bold leading-snug text-isr-dark-red">
+                    <span className="rounded-full bg-isr-turquoise/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-isr-turquoise">
+                      {item.label}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-5 text-xl font-bold leading-snug text-isr-dark-red">
                     {item.title}
                   </h3>
 
-                  <p className="mt-3 flex-1 text-sm leading-relaxed text-gray-700">
+                  <p className="mt-3 text-sm leading-relaxed text-gray-700">
                     {item.description}
                   </p>
-
-                  <span className="mt-6 font-bold text-isr-turquoise">
-                    {item.action}{' '}
-                    <span
-                      aria-hidden="true"
-                      className="inline-block transition group-hover:translate-x-1"
-                    >
-                      →
-                    </span>
-                  </span>
                 </Link>
               ),
             )}
@@ -349,70 +423,31 @@ export default function HomeExperience() {
         </div>
       </section>
 
-      {importantUpdate && (
-        <section className="px-4 py-10 sm:py-12">
-          <div className="container-isr mx-auto max-w-7xl">
-            <div className="rounded-[1.75rem] border border-isr-yellow bg-isr-yellow/30 p-5 sm:p-7">
-              <div className="grid gap-5 lg:grid-cols-[auto_1fr_auto] lg:items-center">
-                <span className="inline-flex w-fit rounded-full bg-isr-dark-red px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
-                  {importantUpdate.priority ===
-                  'urgent'
-                    ? 'Urgent update'
-                    : importantUpdate.pinned
-                      ? 'Pinned update'
-                      : 'Important update'}
-                </span>
-
-                <div>
-                  <h2 className="text-xl font-bold text-isr-dark-red">
-                    {importantUpdate.title}
-                  </h2>
-
-                  <p className="mt-2 max-w-3xl text-sm leading-relaxed text-gray-700">
-                    {importantUpdate.body}
-                  </p>
-                </div>
-
-                <Link
-                  href="/updates"
-                  className="font-bold text-isr-dark-red"
-                >
-                  ISR Updates →
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
       <section className="bg-white px-4 py-14 sm:py-20">
         <div className="container-isr mx-auto max-w-7xl">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <div className="max-w-3xl">
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-isr-turquoise">
+            <div>
+              <p className="isr-eyebrow text-isr-turquoise">
                 Upcoming
               </p>
 
-              <h2 className="mt-3 text-3xl font-bold leading-tight text-isr-dark-red sm:text-4xl">
+              <h2 className="mt-4 text-3xl font-bold text-isr-dark-red sm:text-4xl">
                 What’s happening at ISR?
               </h2>
 
-              <p className="mt-3 text-gray-700">
-                Find your next event, program or
+              <p className="mt-3 max-w-2xl text-gray-700">
+                Find your next event, class, workshop or
                 community activity.
               </p>
             </div>
 
-            <Link
-              href="/events"
-              className="w-fit font-bold text-isr-turquoise"
-            >
+            <Link href="/events" className="isr-text-link">
               View all events →
             </Link>
           </div>
 
           {loading ? (
-            <div className="mt-8 grid gap-5 sm:mt-10 md:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-9 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map(
                 (item) => (
                   <div
@@ -423,7 +458,7 @@ export default function HomeExperience() {
               )}
             </div>
           ) : events.length > 0 ? (
-            <div className="mt-8 grid gap-5 sm:mt-10 md:grid-cols-2 lg:grid-cols-3">
+            <div className="isr-mobile-card-stack mt-9 sm:grid sm:grid-cols-2 lg:grid-cols-3">
               {events.map(
                 (event) => (
                   <EventCard
@@ -435,14 +470,14 @@ export default function HomeExperience() {
               )}
             </div>
           ) : (
-            <div className="mt-8 rounded-3xl bg-isr-cream/70 p-7 text-center sm:mt-10 sm:p-10">
+            <div className="mt-9 rounded-3xl bg-isr-cream/65 p-8 text-center">
               <h3 className="text-xl font-bold text-isr-dark-red">
                 No upcoming events are listed yet
               </h3>
 
-              <p className="mx-auto mt-3 max-w-xl text-sm text-gray-700">
-                Check ISR Updates or our community
-                channels for the latest announcements.
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-gray-700">
+                Check ISR Updates and the community for
+                the latest announcements.
               </p>
 
               <Link
@@ -458,55 +493,67 @@ export default function HomeExperience() {
 
       <section className="bg-isr-dark-red px-4 py-14 text-white sm:py-20">
         <div className="container-isr mx-auto max-w-7xl">
-          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <div className="grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-isr-yellow">
-                New to RMIT?
+              <p className="isr-eyebrow text-isr-yellow">
+                First semester?
               </p>
 
-              <h2 className="mt-3 text-3xl font-bold leading-tight sm:text-4xl">
-                Start university with the essentials
-                already sorted
+              <h2 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl">
+                Get the Muslim student essentials sorted first
               </h2>
 
-              <p className="mt-5 max-w-xl leading-relaxed text-white/75">
-                Find your prayer room, know where
-                Jumu’ah is, join the Muslim community,
-                attend your first event and know where
-                to turn if you need help.
+              <p className="mt-5 max-w-xl leading-relaxed text-white/72">
+                Prayer room. Jumu’ah. Community. Membership.
+                Your first event. A contact point if you need help.
               </p>
 
               <Link
                 href="/start"
                 className="mt-7 inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 font-bold text-isr-dark-red transition hover:bg-isr-yellow"
               >
-                Start here
+                Start Here
               </Link>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {[
-                'Find your campus musallah',
-                'Check Jumu’ah',
-                'Join the WhatsApp Community',
-                'Become a free ISR member',
-                'Find an upcoming event',
-                'Know how to contact ISR',
+                {
+                  number: '01',
+                  label: 'Find your musallah',
+                },
+                {
+                  number: '02',
+                  label: 'Know your Jumu’ah',
+                },
+                {
+                  number: '03',
+                  label: 'Join the community',
+                },
+                {
+                  number: '04',
+                  label: 'Become a member',
+                },
+                {
+                  number: '05',
+                  label: 'Attend something',
+                },
+                {
+                  number: '06',
+                  label: 'Know who to contact',
+                },
               ].map(
-                (
-                  item,
-                  index,
-                ) => (
+                (item) => (
                   <div
-                    key={item}
-                    className="rounded-2xl border border-white/10 bg-white/10 p-4 sm:p-5"
+                    key={item.number}
+                    className="rounded-2xl border border-white/10 bg-white/[0.08] p-5"
                   >
                     <span className="text-xs font-bold text-isr-yellow">
-                      0{index + 1}
+                      {item.number}
                     </span>
 
-                    <p className="mt-2 font-semibold">
-                      {item}
+                    <p className="mt-3 font-semibold">
+                      {item.label}
                     </p>
                   </div>
                 ),
@@ -518,44 +565,43 @@ export default function HomeExperience() {
 
       <section className="bg-white px-4 py-14 sm:py-20">
         <div className="container-isr mx-auto max-w-7xl">
-          <div className="text-center">
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-isr-turquoise">
-              Become part of ISR
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="isr-eyebrow mx-auto text-isr-turquoise">
+              Your pathway
             </p>
 
-            <h2 className="mt-3 text-3xl font-bold leading-tight text-isr-dark-red sm:text-4xl">
+            <h2 className="mt-4 text-3xl font-bold text-isr-dark-red sm:text-4xl">
               Attend. Join. Volunteer. Lead.
             </h2>
 
-            <p className="mx-auto mt-4 max-w-2xl leading-relaxed text-gray-700">
-              You do not need to begin with a title.
-              Start by becoming part of the community
-              and grow from there.
+            <p className="mt-4 leading-relaxed text-gray-700">
+              Community involvement does not start with a title.
+              Start small and grow into responsibility.
             </p>
           </div>
 
-          <div className="mx-auto mt-9 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-6 lg:grid-cols-4">
             {[
               {
-                step: '01',
+                step: '1',
                 title: 'Attend',
                 text:
                   'Come to an event, class or community activity.',
               },
               {
-                step: '02',
+                step: '2',
                 title: 'Join',
                 text:
                   'Become a free formal member of ISR.',
               },
               {
-                step: '03',
+                step: '3',
                 title: 'Volunteer',
                 text:
                   'Help deliver programs and support the community.',
               },
               {
-                step: '04',
+                step: '4',
                 title: 'Lead',
                 text:
                   'Take responsibility and help shape what comes next.',
@@ -564,17 +610,17 @@ export default function HomeExperience() {
               (item) => (
                 <article
                   key={item.step}
-                  className="isr-card p-5 sm:p-6"
+                  className="isr-step-line text-center"
                 >
-                  <span className="text-sm font-bold text-isr-turquoise">
+                  <span className="relative z-10 mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-isr-dark-red font-bold text-white">
                     {item.step}
                   </span>
 
-                  <h3 className="mt-3 text-xl font-bold text-isr-dark-red">
+                  <h3 className="mt-4 text-xl font-bold text-isr-dark-red">
                     {item.title}
                   </h3>
 
-                  <p className="mt-3 text-sm leading-relaxed text-gray-700">
+                  <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-gray-700">
                     {item.text}
                   </p>
                 </article>
@@ -582,7 +628,7 @@ export default function HomeExperience() {
             )}
           </div>
 
-          <div className="mt-8 flex justify-center">
+          <div className="mt-9 flex justify-center">
             <Link
               href="/join"
               className="isr-button-primary"
@@ -593,31 +639,38 @@ export default function HomeExperience() {
         </div>
       </section>
 
-      <section className="bg-isr-cream/60 px-4 py-14 sm:py-20">
+      <section className="bg-isr-cream/55 px-4 py-14 sm:py-20">
         <div className="container-isr mx-auto max-w-7xl">
-          <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+          <div className="grid gap-9 lg:grid-cols-[0.75fr_1.25fr]">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-isr-turquoise">
-                What ISR does
+              <p className="isr-eyebrow text-isr-turquoise">
+                Why ISR exists
               </p>
 
-              <h2 className="mt-3 text-3xl font-bold leading-tight text-isr-dark-red">
+              <h2 className="mt-4 text-3xl font-bold leading-tight text-isr-dark-red sm:text-4xl">
                 Supporting Muslim student life
               </h2>
 
               <p className="mt-4 max-w-xl leading-relaxed text-gray-700">
-                ISR exists so Muslim students have a
-                stronger religious, social and student
-                experience at RMIT.
+                A student society should make Muslim life at
+                university easier to navigate, stronger and
+                more connected.
               </p>
+
+              <Link
+                href="/about"
+                className="isr-text-link mt-6"
+              >
+                About ISR →
+              </Link>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              {whatWeDo.map(
+              {impactAreas.map(
                 (item) => (
                   <article
                     key={item.title}
-                    className="rounded-2xl bg-white p-5 shadow-sm"
+                    className="rounded-2xl border border-isr-light-blue/15 bg-white p-5"
                   >
                     <h3 className="font-bold text-isr-dark-red">
                       {item.title}
@@ -636,32 +689,43 @@ export default function HomeExperience() {
 
       <section className="px-4 py-14 sm:py-20">
         <div className="container-isr mx-auto max-w-7xl">
-          <div className="rounded-[1.75rem] bg-isr-dark-red px-5 py-9 text-center text-white sm:px-10 sm:py-14">
-            <h2 className="text-3xl font-bold leading-tight sm:text-4xl">
-              Your Muslim community at RMIT starts here
-            </h2>
+          <div className="relative overflow-hidden rounded-[2rem] bg-isr-dark-red px-5 py-10 text-center text-white sm:px-10 sm:py-14">
+            <div
+              aria-hidden="true"
+              className="isr-hero-glow -right-16 -top-20 h-52 w-52 bg-isr-turquoise"
+            />
 
-            <p className="mx-auto mt-4 max-w-2xl leading-relaxed text-white/75">
-              Membership is free. Join the community,
-              meet other Muslims and become part of ISR.
-            </p>
+            <div className="relative">
+              <p className="isr-eyebrow mx-auto text-isr-yellow">
+                Join the community
+              </p>
 
-            <div className="mx-auto mt-8 flex max-w-2xl flex-col justify-center gap-3 sm:flex-row">
-              <a
-                href={ISR_PUBLIC.community.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 font-bold text-isr-dark-red transition hover:bg-isr-yellow"
-              >
-                Join WhatsApp Community
-              </a>
+              <h2 className="mx-auto mt-4 max-w-3xl text-3xl font-bold leading-tight sm:text-4xl">
+                Your Muslim community at RMIT starts here
+              </h2>
 
-              <Link
-                href="/join"
-                className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/25 px-6 py-3 font-bold text-white transition hover:bg-white/10"
-              >
-                Join ISR
-              </Link>
+              <p className="mx-auto mt-4 max-w-2xl leading-relaxed text-white/72">
+                Membership is free. Join the community, meet
+                other Muslims and become part of ISR.
+              </p>
+
+              <div className="mx-auto mt-8 flex max-w-2xl flex-col justify-center gap-3 sm:flex-row">
+                <a
+                  href={ISR_PUBLIC.community.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 font-bold text-isr-dark-red transition hover:bg-isr-yellow"
+                >
+                  Join WhatsApp Community
+                </a>
+
+                <Link
+                  href="/join"
+                  className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/25 px-6 py-3 font-bold text-white transition hover:bg-white/10"
+                >
+                  Join ISR
+                </Link>
+              </div>
             </div>
           </div>
         </div>

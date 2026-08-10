@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useMemo,
   useState,
 } from 'react'
 import {
@@ -34,37 +35,10 @@ interface Props {
   open: boolean
   event: Event | null
   onClose: () => void
-  onSubmit:
-    (
-      formData: FormData,
-    ) => Promise<void>
+  onSubmit: (
+    formData: FormData,
+  ) => Promise<void>
 }
-
-const STATUSES: {
-  value: EventStatus
-  label: string
-}[] = [
-  {
-    value: 'scheduled',
-    label: 'Scheduled',
-  },
-  {
-    value: 'sold-out',
-    label: 'Sold out',
-  },
-  {
-    value: 'postponed',
-    label: 'Postponed',
-  },
-  {
-    value: 'cancelled',
-    label: 'Cancelled',
-  },
-  {
-    value: 'completed',
-    label: 'Completed',
-  },
-]
 
 function validHttpUrl(
   value: string,
@@ -75,13 +49,18 @@ function validHttpUrl(
 
   try {
     const url =
-      new URL(value)
+      new URL(
+        value,
+      )
 
     return (
-      url.protocol === 'http:' ||
-      url.protocol === 'https:'
+      url.protocol ===
+        'http:' ||
+      url.protocol ===
+        'https:'
     )
-  } catch {
+  }
+  catch {
     return false
   }
 }
@@ -93,7 +72,8 @@ export function EventModal({
   onSubmit,
 }: Props) {
   const isEdit =
-    event !== null
+    event !==
+    null
 
   const [
     name,
@@ -116,12 +96,6 @@ export function EventModal({
   const [
     description,
     setDescription,
-  ] =
-    useState('')
-
-  const [
-    ticketUrl,
-    setTicketUrl,
   ] =
     useState('')
 
@@ -156,6 +130,12 @@ export function EventModal({
     useState('')
 
   const [
+    ticketUrl,
+    setTicketUrl,
+  ] =
+    useState('')
+
+  const [
     status,
     setStatus,
   ] =
@@ -170,18 +150,16 @@ export function EventModal({
     useState('')
 
   const [
+    contentOwner,
+    setContentOwner,
+  ] =
+    useState('')
+
+  const [
     imageFile,
     setImageFile,
   ] =
     useState<File | null>(
-      null,
-    )
-
-  const [
-    imagePreview,
-    setImagePreview,
-  ] =
-    useState<string | null>(
       null,
     )
 
@@ -197,9 +175,20 @@ export function EventModal({
   ] =
     useState(false)
 
+  const [
+    dirty,
+    setDirty,
+  ] =
+    useState(false)
+
   useEffect(() => {
+    if (!open) {
+      return
+    }
+
     setName(
-      event?.name ?? '',
+      event?.name ??
+        '',
     )
 
     setDate(
@@ -223,29 +212,33 @@ export function EventModal({
         '',
     )
 
-    setTicketUrl(
-      event?.ticketUrl ??
+    setVenue(
+      event?.venue ??
         '',
     )
 
-    setVenue(
-      event?.venue ?? '',
-    )
-
     setCampus(
-      event?.campus ?? '',
+      event?.campus ??
+        '',
     )
 
     setAudience(
-      event?.audience ?? '',
+      event?.audience ??
+        '',
     )
 
     setPrice(
-      event?.price ?? '',
+      event?.price ??
+        '',
     )
 
     setAccessibility(
       event?.accessibility ??
+        '',
+    )
+
+    setTicketUrl(
+      event?.ticketUrl ??
         '',
     )
 
@@ -259,106 +252,88 @@ export function EventModal({
         '',
     )
 
+    setContentOwner(
+      event?.contentOwner ??
+        '',
+    )
+
     setImageFile(null)
-    setImagePreview(
-      event?.imageUrl ||
-        null,
-    )
-
     setError('')
-    setSubmitting(false)
-  }, [event, open])
-
-  useEffect(() => {
-    if (!imageFile) {
-      setImagePreview(
-        event?.imageUrl ||
-          null,
-      )
-      return
-    }
-
-    const objectUrl =
-      URL.createObjectURL(
-        imageFile,
-      )
-
-    setImagePreview(
-      objectUrl,
-    )
-
-    return () => {
-      URL.revokeObjectURL(
-        objectUrl,
-      )
-    }
+    setDirty(false)
   }, [
-    imageFile,
-    event?.imageUrl,
+    event,
+    open,
   ])
 
-  function handleImage(
-    file:
-      | File
-      | null,
-  ) {
-    if (!file) {
-      setImageFile(null)
-      return
-    }
+  const requiresStatusNote =
+    status ===
+      'cancelled' ||
+    status ===
+      'postponed'
 
-    const allowed =
+  const imageLabel =
+    useMemo(
+      () => {
+        if (
+          imageFile
+        ) {
+          return imageFile.name
+        }
+
+        if (
+          event?.imageUrl
+        ) {
+          return 'Current poster retained'
+        }
+
+        return 'No poster selected'
+      },
       [
-        'image/jpeg',
-        'image/png',
-        'image/webp',
-      ]
+        imageFile,
+        event,
+      ],
+    )
 
-    if (
-      !allowed.includes(
-        file.type,
-      )
-    ) {
-      setError(
-        'Poster must be JPEG, PNG or WebP.',
-      )
-      return
-    }
-
-    if (
-      file.size >
-      5 * 1024 * 1024
-    ) {
-      setError(
-        'Poster must be 5 MB or smaller.',
-      )
-      return
-    }
-
-    setError('')
-    setImageFile(file)
+  function change(
+    setter:
+      React.Dispatch<
+        React.SetStateAction<string>
+      >,
+    value: string,
+  ) {
+    setter(value)
+    setDirty(true)
   }
 
-  async function handleSave(
-    submitEvent:
-      React.FormEvent,
-  ) {
-    submitEvent.preventDefault()
-
-    const cleanName =
-      name.trim()
-
-    const cleanDescription =
-      description.trim()
+  function requestClose() {
+    if (
+      submitting
+    ) {
+      return
+    }
 
     if (
-      !cleanName ||
+      dirty &&
+      !window.confirm(
+        'Discard unsaved event changes?',
+      )
+    ) {
+      return
+    }
+
+    onClose()
+  }
+
+  async function handleSave() {
+    if (
+      !name.trim() ||
       !date ||
-      !cleanDescription
+      !description.trim()
     ) {
       setError(
         'Event name, start date/time and description are required.',
       )
+
       return
     }
 
@@ -367,23 +342,29 @@ export function EventModal({
       !imageFile
     ) {
       setError(
-        'A poster is required when creating a new event.',
+        'A poster image is required when creating a new event.',
       )
+
       return
     }
 
     if (
       endDate &&
       new Date(
-        endDate,
+        fromDatetimeLocalValue(
+          endDate,
+        ),
       ).getTime() <
         new Date(
-          date,
+          fromDatetimeLocalValue(
+            date,
+          ),
         ).getTime()
     ) {
       setError(
-        'End time cannot be before the start time.',
+        'The end time cannot be earlier than the start time.',
       )
+
       return
     }
 
@@ -393,23 +374,20 @@ export function EventModal({
       )
     ) {
       setError(
-        'Registration link must use http:// or https://.',
+        'Registration URL must be a valid http or https link.',
       )
+
       return
     }
 
     if (
-      (
-        status ===
-          'cancelled' ||
-        status ===
-          'postponed'
-      ) &&
+      requiresStatusNote &&
       !statusNote.trim()
     ) {
       setError(
-        'Cancelled and postponed events need a public status message explaining what students should know.',
+        'Cancelled and postponed events need a public status note.',
       )
+
       return
     }
 
@@ -421,7 +399,7 @@ export function EventModal({
 
     formData.set(
       'name',
-      cleanName,
+      name.trim(),
     )
 
     formData.set(
@@ -442,7 +420,7 @@ export function EventModal({
 
     formData.set(
       'description',
-      cleanDescription,
+      description.trim(),
     )
 
     formData.set(
@@ -485,7 +463,14 @@ export function EventModal({
       statusNote.trim(),
     )
 
-    if (imageFile) {
+    formData.set(
+      'contentOwner',
+      contentOwner.trim(),
+    )
+
+    if (
+      imageFile
+    ) {
       formData.set(
         'image',
         imageFile,
@@ -497,14 +482,20 @@ export function EventModal({
         formData,
       )
 
+      setDirty(false)
       onClose()
-    } catch (err) {
+    }
+    catch (
+      caught
+    ) {
       setError(
-        err instanceof Error
-          ? err.message
+        caught instanceof
+          Error
+          ? caught.message
           : 'The event could not be saved.',
       )
-    } finally {
+    }
+    finally {
       setSubmitting(false)
     }
   }
@@ -512,134 +503,154 @@ export function EventModal({
   return (
     <Dialog
       open={open}
-      onOpenChange={(nextOpen) => {
-        if (
-          !nextOpen &&
-          !submitting
-        ) {
-          onClose()
+      onOpenChange={(
+        nextOpen,
+      ) => {
+        if (!nextOpen) {
+          requestClose()
         }
       }}
     >
       <DialogContent
-        showCloseButton={false}
         className="max-h-[92vh] overflow-y-auto sm:max-w-3xl"
+        showCloseButton={
+          false
+        }
       >
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-2xl text-isr-dark-red">
             {isEdit
               ? 'Edit event'
               : 'Create event'}
           </DialogTitle>
         </DialogHeader>
 
-        <form
-          onSubmit={handleSave}
-          className="space-y-7"
-        >
-          <section className="space-y-4">
-            <div>
-              <h3 className="font-bold text-isr-dark-red">
-                Essential information
-              </h3>
+        <p className="text-sm text-gray-600">
+          Fields marked with * are required.
+          Public-facing information should be confirmed
+          before saving.
+        </p>
 
-              <p className="mt-1 text-xs text-muted-foreground">
-                These fields form the main public event listing.
-              </p>
-            </div>
+        <div className="space-y-5 py-2">
+          <section className="isr-admin-fieldset">
+            <h3 className="isr-admin-fieldset-title">
+              Event essentials
+            </h3>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="ev-name">
-                Event name *
-              </Label>
-
-              <Input
-                id="ev-name"
-                value={name}
-                onChange={(e) =>
-                  setName(
-                    e.target.value,
-                  )
-                }
-                placeholder="e.g. ISR Heritage Dinner"
-                disabled={submitting}
-              />
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-4">
               <div className="space-y-1.5">
-                <Label htmlFor="ev-date">
-                  Start date &amp; time *
+                <Label
+                  htmlFor="ev-name"
+                  className="isr-admin-required"
+                >
+                  Event name
                 </Label>
 
                 <Input
-                  id="ev-date"
-                  type="datetime-local"
-                  value={date}
-                  onChange={(e) =>
-                    setDate(
-                      e.target.value,
+                  id="ev-name"
+                  value={name}
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setName,
+                      inputEvent
+                        .target
+                        .value,
                     )
                   }
-                  disabled={submitting}
+                  placeholder="e.g. ISR Heritage Dinner"
                 />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="ev-date"
+                    className="isr-admin-required"
+                  >
+                    Starts
+                  </Label>
+
+                  <Input
+                    id="ev-date"
+                    type="datetime-local"
+                    value={date}
+                    onChange={(
+                      inputEvent,
+                    ) =>
+                      change(
+                        setDate,
+                        inputEvent
+                          .target
+                          .value,
+                      )
+                    }
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="ev-end-date">
+                    Ends
+                    <span className="ml-1 font-normal text-gray-400">
+                      optional
+                    </span>
+                  </Label>
+
+                  <Input
+                    id="ev-end-date"
+                    type="datetime-local"
+                    value={endDate}
+                    onChange={(
+                      inputEvent,
+                    ) =>
+                      change(
+                        setEndDate,
+                        inputEvent
+                          .target
+                          .value,
+                      )
+                    }
+                  />
+                </div>
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="ev-end">
-                  End date &amp; time
+                <Label
+                  htmlFor="ev-desc"
+                  className="isr-admin-required"
+                >
+                  Description
                 </Label>
 
-                <Input
-                  id="ev-end"
-                  type="datetime-local"
-                  value={endDate}
-                  onChange={(e) =>
-                    setEndDate(
-                      e.target.value,
+                <Textarea
+                  id="ev-desc"
+                  value={description}
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setDescription,
+                      inputEvent
+                        .target
+                        .value,
                     )
                   }
-                  disabled={submitting}
+                  rows={5}
+                  placeholder="What should students know about this event?"
                 />
+
+                <p className="text-xs text-gray-500">
+                  {description.length} characters
+                </p>
               </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="ev-desc">
-                Description *
-              </Label>
-
-              <Textarea
-                id="ev-desc"
-                value={description}
-                onChange={(e) =>
-                  setDescription(
-                    e.target.value,
-                  )
-                }
-                rows={6}
-                placeholder="What is happening, who is it for, and what should attendees know?"
-                disabled={submitting}
-              />
-
-              <p className="text-xs text-muted-foreground">
-                {
-                  description.length
-                } characters
-              </p>
             </div>
           </section>
 
-          <section className="space-y-4 border-t pt-6">
-            <div>
-              <h3 className="font-bold text-isr-dark-red">
-                Location and attendance
-              </h3>
-
-              <p className="mt-1 text-xs text-muted-foreground">
-                Keep venue, campus and audience information student-friendly.
-              </p>
-            </div>
+          <section className="isr-admin-fieldset">
+            <h3 className="isr-admin-fieldset-title">
+              Location & audience
+            </h3>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
@@ -650,13 +661,17 @@ export function EventModal({
                 <Input
                   id="ev-campus"
                   value={campus}
-                  onChange={(e) =>
-                    setCampus(
-                      e.target.value,
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setCampus,
+                      inputEvent
+                        .target
+                        .value,
                     )
                   }
-                  placeholder="City campus"
-                  disabled={submitting}
+                  placeholder="e.g. City campus"
                 />
               </div>
 
@@ -668,13 +683,17 @@ export function EventModal({
                 <Input
                   id="ev-venue"
                   value={venue}
-                  onChange={(e) =>
-                    setVenue(
-                      e.target.value,
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setVenue,
+                      inputEvent
+                        .target
+                        .value,
                     )
                   }
-                  placeholder="Building 80, Level 6, Room 5"
-                  disabled={submitting}
+                  placeholder="e.g. Building 80, Level 6, Room 5"
                 />
               </div>
 
@@ -686,13 +705,70 @@ export function EventModal({
                 <Input
                   id="ev-audience"
                   value={audience}
-                  onChange={(e) =>
-                    setAudience(
-                      e.target.value,
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setAudience,
+                      inputEvent
+                        .target
+                        .value,
                     )
                   }
-                  placeholder="All students / Brothers / Sisters"
-                  disabled={submitting}
+                  placeholder="e.g. All students / Brothers / Sisters"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="ev-accessibility">
+                  Accessibility information
+                </Label>
+
+                <Input
+                  id="ev-accessibility"
+                  value={accessibility}
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setAccessibility,
+                      inputEvent
+                        .target
+                        .value,
+                    )
+                  }
+                  placeholder="Confirmed access information"
+                />
+              </div>
+            </div>
+          </section>
+
+          <section className="isr-admin-fieldset">
+            <h3 className="isr-admin-fieldset-title">
+              Registration & price
+            </h3>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="ev-ticket">
+                  Registration URL
+                </Label>
+
+                <Input
+                  id="ev-ticket"
+                  type="url"
+                  value={ticketUrl}
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setTicketUrl,
+                      inputEvent
+                        .target
+                        .value,
+                    )
+                  }
+                  placeholder="https://..."
                 />
               </div>
 
@@ -704,70 +780,26 @@ export function EventModal({
                 <Input
                   id="ev-price"
                   value={price}
-                  onChange={(e) =>
-                    setPrice(
-                      e.target.value,
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setPrice,
+                      inputEvent
+                        .target
+                        .value,
                     )
                   }
-                  placeholder="Free / $15"
-                  disabled={submitting}
+                  placeholder="e.g. Free / $15"
                 />
               </div>
             </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="ev-ticket">
-                Registration link
-              </Label>
-
-              <Input
-                id="ev-ticket"
-                type="url"
-                value={ticketUrl}
-                onChange={(e) =>
-                  setTicketUrl(
-                    e.target.value,
-                  )
-                }
-                placeholder="https://..."
-                disabled={submitting}
-              />
-
-              <p className="text-xs text-muted-foreground">
-                Leave blank if registration is not required or not available yet.
-              </p>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="ev-accessibility">
-                Access information
-              </Label>
-
-              <Textarea
-                id="ev-accessibility"
-                value={accessibility}
-                onChange={(e) =>
-                  setAccessibility(
-                    e.target.value,
-                  )
-                }
-                rows={3}
-                placeholder="Step-free access, lift access, seating arrangements or other information students may need."
-                disabled={submitting}
-              />
-            </div>
           </section>
 
-          <section className="space-y-4 border-t pt-6">
-            <div>
-              <h3 className="font-bold text-isr-dark-red">
-                Event status
-              </h3>
-
-              <p className="mt-1 text-xs text-muted-foreground">
-                Status changes are visible to students on event cards and the event page.
-              </p>
-            </div>
+          <section className="isr-admin-fieldset">
+            <h3 className="isr-admin-fieldset-title">
+              Public status
+            </h3>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
@@ -778,151 +810,195 @@ export function EventModal({
                 <select
                   id="ev-status"
                   value={status}
-                  onChange={(e) =>
+                  onChange={(
+                    inputEvent,
+                  ) => {
                     setStatus(
-                      e.target
+                      inputEvent
+                        .target
                         .value as EventStatus,
                     )
-                  }
-                  disabled={submitting}
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
+
+                    setDirty(true)
+                  }}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
                 >
-                  {STATUSES.map(
-                    (item) => (
-                      <option
-                        key={
-                          item.value
-                        }
-                        value={
-                          item.value
-                        }
-                      >
-                        {
-                          item.label
-                        }
-                      </option>
-                    ),
-                  )}
+                  <option value="scheduled">
+                    Scheduled
+                  </option>
+
+                  <option value="sold-out">
+                    Sold out
+                  </option>
+
+                  <option value="postponed">
+                    Postponed
+                  </option>
+
+                  <option value="cancelled">
+                    Cancelled
+                  </option>
+
+                  <option value="completed">
+                    Completed
+                  </option>
                 </select>
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="ev-status-note">
-                  Public status message
+                <Label
+                  htmlFor="ev-status-note"
+                  className={
+                    requiresStatusNote
+                      ? 'isr-admin-required'
+                      : ''
+                  }
+                >
+                  Status note
                 </Label>
 
                 <Input
                   id="ev-status-note"
                   value={statusNote}
-                  onChange={(e) =>
-                    setStatusNote(
-                      e.target.value,
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setStatusNote,
+                      inputEvent
+                        .target
+                        .value,
                     )
                   }
-                  placeholder="e.g. A new date will be announced soon."
-                  disabled={submitting}
+                  placeholder="Explain a cancellation, postponement or other important change"
                 />
               </div>
             </div>
-
-            {(
-              status ===
-                'cancelled' ||
-              status ===
-                'postponed'
-            ) && (
-              <p className="rounded-lg bg-isr-yellow/40 px-4 py-3 text-xs font-medium text-isr-dark-red">
-                A clear public status message is required so students know what has changed.
-              </p>
-            )}
           </section>
 
-          <section className="space-y-4 border-t pt-6">
-            <div>
-              <h3 className="font-bold text-isr-dark-red">
-                Event poster
-              </h3>
+          <section className="isr-admin-fieldset">
+            <h3 className="isr-admin-fieldset-title">
+              Poster & internal ownership
+            </h3>
 
-              <p className="mt-1 text-xs text-muted-foreground">
-                JPEG, PNG or WebP. Maximum 5 MB.
-              </p>
-            </div>
-
-            {imagePreview && (
-              <div className="overflow-hidden rounded-2xl border bg-isr-cream">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={imagePreview}
-                  alt="Event poster preview"
-                  className="max-h-80 w-full object-contain"
-                />
-              </div>
-            )}
-
-            <div className="space-y-1.5">
-              <Label htmlFor="ev-image">
-                {isEdit
-                  ? 'Replace poster'
-                  : 'Upload poster *'}
-              </Label>
-
-              <Input
-                id="ev-image"
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                disabled={submitting}
-                onChange={(e) =>
-                  handleImage(
-                    e.target
-                      .files?.[0] ??
-                      null,
-                  )
-                }
-                className="cursor-pointer"
-              />
-
-              {imageFile && (
-                <p className="text-xs font-medium text-isr-turquoise">
-                  Selected: {
-                    imageFile.name
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="ev-image"
+                  className={
+                    isEdit
+                      ? ''
+                      : 'isr-admin-required'
                   }
+                >
+                  {isEdit
+                    ? 'Replace poster'
+                    : 'Event poster'}
+                </Label>
+
+                <Input
+                  id="ev-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={(
+                    inputEvent,
+                  ) => {
+                    setImageFile(
+                      inputEvent
+                        .target
+                        .files?.[0] ??
+                        null,
+                    )
+
+                    setDirty(true)
+                  }}
+                  className="cursor-pointer"
+                />
+
+                <p className="text-xs text-gray-500">
+                  {imageLabel}
                 </p>
-              )}
+
+                {event?.imageUrl && (
+                  <a
+                    href={event.imageUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex text-xs font-bold text-isr-turquoise hover:text-isr-dark-red"
+                  >
+                    View current poster →
+                  </a>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="ev-owner">
+                  Internal content owner
+                </Label>
+
+                <Input
+                  id="ev-owner"
+                  value={contentOwner}
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setContentOwner,
+                      inputEvent
+                        .target
+                        .value,
+                    )
+                  }
+                  placeholder="e.g. Events Team"
+                />
+
+                <p className="text-xs text-gray-500">
+                  Internal management information.
+                  This is not displayed publicly.
+                </p>
+              </div>
             </div>
           </section>
 
           {error && (
             <div
               role="alert"
-              className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+              className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800"
             >
               {error}
             </div>
           )}
+        </div>
 
-          <DialogFooter className="sticky bottom-0 -mx-6 border-t bg-white px-6 py-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={submitting}
-            >
-              Cancel
-            </Button>
+        <DialogFooter className="gap-2">
+          <Button
+            variant="outline"
+            onClick={
+              requestClose
+            }
+            disabled={
+              submitting
+            }
+          >
+            Cancel
+          </Button>
 
-            <Button
-              type="submit"
-              disabled={submitting}
-              className="bg-isr-dark-red text-isr-cream hover:bg-isr-dark-red/90"
-            >
-              {submitting
-                ? 'Saving…'
-                : isEdit
-                  ? 'Save event'
-                  : 'Create event'}
-            </Button>
-          </DialogFooter>
-        </form>
+          <Button
+            onClick={
+              handleSave
+            }
+            disabled={
+              submitting
+            }
+            className="bg-isr-dark-red text-white hover:bg-isr-dark-red/90"
+          >
+            {submitting
+              ? 'Saving…'
+              : isEdit
+                ? 'Save changes'
+                : 'Create event'}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

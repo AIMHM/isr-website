@@ -14,11 +14,18 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import {
+  Input,
+} from '@/components/ui/input'
+import {
+  Label,
+} from '@/components/ui/label'
 
 interface Props {
   open: boolean
   title: string
   description: string
+  confirmationText?: string
   onConfirm: () => Promise<void>
   onCancel: () => void
 }
@@ -27,6 +34,7 @@ export function ConfirmDeleteDialog({
   open,
   title,
   description,
+  confirmationText,
   onConfirm,
   onCancel,
 }: Props) {
@@ -37,33 +45,33 @@ export function ConfirmDeleteDialog({
     useState(false)
 
   const [
-    error,
-    setError,
+    typed,
+    setTyped,
   ] =
     useState('')
 
   useEffect(() => {
     if (open) {
-      setDeleting(false)
-      setError('')
+      setTyped('')
     }
   }, [open])
 
+  const confirmed =
+    !confirmationText ||
+    typed.trim() ===
+      confirmationText.trim()
+
   async function handleConfirm() {
-    if (deleting) return
+    if (!confirmed) {
+      return
+    }
 
     setDeleting(true)
-    setError('')
 
     try {
       await onConfirm()
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Delete failed. Please try again.',
-      )
-
+    }
+    finally {
       setDeleting(false)
     }
   }
@@ -71,7 +79,9 @@ export function ConfirmDeleteDialog({
   return (
     <AlertDialog
       open={open}
-      onOpenChange={(nextOpen) => {
+      onOpenChange={(
+        nextOpen,
+      ) => {
         if (
           !nextOpen &&
           !deleting
@@ -91,34 +101,60 @@ export function ConfirmDeleteDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        {error && (
-          <div
-            role="alert"
-            className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
-          >
-            {error}
+        {confirmationText && (
+          <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+            <Label
+              htmlFor="delete-confirmation"
+              className="text-sm text-red-900"
+            >
+              Type{' '}
+              <strong>
+                {confirmationText}
+              </strong>{' '}
+              to confirm
+            </Label>
+
+            <Input
+              id="delete-confirmation"
+              value={typed}
+              onChange={(
+                event,
+              ) =>
+                setTyped(
+                  event.target.value,
+                )
+              }
+              autoComplete="off"
+              className="mt-2 bg-white"
+            />
           </div>
         )}
 
         <AlertDialogFooter>
           <AlertDialogCancel
-            onClick={onCancel}
-            disabled={deleting}
+            onClick={
+              onCancel
+            }
+            disabled={
+              deleting
+            }
           >
             Cancel
           </AlertDialogCancel>
 
           <AlertDialogAction
-            disabled={deleting}
-            onClick={(event) => {
-              event.preventDefault()
-              void handleConfirm()
-            }}
+            onClick={
+              handleConfirm
+            }
+            disabled={
+              deleting ||
+              !confirmed
+            }
             className="bg-isr-bright-red text-white hover:bg-isr-bright-red/90"
           >
             {deleting
               ? 'Deleting…'
-              : 'Delete permanently'}
+              : 'Permanently delete'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

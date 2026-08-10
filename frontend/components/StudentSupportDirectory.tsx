@@ -21,7 +21,7 @@ const supportItems = [
     title:
       'Islamophobia or discrimination',
     description:
-      'If you have experienced Islamophobia, harassment, discrimination or treatment you believe relates to your Muslim identity, you can raise it with ISR.',
+      'Raise Islamophobia, harassment, discrimination or treatment you believe relates to your Muslim identity.',
     action:
       'Raise a concern',
     href: mailto(
@@ -33,7 +33,7 @@ const supportItems = [
     title:
       'Wellbeing or personal support',
     description:
-      'If university life is becoming difficult and you want to speak with someone from ISR about what you are dealing with, reach out.',
+      'If university life is becoming difficult and you want to speak with someone from ISR about what you are dealing with.',
     action:
       'Contact ISR',
     href: mailto(
@@ -81,33 +81,34 @@ export default function StudentSupportDirectory() {
     <>
       <section>
         <div className="max-w-3xl">
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-isr-turquoise">
-            Find the right starting point
+          <p className="isr-eyebrow text-isr-turquoise">
+            Choose a starting point
           </p>
 
-          <h2 className="mt-3 text-3xl font-bold leading-tight text-isr-dark-red sm:text-4xl">
-            What do you need help with?
+          <h2 className="mt-4 text-3xl font-bold leading-tight text-isr-dark-red sm:text-4xl">
+            What is affecting your experience?
           </h2>
 
           <p className="mt-4 leading-relaxed text-gray-700">
-            You do not need to know which ISR team handles
-            your issue before contacting us.
+            Pick the closest option. You do not need to
+            work out which ISR team or person is responsible
+            before contacting us.
           </p>
         </div>
 
         <div className="mt-9 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {supportItems.map(
             (item) => {
-              const content = (
+              const body = (
                 <>
                   <div className="flex items-center justify-between gap-4">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-isr-turquoise/10 text-xs font-bold text-isr-turquoise">
+                    <span className="isr-journey-number">
                       {item.number}
                     </span>
 
                     <span
                       aria-hidden="true"
-                      className="text-lg text-isr-turquoise"
+                      className="font-bold text-isr-turquoise"
                     >
                       →
                     </span>
@@ -134,22 +135,30 @@ export default function StudentSupportDirectory() {
               ) {
                 return (
                   <Link
-                    key={item.title}
-                    href={item.href}
-                    className="isr-card isr-card-interactive group flex flex-col p-5 sm:p-6"
+                    key={
+                      item.title
+                    }
+                    href={
+                      item.href
+                    }
+                    className="isr-choice-card isr-card isr-card-interactive group flex flex-col p-5 sm:p-6"
                   >
-                    {content}
+                    {body}
                   </Link>
                 )
               }
 
               return (
                 <a
-                  key={item.title}
-                  href={item.href}
-                  className="isr-card isr-card-interactive group flex flex-col p-5 sm:p-6"
+                  key={
+                    item.title
+                  }
+                  href={
+                    item.href
+                  }
+                  className="isr-choice-card isr-card isr-card-interactive group flex flex-col p-5 sm:p-6"
                 >
-                  {content}
+                  {body}
                 </a>
               )
             },
@@ -157,21 +166,20 @@ export default function StudentSupportDirectory() {
         </div>
       </section>
 
-      <section className="mt-12 grid gap-5 lg:grid-cols-2">
+      <section className="mt-10 grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
         <article className="rounded-[1.75rem] bg-isr-dark-red p-6 text-white sm:p-8">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-isr-yellow">
-            Prefer brothers or sisters?
+          <p className="isr-eyebrow text-isr-yellow">
+            Brothers or sisters
           </p>
 
-          <h2 className="mt-3 text-2xl font-bold">
-            Tell us in your message
+          <h2 className="mt-4 text-2xl font-bold">
+            You can state a preference
           </h2>
 
           <p className="mt-4 text-sm leading-relaxed text-white/75">
             If you would prefer your concern to be handled
             through brothers or sisters within ISR, mention
-            that when you contact us and we can route the
-            enquiry appropriately.
+            that when you contact us.
           </p>
 
           <a
@@ -184,27 +192,34 @@ export default function StudentSupportDirectory() {
           </a>
         </article>
 
-        <article className="rounded-[1.75rem] border border-isr-yellow bg-isr-yellow/35 p-6 sm:p-8">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-isr-turquoise">
-            Protect your information
+        <article className="rounded-[1.75rem] border border-isr-yellow bg-isr-yellow/30 p-6 sm:p-8">
+          <p className="isr-eyebrow text-isr-turquoise">
+            Before you send
           </p>
 
-          <h2 className="mt-3 text-2xl font-bold text-isr-dark-red">
-            Start with the minimum needed
+          <h2 className="mt-4 text-2xl font-bold text-isr-dark-red">
+            Start with a short explanation
           </h2>
 
           <p className="mt-4 text-sm leading-relaxed text-gray-700">
-            Begin with a short explanation of the issue.
             Avoid sending passwords, payment-card details,
             identity documents or highly sensitive records
             through ordinary email unless an appropriate
             process has first been confirmed.
           </p>
 
-          <p className="mt-4 text-sm leading-relaxed text-gray-700">
+          <p className="mt-4 text-sm font-semibold leading-relaxed text-isr-dark-red">
             ISR is a student society and is not an
-            emergency, medical, legal or counselling service.
+            emergency, medical, legal or counselling
+            service.
           </p>
+
+          <Link
+            href="/privacy"
+            className="isr-text-link mt-6"
+          >
+            Privacy information →
+          </Link>
         </article>
       </section>
     </>

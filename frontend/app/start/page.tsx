@@ -4,178 +4,260 @@ import type {
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import {
+  ISR_PUBLIC,
+} from '@/lib/siteContent'
 
 export const metadata: Metadata = {
   title: 'Start Here',
   description:
-    'Essential information for Muslim students starting at RMIT.',
+    'The essential first steps for Muslim students getting started at RMIT.',
 }
 
 const steps = [
   {
     number: '01',
-    title: 'Find somewhere to pray',
+    eyebrow: 'Prayer',
+    title:
+      'Find your campus prayer room',
     description:
-      'Find the brothers’ and sisters’ prayer rooms for City, Bundoora East, Bundoora West and Brunswick.',
-    action: 'Pray at RMIT',
-    href: '/pray',
+      'Know where to pray before you need it. City, Bundoora and Brunswick information is all in one place.',
+    href: '/pray#campus-prayer-spaces',
+    action:
+      'Find a prayer room',
   },
   {
     number: '02',
-    title: 'Know where Jumu’ah is',
+    eyebrow: 'Friday',
+    title:
+      'Know your Jumu’ah arrangements',
     description:
-      'Check City and Bundoora Friday prayer times and locations before you travel.',
-    action: 'Jumu’ah information',
+      'City and Bundoora have different Friday arrangements, while Brunswick currently has no ISR Jumu’ah.',
     href: '/pray#jumuah',
+    action:
+      'Check Jumu’ah',
   },
   {
     number: '03',
-    title: 'Join the Muslim community',
+    eyebrow: 'Community',
+    title:
+      'Join the ISR WhatsApp Community',
     description:
-      'Join the ISR WhatsApp Community so you stay connected to Muslim student life.',
-    action: 'Community links',
-    href: '/join#community',
+      'Stay connected to announcements, opportunities and Muslim student life at RMIT.',
+    href: ISR_PUBLIC.community.url,
+    action:
+      'Join WhatsApp Community',
+    external: true,
   },
   {
     number: '04',
-    title: 'Come to something',
+    eyebrow: 'Membership',
+    title:
+      'Become a free ISR member',
     description:
-      'Events and programs are one of the easiest ways to meet people and become part of ISR.',
-    action: 'Upcoming events',
-    href: '/events',
+      'Formal membership is free and helps strengthen the Society’s Muslim student membership.',
+    href: ISR_PUBLIC.membership.url,
+    action:
+      'Become a member',
+    external: true,
   },
   {
     number: '05',
-    title: 'Become an ISR member',
+    eyebrow: 'Participate',
+    title:
+      'Come to something',
     description:
-      'ISR membership is free and gives you a formal connection to the Society.',
-    action: 'Free membership',
-    href: '/join#membership',
+      'Classes, workshops, socials and community activities are one of the easiest ways to meet people.',
+    href: '/events',
+    action:
+      'Browse events',
   },
   {
     number: '06',
-    title: 'Know where to get help',
+    eyebrow: 'Support',
+    title:
+      'Know where to turn if something happens',
     description:
-      'If something is affecting your experience as a Muslim student, ISR can be a place to begin.',
-    action: 'Student Support',
+      'If something is affecting your experience as a Muslim student, you can begin with ISR.',
     href: '/support',
+    action:
+      'Student Support',
   },
 ]
 
 export default function StartPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-isr-cream via-white to-isr-yellow/20">
+    <div className="min-h-screen bg-gradient-to-b from-isr-cream via-white to-isr-yellow/15">
       <Navbar />
 
       <main id="main-content">
-        <section className="border-b border-isr-light-blue/20 bg-isr-dark-red px-4 py-14 text-white sm:py-20">
-          <div className="container-isr mx-auto max-w-6xl">
-            <div className="mx-auto max-w-3xl text-center">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-isr-yellow">
-                New to RMIT?
-              </p>
+        <section className="isr-page-hero bg-isr-dark-red px-4 py-14 text-white sm:py-20">
+          <div className="container-isr mx-auto max-w-7xl">
+            <div className="grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-end">
+              <div className="max-w-4xl">
+                <p className="isr-eyebrow text-isr-yellow">
+                  New to RMIT?
+                </p>
 
-              <h1 className="mt-3 text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
-                Start here
-              </h1>
+                <h1 className="mt-4 text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+                  Get the Muslim student essentials sorted
+                </h1>
 
-              <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/80 sm:text-xl">
-                The essentials for prayer, Jumu’ah,
-                community, membership, events and support
-                as a Muslim student at RMIT.
-              </p>
+                <p className="mt-5 max-w-3xl text-base leading-relaxed text-white/80 sm:text-xl">
+                  You do not need to learn everything about
+                  ISR on day one. Start with prayer,
+                  Jumu’ah, community, membership and a
+                  contact point.
+                </p>
+              </div>
 
-              <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-white/60">
-                You do not need to figure everything out
-                on your first day. These six steps will
-                get you connected.
-              </p>
+              <div className="rounded-[1.5rem] border border-white/15 bg-white/[0.08] p-5">
+                <p className="text-sm font-bold text-isr-yellow">
+                  Six useful first steps
+                </p>
+
+                <p className="mt-2 text-sm leading-relaxed text-white/65">
+                  You can complete them in any order.
+                  The goal is simply to make campus
+                  easier to navigate.
+                </p>
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="px-4 py-12 sm:py-16 lg:py-20">
+        <section className="px-4 py-14 sm:py-20">
           <div className="container-isr mx-auto max-w-6xl">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4">
               {steps.map(
-                (step) => (
-                  <Link
-                    key={step.number}
-                    href={step.href}
-                    className="isr-card isr-card-interactive group flex min-h-0 flex-col p-5 sm:min-h-64 sm:p-6"
-                  >
-                    <div className="flex items-center justify-between gap-4">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-isr-turquoise/10 text-sm font-bold text-isr-turquoise">
+                (step) => {
+                  const body = (
+                    <>
+                      <div className="isr-journey-number">
                         {step.number}
-                      </span>
+                      </div>
 
-                      <span
-                        aria-hidden="true"
-                        className="text-xl text-isr-turquoise transition-transform group-hover:translate-x-1"
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-bold uppercase tracking-[0.16em] text-isr-turquoise">
+                          {step.eyebrow}
+                        </p>
+
+                        <h2 className="mt-2 text-xl font-bold text-isr-dark-red sm:text-2xl">
+                          {step.title}
+                        </h2>
+
+                        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-gray-700">
+                          {step.description}
+                        </p>
+                      </div>
+
+                      <span className="shrink-0 font-bold text-isr-turquoise">
+                        {step.action} →
+                      </span>
+                    </>
+                  )
+
+                  if (
+                    step.external
+                  ) {
+                    return (
+                      <a
+                        key={step.number}
+                        href={
+                          step.href
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="isr-choice-card isr-card isr-card-interactive flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:p-6"
                       >
-                        →
-                      </span>
-                    </div>
+                        {body}
+                      </a>
+                    )
+                  }
 
-                    <h2 className="mt-5 text-xl font-bold leading-snug text-isr-dark-red">
-                      {step.title}
-                    </h2>
-
-                    <p className="mt-3 flex-1 text-sm leading-relaxed text-gray-700">
-                      {step.description}
-                    </p>
-
-                    <span className="mt-6 font-bold text-isr-turquoise">
-                      {step.action}
-                    </span>
-                  </Link>
-                ),
+                  return (
+                    <Link
+                      key={step.number}
+                      href={step.href}
+                      className="isr-choice-card isr-card isr-card-interactive flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:p-6"
+                    >
+                      {body}
+                    </Link>
+                  )
+                },
               )}
             </div>
+          </div>
+        </section>
 
-            <div className="mt-10 grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
-              <div className="rounded-[1.75rem] bg-isr-cream/70 p-6 sm:p-8">
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-isr-turquoise">
-                  One useful rule
+        <section className="bg-isr-cream/55 px-4 py-14 sm:py-20">
+          <div className="container-isr mx-auto max-w-6xl">
+            <div className="grid gap-5 lg:grid-cols-3">
+              <article className="rounded-[1.75rem] bg-white p-6 sm:p-7">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-isr-turquoise">
+                  Already settled in?
                 </p>
 
                 <h2 className="mt-3 text-2xl font-bold text-isr-dark-red">
-                  You do not have to wait until you know
-                  people to become part of ISR.
+                  Get involved
                 </h2>
 
-                <p className="mt-4 max-w-2xl leading-relaxed text-gray-700">
-                  Come to an event, join the community,
-                  pray on campus or send us a message.
-                  Starting small is completely fine.
+                <p className="mt-3 text-sm leading-relaxed text-gray-700">
+                  Volunteer, join the team or contribute to
+                  Muslim student life.
                 </p>
-              </div>
 
-              <Link
-                href="/join"
-                className="isr-button-primary lg:min-w-48"
-              >
-                Join ISR
-              </Link>
-            </div>
+                <Link
+                  href="/join"
+                  className="isr-text-link mt-6"
+                >
+                  Ways to get involved →
+                </Link>
+              </article>
 
-            <div className="mt-10 rounded-[1.75rem] bg-isr-dark-red px-5 py-9 text-center text-white sm:px-10 sm:py-12">
-              <h2 className="text-2xl font-bold sm:text-3xl">
-                Still not sure where to begin?
-              </h2>
+              <article className="rounded-[1.75rem] bg-white p-6 sm:p-7">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-isr-turquoise">
+                  Need something?
+                </p>
 
-              <p className="mx-auto mt-4 max-w-2xl leading-relaxed text-white/75">
-                Contact ISR and tell us what you need.
-                You do not need to know which team or
-                person handles it.
-              </p>
+                <h2 className="mt-3 text-2xl font-bold text-isr-dark-red">
+                  Talk to ISR
+                </h2>
 
-              <Link
-                href="/contact"
-                className="mt-7 inline-flex min-h-12 items-center justify-center rounded-full bg-white px-7 py-3 font-bold text-isr-dark-red transition hover:bg-isr-yellow"
-              >
-                Contact ISR
-              </Link>
+                <p className="mt-3 text-sm leading-relaxed text-gray-700">
+                  You do not need to know which team or
+                  person handles your enquiry.
+                </p>
+
+                <Link
+                  href="/contact"
+                  className="isr-text-link mt-6"
+                >
+                  Contact ISR →
+                </Link>
+              </article>
+
+              <article className="rounded-[1.75rem] bg-isr-dark-red p-6 text-white sm:p-7">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-isr-yellow">
+                  Learn more
+                </p>
+
+                <h2 className="mt-3 text-2xl font-bold">
+                  What is ISR?
+                </h2>
+
+                <p className="mt-3 text-sm leading-relaxed text-white/70">
+                  Learn why the Society exists and what it
+                  does for Muslim students.
+                </p>
+
+                <Link
+                  href="/about"
+                  className="mt-6 inline-flex font-bold text-isr-yellow"
+                >
+                  About ISR →
+                </Link>
+              </article>
             </div>
           </div>
         </section>

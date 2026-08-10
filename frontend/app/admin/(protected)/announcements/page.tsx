@@ -1,5 +1,7 @@
 'use client'
 
+/* eslint-disable @next/next/no-img-element */
+
 import {
   useCallback,
   useEffect,
@@ -8,22 +10,25 @@ import {
 } from 'react'
 import Link from 'next/link'
 import {
+  ExternalLinkIcon,
   PencilIcon,
+  PinIcon,
   PlusIcon,
+  SearchIcon,
   Trash2Icon,
 } from 'lucide-react'
 import {
   Button,
 } from '@/components/ui/button'
 import {
+  Input,
+} from '@/components/ui/input'
+import {
   AnnouncementModal,
 } from '@/components/admin/AnnouncementModal'
 import {
   ConfirmDeleteDialog,
 } from '@/components/admin/ConfirmDeleteDialog'
-import {
-  AdminFeedback,
-} from '@/components/admin/AdminFeedback'
 import {
   getToken,
 } from '@/lib/auth'
@@ -40,49 +45,30 @@ import {
   type Announcement,
   type AnnouncementPriority,
 } from '@/lib/announcements'
+import {
+  IS_LOCAL_ADMIN_MODE,
+} from '@/lib/localAdminMode'
+
+type PriorityFilter =
+  | 'all'
+  | AnnouncementPriority
 
 const PRIORITY_CLASSES: Record<
   AnnouncementPriority,
   string
 > = {
   normal:
-    'bg-isr-turquoise/10 text-isr-turquoise',
+    'bg-gray-100 text-gray-600',
   important:
-    'bg-isr-yellow/70 text-isr-dark-red',
+    'bg-amber-50 text-amber-800',
   urgent:
-    'bg-red-100 text-red-800',
+    'bg-red-50 text-red-700',
 }
 
-function formatExpiry(
-  value: string,
-): string {
-  const date =
-    new Date(value)
-
-  if (
-    Number.isNaN(
-      date.getTime(),
-    )
-  ) {
-    return 'Invalid expiry'
-  }
-
-  return new Intl.DateTimeFormat(
-    'en-AU',
-    {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-    },
-  ).format(date)
-}
-
-export default function AdminUpdatesPage() {
+export default function AdminAnnouncementsPage() {
   const [
-    updates,
-    setUpdates,
+    announcements,
+    setAnnouncements,
   ] =
     useState<Announcement[]>(
       [],
@@ -116,11 +102,21 @@ export default function AdminUpdatesPage() {
     priorityFilter,
     setPriorityFilter,
   ] =
+    useState<PriorityFilter>(
+      'all',
+    )
+
+  const [
+    visibilityFilter,
+    setVisibilityFilter,
+  ] =
     useState<
-      | 'all'
-      | AnnouncementPriority
-      | 'expired'
-    >('all')
+      'all' |
+      'active' |
+      'expired'
+    >(
+      'all',
+    )
 
   const [
     modalOpen,
@@ -150,7 +146,7 @@ export default function AdminUpdatesPage() {
       null,
     )
 
-  const loadUpdates =
+  const loadAnnouncements =
     useCallback(
       async () => {
         setLoading(true)
@@ -160,18 +156,23 @@ export default function AdminUpdatesPage() {
           const data =
             await fetchAllAnnouncements()
 
-          setUpdates(
+          setAnnouncements(
             sortAnnouncements(
               data,
             ),
           )
-        } catch (err) {
+        }
+        catch (
+          caught
+        ) {
           setLoadError(
-            err instanceof Error
-              ? err.message
+            caught instanceof
+              Error
+              ? caught.message
               : 'Failed to load ISR Updates.',
           )
-        } finally {
+        }
+        finally {
           setLoading(false)
         }
       },
@@ -179,56 +180,102 @@ export default function AdminUpdatesPage() {
     )
 
   useEffect(() => {
-    void loadUpdates()
-  }, [loadUpdates])
+    void loadAnnouncements()
+  }, [loadAnnouncements])
 
-  const filteredUpdates =
+  const stats =
+    useMemo(
+      () => ({
+        total:
+          announcements.length,
+
+        pinned:
+          announcements.filter(
+            (item) =>
+              item.pinned,
+          ).length,
+
+        urgent:
+          announcements.filter(
+            (item) =>
+              item.priority ===
+              'urgent',
+          ).length,
+
+        expired:
+          announcements.filter(
+            isAnnouncementExpired,
+          ).length,
+      }),
+      [announcements],
+    )
+
+  const visibleAnnouncements =
     useMemo(
       () => {
-        const query =
+        const normalized =
           search
             .trim()
             .toLowerCase()
 
-        return updates.filter(
-          (update) => {
+        return announcements.filter(
+          (item) => {
             const priority =
-              update.priority ??
+              item.priority ??
               'normal'
 
             const expired =
               isAnnouncementExpired(
-                update,
+                item,
               )
 
             const matchesPriority =
               priorityFilter ===
                 'all' ||
+              priority ===
+                priorityFilter
+
+            const matchesVisibility =
+              visibilityFilter ===
+                'all' ||
               (
-                priorityFilter ===
+                visibilityFilter ===
                   'expired'
                   ? expired
-                  : priority ===
-                    priorityFilter
+                  : !expired
               )
 
-            const matchesSearch =
-              !query ||
-              `${update.title} ${update.body}`
+            const searchable =
+              [
+                item.title,
+                item.body,
+                item.actionLabel,
+                item.contentOwner,
+              ]
+                .filter(
+                  Boolean,
+                )
+                .join(' ')
                 .toLowerCase()
-                .includes(query)
 
             return (
               matchesPriority &&
-              matchesSearch
+              matchesVisibility &&
+              (
+                !normalized ||
+                searchable.includes(
+                  normalized,
+                )
+              )
             )
           },
         )
       },
       [
-        updates,
+        announcements,
         search,
         priorityFilter,
+        visibilityFilter,
       ],
     )
 
@@ -242,10 +289,11 @@ export default function AdminUpdatesPage() {
   }
 
   function openEdit(
-    update: Announcement,
+    announcement:
+      Announcement,
   ) {
     setSelectedAnnouncement(
-      update,
+      announcement,
     )
 
     setModalOpen(true)
@@ -253,33 +301,41 @@ export default function AdminUpdatesPage() {
   }
 
   function openDelete(
-    update: Announcement,
+    announcement:
+      Announcement,
   ) {
     setAnnouncementToDelete(
-      update,
+      announcement,
     )
 
     setDeleteOpen(true)
     setFeedback('')
   }
 
+  function closeModal() {
+    setModalOpen(false)
+    setSelectedAnnouncement(
+      null,
+    )
+  }
+
   function closeDelete() {
     setDeleteOpen(false)
-
     setAnnouncementToDelete(
       null,
     )
   }
 
   async function handleSubmit(
-    formData: FormData,
+    formData:
+      FormData,
   ) {
     const token =
       getToken()
 
     if (!token) {
       throw new Error(
-        'Admin session is unavailable. Please sign in again.',
+        'Your admin session has expired. Sign in again.',
       )
     }
 
@@ -293,7 +349,7 @@ export default function AdminUpdatesPage() {
           formData,
         )
 
-      setUpdates(
+      setAnnouncements(
         (previous) =>
           sortAnnouncements(
             previous.map(
@@ -307,25 +363,26 @@ export default function AdminUpdatesPage() {
       )
 
       setFeedback(
-        `"${updated.title}" was updated.`,
+        `Saved "${updated.title}".`,
       )
-    } else {
+    }
+    else {
       const created =
         await createAnnouncement(
           token,
           formData,
         )
 
-      setUpdates(
+      setAnnouncements(
         (previous) =>
           sortAnnouncements([
-            created,
             ...previous,
+            created,
           ]),
       )
 
       setFeedback(
-        `"${created.title}" was published.`,
+        `Created "${created.title}".`,
       )
     }
   }
@@ -341,174 +398,268 @@ export default function AdminUpdatesPage() {
       getToken()
 
     if (!token) {
-      throw new Error(
-        'Admin session is unavailable. Please sign in again.',
+      setFeedback(
+        'Your admin session has expired.',
       )
+
+      closeDelete()
+
+      return
     }
 
-    const deleting =
+    const title =
       announcementToDelete
+        .title
 
-    await deleteAnnouncement(
-      token,
-      deleting.id,
-    )
+    try {
+      await deleteAnnouncement(
+        token,
+        announcementToDelete.id,
+      )
 
-    setUpdates(
-      (previous) =>
-        previous.filter(
-          (item) =>
-            item.id !==
-            deleting.id,
-        ),
-    )
+      setAnnouncements(
+        (previous) =>
+          previous.filter(
+            (item) =>
+              item.id !==
+              announcementToDelete.id,
+          ),
+      )
 
-    closeDelete()
-
-    setFeedback(
-      `"${deleting.title}" was deleted.`,
-    )
+      setFeedback(
+        `Deleted "${title}".`,
+      )
+    }
+    catch (
+      caught
+    ) {
+      setFeedback(
+        caught instanceof
+          Error
+          ? caught.message
+          : `Could not delete "${title}".`,
+      )
+    }
+    finally {
+      closeDelete()
+    }
   }
+
+  const hasFilters =
+    Boolean(
+      search.trim(),
+    ) ||
+    priorityFilter !==
+      'all' ||
+    visibilityFilter !==
+      'all'
 
   return (
     <div>
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+      <header className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-sm font-bold uppercase tracking-[0.16em] text-isr-turquoise">
-            Website content
-          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-isr-turquoise">
+              Content management
+            </p>
+
+            {IS_LOCAL_ADMIN_MODE && (
+              <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-amber-900">
+                Local sandbox
+              </span>
+            )}
+          </div>
 
           <h1 className="mt-2 text-3xl font-bold text-isr-dark-red">
             ISR Updates
           </h1>
 
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600">
-            Manage important notices, prayer changes, event changes and other time-sensitive student information.
+            Manage important notices, temporary changes and
+            operational information shown to students.
           </p>
         </div>
 
         <Button
-          onClick={openCreate}
-          className="bg-isr-turquoise text-white hover:bg-isr-turquoise/90"
+          onClick={
+            openCreate
+          }
+          className="gap-2 bg-isr-dark-red text-white hover:bg-isr-turquoise"
         >
-          <PlusIcon className="size-4" />
+          <PlusIcon className="h-4 w-4" />
           New ISR Update
         </Button>
-      </div>
+      </header>
+
+      <section className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="isr-admin-stat">
+          <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
+            Total
+          </p>
+
+          <p className="mt-2 text-2xl font-bold text-isr-dark-red">
+            {stats.total}
+          </p>
+        </div>
+
+        <div className="isr-admin-stat">
+          <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
+            Pinned
+          </p>
+
+          <p className="mt-2 text-2xl font-bold text-isr-turquoise">
+            {stats.pinned}
+          </p>
+        </div>
+
+        <div className="isr-admin-stat">
+          <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
+            Urgent
+          </p>
+
+          <p className="mt-2 text-2xl font-bold text-red-700">
+            {stats.urgent}
+          </p>
+        </div>
+
+        <div className="isr-admin-stat">
+          <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
+            Expired
+          </p>
+
+          <p className="mt-2 text-2xl font-bold text-gray-600">
+            {stats.expired}
+          </p>
+        </div>
+      </section>
 
       {feedback && (
-        <div className="mt-6">
-          <AdminFeedback
-            message={feedback}
-            type="success"
-            onDismiss={() =>
-              setFeedback('')
-            }
-          />
+        <div
+          role="status"
+          className="mt-5 rounded-xl border border-isr-turquoise/25 bg-isr-turquoise/5 px-4 py-3 text-sm font-semibold text-isr-dark-red"
+        >
+          {feedback}
         </div>
       )}
 
-      <div className="mt-6 grid gap-3 rounded-2xl border bg-white p-4 sm:grid-cols-[1fr_auto]">
-        <label
-          className="sr-only"
-          htmlFor="admin-update-search"
-        >
-          Search ISR Updates
-        </label>
+      <section className="isr-admin-toolbar mt-6">
+        <div className="grid gap-3 lg:grid-cols-[1fr_190px_190px_auto]">
+          <label className="relative">
+            <span className="sr-only">
+              Search ISR Updates
+            </span>
 
-        <input
-          id="admin-update-search"
-          type="search"
-          value={search}
-          onChange={(e) =>
-            setSearch(
-              e.target.value,
-            )
-          }
-          placeholder="Search updates..."
-          className="rounded-xl border border-isr-light-blue/40 px-4 py-2.5 text-sm outline-none focus:border-isr-turquoise focus:ring-2 focus:ring-isr-turquoise/15"
-        />
+            <SearchIcon className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
 
-        <label
-          className="sr-only"
-          htmlFor="admin-update-priority"
-        >
-          Filter ISR Updates
-        </label>
+            <Input
+              value={search}
+              onChange={(
+                event,
+              ) =>
+                setSearch(
+                  event.target.value,
+                )
+              }
+              className="pl-9"
+              placeholder="Search updates…"
+            />
+          </label>
 
-        <select
-          id="admin-update-priority"
-          value={priorityFilter}
-          onChange={(e) =>
-            setPriorityFilter(
-              e.target.value as
-                | 'all'
-                | AnnouncementPriority
-                | 'expired',
-            )
-          }
-          className="rounded-xl border border-isr-light-blue/40 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 outline-none focus:border-isr-turquoise"
-        >
-          <option value="all">
-            All updates
-          </option>
-
-          <option value="urgent">
-            Urgent
-          </option>
-
-          <option value="important">
-            Important
-          </option>
-
-          <option value="normal">
-            Normal
-          </option>
-
-          <option value="expired">
-            Expired
-          </option>
-        </select>
-      </div>
-
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-gray-500">
-        <p>
-          {
-            filteredUpdates.length
-          } {
-            filteredUpdates.length ===
-            1
-              ? 'update'
-              : 'updates'
-          }
-        </p>
-
-        {(search ||
-          priorityFilter !==
-            'all') && (
-          <button
-            type="button"
-            onClick={() => {
-              setSearch('')
+          <select
+            value={
+              priorityFilter
+            }
+            onChange={(
+              event,
+            ) =>
               setPriorityFilter(
-                'all',
+                event.target
+                  .value as PriorityFilter,
               )
-            }}
-            className="font-semibold text-isr-turquoise"
+            }
+            aria-label="Filter ISR Update priority"
+            className="flex h-9 rounded-md border border-input bg-white px-3 text-sm"
           >
-            Clear filters
-          </button>
-        )}
-      </div>
+            <option value="all">
+              All priorities
+            </option>
+
+            <option value="normal">
+              Normal
+            </option>
+
+            <option value="important">
+              Important
+            </option>
+
+            <option value="urgent">
+              Urgent
+            </option>
+          </select>
+
+          <select
+            value={
+              visibilityFilter
+            }
+            onChange={(
+              event,
+            ) =>
+              setVisibilityFilter(
+                event.target
+                  .value as
+                  | 'all'
+                  | 'active'
+                  | 'expired',
+              )
+            }
+            aria-label="Filter ISR Update visibility"
+            className="flex h-9 rounded-md border border-input bg-white px-3 text-sm"
+          >
+            <option value="all">
+              Active & expired
+            </option>
+
+            <option value="active">
+              Active only
+            </option>
+
+            <option value="expired">
+              Expired only
+            </option>
+          </select>
+
+          {hasFilters && (
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSearch('')
+                setPriorityFilter(
+                  'all',
+                )
+                setVisibilityFilter(
+                  'all',
+                )
+              }}
+            >
+              Clear
+            </Button>
+          )}
+        </div>
+
+        {!loading &&
+          !loadError && (
+            <p className="mt-3 text-xs text-gray-500">
+              Showing {visibleAnnouncements.length} of {announcements.length} updates.
+            </p>
+          )}
+      </section>
 
       {loading && (
-        <div className="mt-8 grid gap-4">
+        <div className="mt-6 space-y-4">
           {[1, 2, 3].map(
             (item) => (
               <div
-                key={
-                  item
-                }
+                key={item}
                 className="h-40 animate-pulse rounded-2xl bg-white"
               />
             ),
@@ -518,18 +669,19 @@ export default function AdminUpdatesPage() {
 
       {!loading &&
         loadError && (
-          <div className="mt-8">
-            <AdminFeedback
-              message={
-                loadError
-              }
-              type="error"
-            />
+          <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-6">
+            <h2 className="font-bold text-red-900">
+              ISR Updates could not be loaded
+            </h2>
+
+            <p className="mt-2 text-sm text-red-800">
+              {loadError}
+            </p>
 
             <Button
               variant="outline"
               onClick={() =>
-                void loadUpdates()
+                void loadAnnouncements()
               }
               className="mt-4"
             >
@@ -540,162 +692,169 @@ export default function AdminUpdatesPage() {
 
       {!loading &&
         !loadError &&
-        filteredUpdates.length ===
+        visibleAnnouncements.length ===
           0 && (
-          <div className="mt-8 rounded-2xl border bg-white p-10 text-center">
+          <div className="mt-6 rounded-2xl border border-isr-light-blue/25 bg-white p-8 text-center">
             <h2 className="text-xl font-bold text-isr-dark-red">
-              No matching ISR Updates
+              {hasFilters
+                ? 'No updates match these filters'
+                : 'No ISR Updates yet'}
             </h2>
-
-            <p className="mt-2 text-sm text-gray-600">
-              Publish a new update or change the current filters.
-            </p>
           </div>
         )}
 
       {!loading &&
         !loadError &&
-        filteredUpdates.length >
+        visibleAnnouncements.length >
           0 && (
-          <div className="mt-8 space-y-4">
-            {filteredUpdates.map(
-              (update) => {
+          <div className="mt-6 space-y-4">
+            {visibleAnnouncements.map(
+              (
+                announcement,
+              ) => {
                 const priority =
-                  update.priority ??
+                  announcement.priority ??
                   'normal'
 
                 const expired =
                   isAnnouncementExpired(
-                    update,
+                    announcement,
                   )
 
                 return (
                   <article
                     key={
-                      update.id
+                      announcement.id
                     }
-                    className={`rounded-2xl border bg-white p-5 shadow-sm sm:p-6 ${
+                    className={`isr-admin-item overflow-hidden ${
                       expired
                         ? 'opacity-70'
                         : ''
                     }`}
                   >
-                    <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span
-                            className={`rounded-full px-3 py-1 text-xs font-bold ${
-                              PRIORITY_CLASSES[
-                                priority
-                              ]
-                            }`}
-                          >
-                            {
-                              priority ===
-                              'normal'
-                                ? 'Normal'
-                                : priority ===
-                                    'important'
-                                  ? 'Important'
-                                  : 'Urgent'
+                    <div
+                      className={
+                        announcement.imageUrl
+                          ? 'grid md:grid-cols-[150px_1fr]'
+                          : ''
+                      }
+                    >
+                      {announcement.imageUrl && (
+                        <div className="isr-admin-preview relative min-h-36 rounded-none border-0">
+                          <img
+                            src={
+                              announcement.imageUrl
                             }
-                          </span>
-
-                          {update.pinned && (
-                            <span className="rounded-full bg-isr-dark-red px-3 py-1 text-xs font-bold text-white">
-                              Pinned
-                            </span>
-                          )}
-
-                          {expired && (
-                            <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-bold text-gray-700">
-                              Expired
-                            </span>
-                          )}
+                            alt=""
+                            className="h-full w-full object-contain p-2"
+                          />
                         </div>
+                      )}
 
-                        <h2 className="mt-4 text-xl font-bold text-isr-dark-red">
-                          {
-                            update.title
-                          }
-                        </h2>
+                      <div className="p-5">
+                        <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span
+                                className={`isr-admin-status ${PRIORITY_CLASSES[priority]}`}
+                              >
+                                {priority}
+                              </span>
 
-                        <p className="mt-2 text-sm leading-relaxed text-gray-700">
-                          {
-                            update.body.length >
-                            220
-                              ? `${update.body.slice(
-                                  0,
-                                  220,
-                                )}…`
-                              : update.body
-                          }
-                        </p>
+                              {announcement.pinned && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-isr-turquoise/10 px-2.5 py-1 text-xs font-bold text-isr-turquoise">
+                                  <PinIcon className="h-3 w-3" />
+                                  Pinned
+                                </span>
+                              )}
 
-                        <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-gray-500">
-                          <span>
-                            Posted {
-                              formatAnnouncementDate(
-                                update.createdAt,
-                              )
-                            }
-                          </span>
+                              {expired && (
+                                <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-bold text-gray-600">
+                                  Expired
+                                </span>
+                              )}
+                            </div>
 
-                          {update.expiresAt && (
-                            <span>
-                              Expires {
-                                formatExpiry(
-                                  update.expiresAt,
+                            <h2 className="mt-3 text-xl font-bold leading-snug text-isr-dark-red">
+                              {announcement.title}
+                            </h2>
+
+                            <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                              {formatAnnouncementDate(
+                                announcement.createdAt,
+                              )}
+                            </p>
+
+                            <p className="mt-3 line-clamp-3 max-w-3xl text-sm leading-relaxed text-gray-700">
+                              {announcement.body}
+                            </p>
+
+                            {(announcement.actionLabel ||
+                              announcement.expiresAt ||
+                              announcement.contentOwner) && (
+                              <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-gray-500">
+                                {announcement.actionLabel && (
+                                  <span>
+                                    Action: {announcement.actionLabel}
+                                  </span>
+                                )}
+
+                                {announcement.expiresAt && (
+                                  <span>
+                                    Expires: {formatAnnouncementDate(
+                                      announcement.expiresAt,
+                                    )}
+                                  </span>
+                                )}
+
+                                {announcement.contentOwner && (
+                                  <span>
+                                    Owner: {announcement.contentOwner}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="isr-admin-mobile-actions flex shrink-0 flex-col gap-2 sm:flex-row">
+                            <Link
+                              href="/updates"
+                              target="_blank"
+                              className="inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-sm font-semibold text-isr-dark-red hover:bg-isr-cream"
+                            >
+                              <ExternalLinkIcon className="h-4 w-4" />
+                              Preview
+                            </Link>
+
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                openEdit(
+                                  announcement,
                                 )
                               }
-                            </span>
-                          )}
+                              className="gap-2"
+                            >
+                              <PencilIcon className="h-4 w-4" />
+                              Edit
+                            </Button>
 
-                          {update.actionLabel && (
-                            <span>
-                              Action: {
-                                update.actionLabel
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                openDelete(
+                                  announcement,
+                                )
                               }
-                            </span>
-                          )}
+                              className="gap-2 border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
+                            >
+                              <Trash2Icon className="h-4 w-4" />
+                              Delete
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-
-                      <div className="flex shrink-0 flex-wrap gap-2 lg:flex-col">
-                        <Link
-                          href="/updates"
-                          target="_blank"
-                          className="rounded-lg border px-3 py-2 text-xs font-bold text-gray-700 transition hover:bg-gray-50"
-                        >
-                          Public view ↗
-                        </Link>
-
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() =>
-                            openEdit(
-                              update,
-                            )
-                          }
-                        >
-                          <PencilIcon className="size-4" />
-                          Edit
-                        </Button>
-
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() =>
-                            openDelete(
-                              update,
-                            )
-                          }
-                          className="text-red-700 hover:bg-red-50 hover:text-red-800"
-                        >
-                          <Trash2Icon className="size-4" />
-                          Delete
-                        </Button>
                       </div>
                     </div>
                   </article>
@@ -710,22 +869,29 @@ export default function AdminUpdatesPage() {
         announcement={
           selectedAnnouncement
         }
-        onClose={() =>
-          setModalOpen(false)
+        onClose={
+          closeModal
         }
-        onSubmit={handleSubmit}
+        onSubmit={
+          handleSubmit
+        }
       />
 
       <ConfirmDeleteDialog
-        open={deleteOpen}
-        title="Delete ISR Update?"
-        description={
-          announcementToDelete
-            ? `You are about to permanently delete "${announcementToDelete.title}". This cannot be undone.`
-            : 'This ISR Update will be permanently deleted.'
+        open={
+          deleteOpen
         }
-        onConfirm={handleDelete}
-        onCancel={closeDelete}
+        title="Permanently delete ISR Update?"
+        description={`This will delete "${announcementToDelete?.title ?? ''}". This cannot be undone.`}
+        confirmationText={
+          announcementToDelete?.title
+        }
+        onConfirm={
+          handleDelete
+        }
+        onCancel={
+          closeDelete
+        }
       />
     </div>
   )

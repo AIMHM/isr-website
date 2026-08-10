@@ -38,39 +38,13 @@ import type {
 interface Props {
   open: boolean
   announcement:
-    | Announcement
-    | null
+    Announcement |
+    null
   onClose: () => void
-  onSubmit:
-    (
-      formData: FormData,
-    ) => Promise<void>
+  onSubmit: (
+    formData: FormData,
+  ) => Promise<void>
 }
-
-const PRIORITIES: {
-  value: AnnouncementPriority
-  label: string
-  description: string
-}[] = [
-  {
-    value: 'normal',
-    label: 'Normal',
-    description:
-      'Standard ISR information.',
-  },
-  {
-    value: 'important',
-    label: 'Important',
-    description:
-      'Something students should pay attention to.',
-  },
-  {
-    value: 'urgent',
-    label: 'Urgent',
-    description:
-      'Time-sensitive information requiring prominent display.',
-  },
-]
 
 function validActionUrl(
   value: string,
@@ -80,21 +54,27 @@ function validActionUrl(
   }
 
   if (
-    value.startsWith('/') &&
-    !value.startsWith('//')
+    value.startsWith(
+      '/',
+    )
   ) {
     return true
   }
 
   try {
     const url =
-      new URL(value)
+      new URL(
+        value,
+      )
 
     return (
-      url.protocol === 'http:' ||
-      url.protocol === 'https:'
+      url.protocol ===
+        'http:' ||
+      url.protocol ===
+        'https:'
     )
-  } catch {
+  }
+  catch {
     return false
   }
 }
@@ -106,7 +86,8 @@ export function AnnouncementModal({
   onSubmit,
 }: Props) {
   const isEdit =
-    announcement !== null
+    announcement !==
+    null
 
   const [
     title,
@@ -153,18 +134,16 @@ export function AnnouncementModal({
     useState('')
 
   const [
+    contentOwner,
+    setContentOwner,
+  ] =
+    useState('')
+
+  const [
     imageFile,
     setImageFile,
   ] =
     useState<File | null>(
-      null,
-    )
-
-  const [
-    imagePreview,
-    setImagePreview,
-  ] =
-    useState<string | null>(
       null,
     )
 
@@ -180,7 +159,17 @@ export function AnnouncementModal({
   ] =
     useState(false)
 
+  const [
+    dirty,
+    setDirty,
+  ] =
+    useState(false)
+
   useEffect(() => {
+    if (!open) {
+      return
+    }
+
     setTitle(
       announcement?.title ??
         '',
@@ -204,7 +193,8 @@ export function AnnouncementModal({
     setExpiresAt(
       announcement?.expiresAt
         ? toDatetimeLocalValue(
-            announcement.expiresAt,
+            announcement
+              .expiresAt,
           )
         : '',
     )
@@ -219,93 +209,50 @@ export function AnnouncementModal({
         '',
     )
 
-    setImageFile(null)
-
-    setImagePreview(
-      announcement?.imageUrl ||
-        null,
+    setContentOwner(
+      announcement?.contentOwner ??
+        '',
     )
 
+    setImageFile(null)
     setError('')
-    setSubmitting(false)
+    setDirty(false)
   }, [
     announcement,
     open,
   ])
 
-  useEffect(() => {
-    if (!imageFile) {
-      setImagePreview(
-        announcement?.imageUrl ||
-          null,
-      )
-      return
-    }
-
-    const objectUrl =
-      URL.createObjectURL(
-        imageFile,
-      )
-
-    setImagePreview(
-      objectUrl,
-    )
-
-    return () => {
-      URL.revokeObjectURL(
-        objectUrl,
-      )
-    }
-  }, [
-    imageFile,
-    announcement?.imageUrl,
-  ])
-
-  function handleImage(
-    file:
-      | File
-      | null,
+  function change(
+    setter:
+      React.Dispatch<
+        React.SetStateAction<string>
+      >,
+    value: string,
   ) {
-    if (!file) {
-      setImageFile(null)
-      return
-    }
-
-    if (
-      ![
-        'image/jpeg',
-        'image/png',
-        'image/webp',
-      ].includes(
-        file.type,
-      )
-    ) {
-      setError(
-        'Image must be JPEG, PNG or WebP.',
-      )
-      return
-    }
-
-    if (
-      file.size >
-      5 * 1024 * 1024
-    ) {
-      setError(
-        'Image must be 5 MB or smaller.',
-      )
-      return
-    }
-
-    setError('')
-    setImageFile(file)
+    setter(value)
+    setDirty(true)
   }
 
-  async function handleSave(
-    submitEvent:
-      React.FormEvent,
-  ) {
-    submitEvent.preventDefault()
+  function requestClose() {
+    if (
+      submitting
+    ) {
+      return
+    }
 
+    if (
+      dirty &&
+      !window.confirm(
+        'Discard unsaved ISR Update changes?',
+      )
+    ) {
+      return
+    }
+
+    onClose()
+  }
+
+  async function handleSave() {
     if (
       !title.trim() ||
       !body.trim()
@@ -313,20 +260,28 @@ export function AnnouncementModal({
       setError(
         'Title and update text are required.',
       )
+
       return
     }
 
-    if (
+    const hasActionLabel =
       Boolean(
         actionLabel.trim(),
-      ) !==
+      )
+
+    const hasActionUrl =
       Boolean(
         actionUrl.trim(),
       )
+
+    if (
+      hasActionLabel !==
+      hasActionUrl
     ) {
       setError(
-        'Action label and action link must be provided together.',
+        'Action label and action URL must either both be supplied or both be blank.',
       )
+
       return
     }
 
@@ -336,22 +291,9 @@ export function AnnouncementModal({
       )
     ) {
       setError(
-        'Action link must be a website path such as /pray or a full http/https URL.',
+        'Action URL must be an internal path beginning with / or a valid http/https URL.',
       )
-      return
-    }
 
-    if (
-      expiresAt &&
-      Number.isNaN(
-        new Date(
-          expiresAt,
-        ).getTime(),
-      )
-    ) {
-      setError(
-        'Expiry date is invalid.',
-      )
       return
     }
 
@@ -402,7 +344,14 @@ export function AnnouncementModal({
       actionUrl.trim(),
     )
 
-    if (imageFile) {
+    formData.set(
+      'contentOwner',
+      contentOwner.trim(),
+    )
+
+    if (
+      imageFile
+    ) {
       formData.set(
         'image',
         imageFile,
@@ -414,14 +363,20 @@ export function AnnouncementModal({
         formData,
       )
 
+      setDirty(false)
       onClose()
-    } catch (err) {
+    }
+    catch (
+      caught
+    ) {
       setError(
-        err instanceof Error
-          ? err.message
+        caught instanceof
+          Error
+          ? caught.message
           : 'The ISR Update could not be saved.',
       )
-    } finally {
+    }
+    finally {
       setSubmitting(false)
     }
   }
@@ -429,204 +384,224 @@ export function AnnouncementModal({
   return (
     <Dialog
       open={open}
-      onOpenChange={(nextOpen) => {
-        if (
-          !nextOpen &&
-          !submitting
-        ) {
-          onClose()
+      onOpenChange={(
+        nextOpen,
+      ) => {
+        if (!nextOpen) {
+          requestClose()
         }
       }}
     >
       <DialogContent
-        showCloseButton={false}
-        className="max-h-[92vh] overflow-y-auto sm:max-w-2xl"
+        className="max-h-[92vh] overflow-y-auto sm:max-w-3xl"
+        showCloseButton={
+          false
+        }
       >
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-2xl text-isr-dark-red">
             {isEdit
               ? 'Edit ISR Update'
               : 'Create ISR Update'}
           </DialogTitle>
         </DialogHeader>
 
-        <form
-          onSubmit={handleSave}
-          className="space-y-7"
-        >
-          <section className="space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="an-title">
-                Title *
-              </Label>
+        <p className="text-sm text-gray-600">
+          Use ISR Updates for operational or
+          time-sensitive information students may
+          need to act on.
+        </p>
 
-              <Input
-                id="an-title"
-                value={title}
-                onChange={(e) =>
-                  setTitle(
-                    e.target.value,
-                  )
-                }
-                placeholder="e.g. Bundoora Jumu’ah Time Change"
-                disabled={submitting}
-              />
-            </div>
+        <div className="space-y-5 py-2">
+          <section className="isr-admin-fieldset">
+            <h3 className="isr-admin-fieldset-title">
+              Update content
+            </h3>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="an-body">
-                Update text *
-              </Label>
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="an-title"
+                  className="isr-admin-required"
+                >
+                  Title
+                </Label>
 
-              <Textarea
-                id="an-body"
-                value={body}
-                onChange={(e) =>
-                  setBody(
-                    e.target.value,
-                  )
-                }
-                rows={6}
-                placeholder="What has changed and what should students do?"
-                disabled={submitting}
-              />
+                <Input
+                  id="an-title"
+                  value={title}
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setTitle,
+                      inputEvent
+                        .target
+                        .value,
+                    )
+                  }
+                  placeholder="What changed?"
+                />
+              </div>
 
-              <p className="text-xs text-muted-foreground">
-                {
-                  body.length
-                } characters
-              </p>
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="an-body"
+                  className="isr-admin-required"
+                >
+                  Update text
+                </Label>
+
+                <Textarea
+                  id="an-body"
+                  value={body}
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setBody,
+                      inputEvent
+                        .target
+                        .value,
+                    )
+                  }
+                  rows={7}
+                  placeholder="Give students the information they actually need."
+                />
+
+                <p className="text-xs text-gray-500">
+                  {body.length} characters
+                </p>
+              </div>
             </div>
           </section>
 
-          <section className="space-y-4 border-t pt-6">
-            <div>
-              <h3 className="font-bold text-isr-dark-red">
-                Visibility
-              </h3>
+          <section className="isr-admin-fieldset">
+            <h3 className="isr-admin-fieldset-title">
+              Visibility & priority
+            </h3>
 
-              <p className="mt-1 text-xs text-muted-foreground">
-                Use urgency carefully so genuinely important notices remain meaningful.
-              </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="an-priority">
+                  Priority
+                </Label>
+
+                <select
+                  id="an-priority"
+                  value={priority}
+                  onChange={(
+                    inputEvent,
+                  ) => {
+                    setPriority(
+                      inputEvent
+                        .target
+                        .value as AnnouncementPriority,
+                    )
+
+                    setDirty(true)
+                  }}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                >
+                  <option value="normal">
+                    Normal
+                  </option>
+
+                  <option value="important">
+                    Important
+                  </option>
+
+                  <option value="urgent">
+                    Urgent
+                  </option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="an-expiry">
+                  Expiry
+                  <span className="ml-1 font-normal text-gray-400">
+                    optional
+                  </span>
+                </Label>
+
+                <Input
+                  id="an-expiry"
+                  type="datetime-local"
+                  value={expiresAt}
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setExpiresAt,
+                      inputEvent
+                        .target
+                        .value,
+                    )
+                  }
+                />
+              </div>
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="an-priority">
-                Priority
-              </Label>
-
-              <select
-                id="an-priority"
-                value={priority}
-                onChange={(e) =>
-                  setPriority(
-                    e.target
-                      .value as AnnouncementPriority,
-                  )
-                }
-                disabled={submitting}
-                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {PRIORITIES.map(
-                  (item) => (
-                    <option
-                      key={
-                        item.value
-                      }
-                      value={
-                        item.value
-                      }
-                    >
-                      {
-                        item.label
-                      }
-                    </option>
-                  ),
-                )}
-              </select>
-
-              <p className="text-xs text-muted-foreground">
-                {
-                  PRIORITIES.find(
-                    (item) =>
-                      item.value ===
-                      priority,
-                  )?.description
-                }
-              </p>
-            </div>
-
-            <div className="flex items-center justify-between gap-5 rounded-xl border p-4">
+            <div className="mt-4 flex items-center justify-between gap-4 rounded-xl border bg-white px-4 py-4">
               <div>
-                <p className="text-sm font-semibold text-isr-dark-red">
-                  Pin this update
-                </p>
+                <Label htmlFor="an-pinned">
+                  Pin update
+                </Label>
 
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Pinned updates are prioritised above ordinary notices.
+                <p className="mt-1 text-xs leading-relaxed text-gray-500">
+                  Pinned updates receive stronger
+                  prominence and appear before ordinary
+                  updates.
                 </p>
               </div>
 
               <Switch
+                id="an-pinned"
                 checked={pinned}
-                onCheckedChange={
-                  setPinned
-                }
-                disabled={submitting}
-                aria-label="Pin this ISR Update"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="an-expires">
-                Expire automatically
-              </Label>
-
-              <Input
-                id="an-expires"
-                type="datetime-local"
-                value={expiresAt}
-                onChange={(e) =>
-                  setExpiresAt(
-                    e.target.value,
+                onCheckedChange={(
+                  checked,
+                ) => {
+                  setPinned(
+                    checked,
                   )
-                }
-                disabled={submitting}
-              />
 
-              <p className="text-xs text-muted-foreground">
-                Useful for room changes, event notices and other temporary information. Leave blank for no automatic expiry.
-              </p>
+                  setDirty(true)
+                }}
+              />
             </div>
           </section>
 
-          <section className="space-y-4 border-t pt-6">
-            <div>
-              <h3 className="font-bold text-isr-dark-red">
-                Optional action
-              </h3>
+          <section className="isr-admin-fieldset">
+            <h3 className="isr-admin-fieldset-title">
+              Optional action
+            </h3>
 
-              <p className="mt-1 text-xs text-muted-foreground">
-                Add a button only when there is a clear next step.
-              </p>
-            </div>
+            <p className="mb-4 text-xs leading-relaxed text-gray-500">
+              Only add an action when students genuinely
+              need somewhere to go next.
+            </p>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label htmlFor="an-action-label">
-                  Button text
+                  Button label
                 </Label>
 
                 <Input
                   id="an-action-label"
                   value={actionLabel}
-                  onChange={(e) =>
-                    setActionLabel(
-                      e.target.value,
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setActionLabel,
+                      inputEvent
+                        .target
+                        .value,
                     )
                   }
-                  placeholder="View prayer information"
-                  disabled={submitting}
+                  placeholder="e.g. Register now"
                 />
               </div>
 
@@ -638,136 +613,142 @@ export function AnnouncementModal({
                 <Input
                   id="an-action-url"
                   value={actionUrl}
-                  onChange={(e) =>
-                    setActionUrl(
-                      e.target.value,
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setActionUrl,
+                      inputEvent
+                        .target
+                        .value,
                     )
                   }
-                  placeholder="/pray or https://..."
-                  disabled={submitting}
+                  placeholder="/events or https://..."
                 />
               </div>
             </div>
           </section>
 
-          <section className="space-y-4 border-t pt-6">
-            <div>
-              <h3 className="font-bold text-isr-dark-red">
-                Image
-              </h3>
-
-              <p className="mt-1 text-xs text-muted-foreground">
-                Optional. JPEG, PNG or WebP. Maximum 5 MB.
-              </p>
-            </div>
-
-            {imagePreview && (
-              <div className="overflow-hidden rounded-2xl border bg-isr-cream">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={imagePreview}
-                  alt="ISR Update image preview"
-                  className="max-h-72 w-full object-contain"
-                />
-              </div>
-            )}
-
-            <Input
-              id="an-image"
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              disabled={submitting}
-              onChange={(e) =>
-                handleImage(
-                  e.target
-                    .files?.[0] ??
-                    null,
-                )
-              }
-              className="cursor-pointer"
-            />
-
-            {imageFile && (
-              <p className="text-xs font-medium text-isr-turquoise">
-                Selected: {
-                  imageFile.name
-                }
-              </p>
-            )}
-          </section>
-
-          <section className="rounded-2xl bg-isr-cream/60 p-5">
-            <p className="text-xs font-bold uppercase tracking-wide text-isr-turquoise">
-              Preview
-            </p>
-
-            <div className="mt-3 flex flex-wrap gap-2">
-              <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-isr-dark-red">
-                {
-                  priority ===
-                  'normal'
-                    ? 'Update'
-                    : priority ===
-                        'important'
-                      ? 'Important'
-                      : 'Urgent'
-                }
-              </span>
-
-              {pinned && (
-                <span className="rounded-full bg-isr-dark-red px-3 py-1 text-xs font-bold text-white">
-                  Pinned
-                </span>
-              )}
-            </div>
-
-            <h3 className="mt-4 text-xl font-bold text-isr-dark-red">
-              {
-                title.trim() ||
-                'ISR Update title'
-              }
+          <section className="isr-admin-fieldset">
+            <h3 className="isr-admin-fieldset-title">
+              Image & internal ownership
             </h3>
 
-            <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-gray-700">
-              {
-                body.trim() ||
-                'Your update text will appear here.'
-              }
-            </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="an-image">
+                  Image
+                  <span className="ml-1 font-normal text-gray-400">
+                    optional
+                  </span>
+                </Label>
+
+                <Input
+                  id="an-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={(
+                    inputEvent,
+                  ) => {
+                    setImageFile(
+                      inputEvent
+                        .target
+                        .files?.[0] ??
+                        null,
+                    )
+
+                    setDirty(true)
+                  }}
+                  className="cursor-pointer"
+                />
+
+                {imageFile && (
+                  <p className="text-xs text-gray-500">
+                    Selected: {imageFile.name}
+                  </p>
+                )}
+
+                {announcement?.imageUrl && (
+                  <a
+                    href={
+                      announcement.imageUrl
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex text-xs font-bold text-isr-turquoise hover:text-isr-dark-red"
+                  >
+                    View current image →
+                  </a>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="an-owner">
+                  Internal content owner
+                </Label>
+
+                <Input
+                  id="an-owner"
+                  value={contentOwner}
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setContentOwner,
+                      inputEvent
+                        .target
+                        .value,
+                    )
+                  }
+                  placeholder="e.g. Administration"
+                />
+
+                <p className="text-xs text-gray-500">
+                  Internal management information only.
+                </p>
+              </div>
+            </div>
           </section>
 
           {error && (
             <div
               role="alert"
-              className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+              className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800"
             >
               {error}
             </div>
           )}
+        </div>
 
-          <DialogFooter className="sticky bottom-0 -mx-6 border-t bg-white px-6 py-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={submitting}
-            >
-              Cancel
-            </Button>
+        <DialogFooter className="gap-2">
+          <Button
+            variant="outline"
+            onClick={
+              requestClose
+            }
+            disabled={
+              submitting
+            }
+          >
+            Cancel
+          </Button>
 
-            <Button
-              type="submit"
-              disabled={submitting}
-              className="bg-isr-dark-red text-isr-cream hover:bg-isr-dark-red/90"
-            >
-              {submitting
-                ? 'Saving…'
-                : isEdit
-                  ? 'Save ISR Update'
-                  : 'Publish ISR Update'}
-            </Button>
-          </DialogFooter>
-        </form>
+          <Button
+            onClick={
+              handleSave
+            }
+            disabled={
+              submitting
+            }
+            className="bg-isr-dark-red text-white hover:bg-isr-dark-red/90"
+          >
+            {submitting
+              ? 'Saving…'
+              : isEdit
+                ? 'Save changes'
+                : 'Create update'}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )
