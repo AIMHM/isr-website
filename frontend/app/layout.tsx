@@ -1,3 +1,4 @@
+import PublicStructuredData from '@/components/PublicStructuredData'
 import type { Metadata } from 'next'
 import './globals.css'
 
@@ -65,6 +66,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn('font-sans', geist.variable)}>
       <body className="bg-white text-gray-900">
+        <PublicStructuredData />
         <a
           href="#main-content"
           className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-lg bg-isr-dark-red px-4 py-2 font-semibold text-white shadow-lg transition focus:translate-y-0"
@@ -74,7 +76,12 @@ export default function RootLayout({
 
         <LocalDemoBanner />
 
-        {children}
+        <div
+          id="isr-page-content"
+          tabIndex={-1}
+        >
+          {children}
+        </div>
       </body>
     </html>
   )

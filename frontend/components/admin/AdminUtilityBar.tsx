@@ -7,6 +7,14 @@ import {
 
 const PUBLIC_LINKS = [
   {
+    href: '/find',
+    label: 'Find',
+  },
+  {
+    href: '/campuses',
+    label: 'Campuses',
+  },
+  {
     href: '/',
     label: 'Home',
   },

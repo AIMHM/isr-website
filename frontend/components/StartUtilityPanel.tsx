@@ -7,6 +7,22 @@ import {
 const TASKS = [
   {
     title:
+      'Find something',
+    description:
+      'Search ISR pages, prayer spaces, events and updates.',
+    href:
+      '/find',
+  },
+  {
+    title:
+      'Campus guide',
+    description:
+      'Jump directly to RMIT prayer-space information.',
+    href:
+      '/campuses',
+  },
+  {
+    title:
       'Friday prayer',
     description:
       'Check current Jumu’ah times and locations.',

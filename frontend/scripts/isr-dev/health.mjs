@@ -125,6 +125,7 @@ const audits = [
   'scripts/d3-structure-audit.mjs',
   'scripts/d4-regression-audit.mjs',
   'scripts/d4-services-audit.mjs',
+  'scripts/d5-audit.mjs',
 ]
 
 for (
@@ -165,6 +166,8 @@ await checkRoutes(
   [
     '/',
     '/start',
+    '/find',
+    '/campuses',
     '/pray',
     '/events',
     '/updates',

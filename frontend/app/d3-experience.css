@@ -715,3 +715,105 @@
     transform: none;
   }
 }
+
+/* ISR TOOLKIT D5 DISCOVERY LAYER */
+
+.isr-skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 9999;
+  transform: translateY(-180%);
+  border-radius: 9999px;
+  background: #5B0B05;
+  padding: 0.7rem 1rem;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.18);
+  transition:
+    transform 150ms ease;
+}
+
+.isr-skip-link:focus {
+  transform: translateY(0);
+  outline: 3px solid #509589;
+  outline-offset: 3px;
+}
+
+.isr-find-panel {
+  border: 1px solid rgba(152, 174, 168, 0.3);
+  border-radius: 1.75rem;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 1.25rem;
+  box-shadow:
+    0 12px 36px rgba(91, 11, 5, 0.06);
+}
+
+.isr-find-result {
+  display: flex;
+  min-height: 5.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid rgba(152, 174, 168, 0.25);
+  border-radius: 1.15rem;
+  background: #ffffff;
+  padding: 1rem 1.15rem;
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.isr-find-result:hover {
+  transform: translateY(-1px);
+  border-color: rgba(80, 149, 137, 0.65);
+  box-shadow:
+    0 8px 24px rgba(91, 11, 5, 0.05);
+}
+
+.isr-find-result:focus-visible {
+  outline: 3px solid rgba(80, 149, 137, 0.45);
+  outline-offset: 3px;
+}
+
+.isr-campus-guide-card {
+  border: 1px solid rgba(152, 174, 168, 0.25);
+  border-radius: 1.75rem;
+  background: #ffffff;
+  padding: 1.5rem;
+  box-shadow:
+    0 10px 30px rgba(91, 11, 5, 0.05);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(80, 149, 137, 0.5);
+  outline-offset: 3px;
+}
+
+@media (min-width: 640px) {
+  .isr-find-panel {
+    padding: 1.5rem;
+  }
+
+  .isr-campus-guide-card {
+    padding: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .isr-skip-link,
+  .isr-find-result {
+    transition: none;
+  }
+
+  .isr-find-result:hover {
+    transform: none;
+  }
+}
