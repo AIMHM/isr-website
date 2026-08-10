@@ -8,29 +8,30 @@ import EventDetailExperience from '@/components/EventDetailExperience'
 export const metadata: Metadata = {
   title: 'ISR Event',
   description:
-    'Islamic Society of RMIT event information.',
-}
-
-type EventPageProps = {
-  params: Promise<{
-    id: string
-  }>
+    'Event information from the Islamic Society of RMIT.',
 }
 
 export default async function EventPage({
   params,
-}: EventPageProps) {
+}: {
+  params: Promise<{
+    id: string
+  }>
+}) {
   const {
     id,
   } =
     await params
 
+  const eventId =
+    Number(id)
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-isr-cream via-white to-isr-yellow/20">
       <Navbar />
 
       <EventDetailExperience
-        id={Number(id)}
+        id={eventId}
       />
 
       <Footer />

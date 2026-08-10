@@ -77,6 +77,8 @@ export default function PrayerTimesTable() {
                 {hijriDate ? <p>{hijriDate}</p> : <span />}
                 {weather && (
                   <div className="flex shrink-0 items-center gap-1.5">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+
                     <img
                       src={getWeatherIconUrl(weather.current.condition.icon)}
                       alt={weather.current.condition.text}

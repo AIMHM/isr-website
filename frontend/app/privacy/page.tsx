@@ -1,55 +1,40 @@
-import type { Metadata } from 'next'
+import type {
+  Metadata,
+} from 'next'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import SectionHeading from '@/components/SectionHeading'
+import {
+  ISR_PUBLIC,
+  mailto,
+} from '@/lib/siteContent'
 
 export const metadata: Metadata = {
   title: 'Privacy',
   description:
-    'Privacy information for the Islamic Society of RMIT website and services.',
+    'Privacy information for the Islamic Society of RMIT website.',
 }
 
-const sections = [
+const principles = [
   {
-    title: 'Information ISR may collect',
-    description:
-      'Contact details, membership information, event registrations, volunteer information, correspondence and limited website analytics where approved.',
+    title: 'Only share what is needed',
+    text:
+      'When contacting ISR, start with the minimum information necessary for us to understand your enquiry.',
   },
   {
-    title: 'Why information may be used',
-    description:
-      'To administer membership, deliver events, respond to enquiries, manage volunteers, meet university requirements and maintain organisational records.',
+    title: 'Be careful with sensitive information',
+    text:
+      'Avoid sending passwords, payment-card details, identity documents, detailed health records or other highly sensitive information through ordinary website or email channels unless an appropriate process has been confirmed.',
   },
   {
-    title: 'Access and sharing',
-    description:
-      'Information should be available only to authorised people and shared only where required for an approved purpose, legal obligation, safety concern or university process.',
+    title: 'External services have their own policies',
+    text:
+      'Links to membership, registration, social media, messaging and donation services take you to third-party platforms that operate under their own privacy practices.',
   },
   {
-    title: 'Storage and security',
-    description:
-      'Approved storage systems, access controls, account ownership and security responsibilities should be documented before sensitive information is collected.',
-  },
-  {
-    title: 'Retention and deletion',
-    description:
-      'ISR should define how long each category of information is retained and how obsolete records are securely archived or deleted.',
-  },
-  {
-    title: 'Photography and media',
-    description:
-      'Clear notice, consent and removal processes should apply to event photography and activities involving minors.',
-  },
-  {
-    title: 'Third-party services',
-    description:
-      'External registration, email, storage, analytics and communications providers should be identified where they handle personal information.',
-  },
-  {
-    title: 'Access and correction',
-    description:
-      'People should be able to ask what information ISR holds, request correction and raise a concern about information handling.',
+    title: 'Ask if you are unsure',
+    text:
+      'If you are concerned about how to send information to ISR, contact us first before transmitting sensitive material.',
   },
 ]
 
@@ -58,100 +43,114 @@ export default function PrivacyPage() {
     <div className="min-h-screen bg-gradient-to-b from-isr-cream via-white to-isr-yellow/20">
       <Navbar />
 
-      <main id="main-content" className="px-4 py-14 sm:py-20">
-        <div className="container-isr mx-auto max-w-5xl">
-          <header className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-isr-turquoise">
-              Information handling
-            </p>
+      <main id="main-content">
+        <section className="bg-isr-dark-red px-4 py-14 text-white sm:py-20">
+          <div className="container-isr mx-auto max-w-6xl">
+            <div className="max-w-4xl">
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-isr-yellow">
+                Privacy
+              </p>
 
-            <h1 className="mt-3 text-4xl font-bold text-isr-dark-red sm:text-5xl">
-              Privacy
-            </h1>
+              <h1 className="mt-3 text-4xl font-bold leading-tight sm:text-5xl">
+                Protecting information you share with ISR
+              </h1>
 
-            <p className="mt-5 text-lg leading-relaxed text-gray-700">
-              This page identifies the privacy controls that should govern ISR
-              information collection and handling.
-            </p>
-
-            <div className="mt-6 rounded-2xl border border-isr-yellow bg-isr-yellow/50 p-4 text-sm font-semibold leading-relaxed text-isr-dark-red">
-              Local prototype only. This is not yet the final approved ISR
-              privacy policy.
+              <p className="mt-5 max-w-3xl text-base leading-relaxed text-white/80 sm:text-lg">
+                This page explains practical privacy
+                principles for using the ISR website and
+                contacting the Society.
+              </p>
             </div>
-          </header>
+          </div>
+        </section>
 
-          <section
-            aria-labelledby="privacy-framework"
-            className="mt-14"
-          >
-            <SectionHeading
-              eyebrow="Privacy framework"
-              title="How information should be handled"
-              description="Any final policy should reflect the actual systems, legal obligations, university requirements and approved ISR practices in operation."
-              id="privacy-framework"
-            />
+        <section className="px-4 py-14 sm:py-20">
+          <div className="container-isr mx-auto max-w-6xl">
+            <div className="grid gap-5 md:grid-cols-2">
+              {principles.map(
+                (principle) => (
+                  <article
+                    key={principle.title}
+                    className="isr-card p-6 sm:p-7"
+                  >
+                    <h2 className="text-xl font-bold text-isr-dark-red">
+                      {principle.title}
+                    </h2>
 
-            <div className="mt-10 grid gap-5 md:grid-cols-2">
-              {sections.map((section) => (
-                <article
-                  key={section.title}
-                  className="isr-card p-6"
-                >
-                  <h3 className="text-xl font-bold text-isr-dark-red">
-                    {section.title}
-                  </h3>
-
-                  <p className="mt-3 text-sm leading-relaxed text-gray-700">
-                    {section.description}
-                  </p>
-                </article>
-              ))}
+                    <p className="mt-3 text-sm leading-relaxed text-gray-700">
+                      {principle.text}
+                    </p>
+                  </article>
+                ),
+              )}
             </div>
-          </section>
 
-          <section className="isr-card mt-14 border-isr-yellow bg-isr-yellow/35 p-6 sm:p-8">
-            <h2 className="text-2xl font-bold text-isr-dark-red">
-              Before sending sensitive information
-            </h2>
+            <section className="mt-10 rounded-[1.75rem] bg-isr-cream/65 p-6 sm:p-8">
+              <h2 className="text-2xl font-bold text-isr-dark-red">
+                Information submitted through external platforms
+              </h2>
 
-            <p className="mt-4 leading-relaxed text-gray-700">
-              Do not send passwords, payment-card details, identity documents,
-              detailed medical records or highly sensitive evidence through
-              ordinary email unless an approved secure process has been
-              established.
+              <p className="mt-4 leading-relaxed text-gray-700">
+                ISR links to external services for functions
+                such as membership, event registration,
+                messaging, social media, forms and
+                donations. When you leave the ISR website,
+                the external provider may collect and
+                process information according to its own
+                privacy terms and settings.
+              </p>
+
+              <p className="mt-4 leading-relaxed text-gray-700">
+                Before submitting sensitive information,
+                review what the service is requesting and
+                only provide information that is necessary
+                for the relevant purpose.
+              </p>
+            </section>
+
+            <section className="mt-10 rounded-[1.75rem] border border-isr-yellow bg-isr-yellow/35 p-6 sm:p-8">
+              <h2 className="text-2xl font-bold text-isr-dark-red">
+                Need to discuss a privacy concern?
+              </h2>
+
+              <p className="mt-4 max-w-3xl text-sm leading-relaxed text-gray-700">
+                Contact ISR if you believe information has
+                been sent incorrectly, a website pathway is
+                requesting inappropriate information, or you
+                are unsure how to send something safely.
+              </p>
+
+              <a
+                href={mailto(
+                  'ISR Privacy Enquiry',
+                )}
+                className="isr-button-primary mt-6"
+              >
+                Contact ISR
+              </a>
+            </section>
+
+            <div className="mt-10 flex flex-wrap gap-5 text-sm">
+              <Link
+                href="/contact"
+                className="isr-text-link"
+              >
+                Contact ISR →
+              </Link>
+
+              <Link
+                href="/accessibility"
+                className="isr-text-link"
+              >
+                Accessibility →
+              </Link>
+            </div>
+
+            <p className="mt-10 text-xs leading-relaxed text-gray-500">
+              Contact email: {ISR_PUBLIC.email}
             </p>
-
-            <Link
-              href="/contact"
-              className="isr-text-link mt-5"
-            >
-              View contact pathways
-              <span aria-hidden="true">→</span>
-            </Link>
-          </section>
-
-          <section className="mt-14 overflow-hidden rounded-[2rem] bg-isr-dark-red p-6 text-white shadow-[0_20px_55px_rgba(91,11,5,0.14)] sm:p-8">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-isr-yellow">
-              Privacy enquiry
-            </p>
-
-            <h2 className="mt-3 text-2xl font-bold">
-              Ask about your information
-            </h2>
-
-            <p className="mt-3 max-w-3xl leading-relaxed text-white/80">
-              Until a dedicated privacy contact is formally appointed, privacy
-              enquiries may be directed to the official ISR email.
-            </p>
-
-            <a
-              href="mailto:isr@rmit.edu.au?subject=ISR%20Privacy%20Enquiry"
-              className="mt-6 inline-flex rounded-full bg-white px-6 py-3 font-semibold text-isr-dark-red transition hover:bg-isr-yellow"
-            >
-              Email ISR
-            </a>
-          </section>
-        </div>
+          </div>
+        </section>
       </main>
 
       <Footer />

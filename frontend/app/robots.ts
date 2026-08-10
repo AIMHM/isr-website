@@ -1,13 +1,21 @@
-import type { MetadataRoute } from 'next'
+import type {
+  MetadataRoute,
+} from 'next'
 
-export default function robots(): MetadataRoute.Robots {
+export default function robots():
+  MetadataRoute.Robots {
   const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    'http://localhost:3000'
 
-  const publicDeployment =
-    baseUrl.startsWith('https://theisr.com.au')
+  const isLocal =
+    baseUrl.includes(
+      'localhost',
+    ) ||
+    process.env.NODE_ENV !==
+      'production'
 
-  if (!publicDeployment) {
+  if (isLocal) {
     return {
       rules: {
         userAgent: '*',
@@ -20,9 +28,13 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/admin', '/admin/'],
+      disallow: [
+        '/admin',
+        '/api',
+      ],
     },
-    sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl,
+
+    sitemap:
+      `${baseUrl}/sitemap.xml`,
   }
 }

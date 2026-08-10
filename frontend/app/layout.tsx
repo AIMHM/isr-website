@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
+
+import './d2-polish.css'
 import { Geist } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import LocalDemoBanner from '@/components/LocalDemoBanner'

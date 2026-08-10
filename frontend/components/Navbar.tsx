@@ -64,6 +64,10 @@ export default function Navbar() {
   }, [pathname])
 
   useEffect(() => {
+    if (!menuOpen) {
+      return
+    }
+
     function onKeyDown(
       event: KeyboardEvent,
     ) {
@@ -85,13 +89,30 @@ export default function Navbar() {
         'keydown',
         onKeyDown,
       )
-  }, [])
+  }, [menuOpen])
+
+  useEffect(() => {
+    if (!menuOpen) {
+      document.body.style.overflow =
+        ''
+
+      return
+    }
+
+    document.body.style.overflow =
+      'hidden'
+
+    return () => {
+      document.body.style.overflow =
+        ''
+    }
+  }, [menuOpen])
 
   return (
-    <header className="sticky top-0 z-50 border-b border-isr-light-blue/20 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-isr-light-blue/20 bg-white/95 backdrop-blur-md">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-[100] focus:rounded-lg focus:bg-isr-dark-red focus:px-4 focus:py-2 focus:text-white"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-[100] focus:rounded-lg focus:bg-isr-dark-red focus:px-4 focus:py-2 focus:font-bold focus:text-white"
       >
         Skip to content
       </a>
@@ -100,7 +121,7 @@ export default function Navbar() {
         <Link
           href="/"
           aria-label="Islamic Society of RMIT home"
-          className="flex shrink-0 items-center gap-3"
+          className="flex shrink-0 items-center gap-3 rounded-xl"
         >
           <Image
             src="/images/isr_logo_transparent.png"
@@ -136,12 +157,8 @@ export default function Navbar() {
 
               return (
                 <Link
-                  key={
-                    link.href
-                  }
-                  href={
-                    link.href
-                  }
+                  key={link.href}
+                  href={link.href}
                   aria-current={
                     active
                       ? 'page'
@@ -153,9 +170,7 @@ export default function Navbar() {
                       : 'text-gray-600 hover:bg-isr-cream hover:text-isr-dark-red'
                   }`}
                 >
-                  {
-                    link.label
-                  }
+                  {link.label}
                 </Link>
               )
             },
@@ -165,7 +180,22 @@ export default function Navbar() {
         <div className="flex items-center gap-2">
           <Link
             href="/join"
-            className="hidden rounded-full bg-isr-dark-red px-5 py-2.5 text-sm font-bold text-white transition hover:bg-isr-turquoise sm:inline-flex"
+            aria-current={
+              isActive(
+                pathname,
+                '/join',
+              )
+                ? 'page'
+                : undefined
+            }
+            className={`hidden rounded-full px-5 py-2.5 text-sm font-bold transition sm:inline-flex ${
+              isActive(
+                pathname,
+                '/join',
+              )
+                ? 'bg-isr-turquoise text-white'
+                : 'bg-isr-dark-red text-white hover:bg-isr-turquoise'
+            }`}
           >
             Join ISR
           </Link>
@@ -177,9 +207,7 @@ export default function Navbar() {
                 ? 'Close navigation menu'
                 : 'Open navigation menu'
             }
-            aria-expanded={
-              menuOpen
-            }
+            aria-expanded={menuOpen}
             aria-controls="mobile-navigation"
             onClick={() =>
               setMenuOpen(
@@ -222,59 +250,73 @@ export default function Navbar() {
       </div>
 
       {menuOpen && (
-        <div
-          id="mobile-navigation"
-          className="border-t border-isr-light-blue/20 bg-white px-4 pb-5 pt-3 xl:hidden"
-        >
-          <nav
-            aria-label="Mobile navigation"
-            className="container-isr mx-auto max-w-7xl"
+        <>
+          <button
+            type="button"
+            aria-label="Close navigation menu"
+            onClick={() =>
+              setMenuOpen(false)
+            }
+            className="fixed inset-0 top-[69px] z-[-1] bg-black/20 xl:hidden"
+          />
+
+          <div
+            id="mobile-navigation"
+            className="max-h-[calc(100vh-69px)] overflow-y-auto border-t border-isr-light-blue/20 bg-white px-4 pb-6 pt-3 shadow-lg xl:hidden"
           >
-            <div className="grid gap-1 sm:grid-cols-2">
-              {links.map(
-                (link) => {
-                  const active =
-                    isActive(
-                      pathname,
-                      link.href,
-                    )
-
-                  return (
-                    <Link
-                      key={
-                        link.href
-                      }
-                      href={
-                        link.href
-                      }
-                      aria-current={
-                        active
-                          ? 'page'
-                          : undefined
-                      }
-                      className={`rounded-xl px-4 py-3 text-sm font-semibold ${
-                        active
-                          ? 'bg-isr-turquoise/10 text-isr-dark-red'
-                          : 'text-gray-700 hover:bg-isr-cream'
-                      }`}
-                    >
-                      {
-                        link.label
-                      }
-                    </Link>
-                  )
-                },
-              )}
-            </div>
-
-            <Link
-              href="/join"
-              className="mt-4 flex w-full justify-center rounded-xl bg-isr-dark-red px-5 py-3 font-bold text-white"
+            <nav
+              aria-label="Mobile navigation"
+              className="container-isr mx-auto max-w-7xl"
             >
-              Join ISR
-            </Link>
-          </nav>
-        </div>
+              <div className="grid gap-1 sm:grid-cols-2">
+                {links.map(
+                  (link) => {
+                    const active =
+                      isActive(
+                        pathname,
+                        link.href,
+                      )
+
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        aria-current={
+                          active
+                            ? 'page'
+                            : undefined
+                        }
+                        className={`rounded-xl px-4 py-3 text-base font-semibold sm:text-sm ${
+                          active
+                            ? 'bg-isr-turquoise/10 text-isr-dark-red'
+                            : 'text-gray-700 hover:bg-isr-cream'
+                        }`}
+                      >
+                        {link.label}
+                      </Link>
+                    )
+                  },
+                )}
+              </div>
+
+              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                <Link
+                  href="/updates"
+                  className="rounded-xl border border-isr-light-blue/30 px-4 py-3 text-center font-bold text-isr-dark-red"
+                >
+                  ISR Updates
+                </Link>
+
+                <Link
+                  href="/join"
+                  className="rounded-xl bg-isr-dark-red px-5 py-3 text-center font-bold text-white"
+                >
+                  Join ISR
+                </Link>
+              </div>
+            </nav>
+          </div>
+        </>
       )}
     </header>
   )

@@ -1,11 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import {
-  InstagramIcon,
-  MailIcon,
-  WhatsappIcon,
-} from '@/components/Icons'
-import {
   ISR_PUBLIC,
 } from '@/lib/siteContent'
 
@@ -64,10 +59,6 @@ const policyLinks = [
     href: '/accessibility',
     label: 'Accessibility',
   },
-  {
-    href: '/sitemap.xml',
-    label: 'Sitemap',
-  },
 ]
 
 export default function Footer() {
@@ -76,8 +67,8 @@ export default function Footer() {
 
   return (
     <footer className="bg-isr-dark-red px-4 py-12 text-white sm:py-14">
-      <div className="container-isr mx-auto max-w-6xl">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.25fr_0.8fr_0.8fr_1fr]">
+      <div className="container-isr mx-auto max-w-7xl">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.2fr_0.8fr_0.8fr_1fr]">
           <div>
             <Link
               href="/"
@@ -102,19 +93,24 @@ export default function Footer() {
               </span>
             </Link>
 
-            <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/75">
-              {
-                ISR_PUBLIC
-                  .tagline
-              }.
+            <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/70">
+              {ISR_PUBLIC.tagline}.
             </p>
 
             <p className="mt-4 text-sm font-semibold text-isr-yellow">
-              {
-                ISR_PUBLIC
-                  .representationTagline
-              }
+              {ISR_PUBLIC.representationTagline}
             </p>
+
+            <div className="mt-6">
+              <a
+                href={ISR_PUBLIC.community.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex rounded-full bg-white px-4 py-2.5 text-sm font-bold text-isr-dark-red transition hover:bg-isr-yellow"
+              >
+                Join the community
+              </a>
+            </div>
           </div>
 
           <div>
@@ -122,23 +118,15 @@ export default function Footer() {
               For students
             </h2>
 
-            <ul className="mt-4 space-y-3 text-sm text-white/75">
+            <ul className="mt-4 space-y-3 text-sm text-white/70">
               {studentLinks.map(
                 (link) => (
-                  <li
-                    key={
-                      link.href
-                    }
-                  >
+                  <li key={link.href}>
                     <Link
-                      href={
-                        link.href
-                      }
+                      href={link.href}
                       className="transition hover:text-white"
                     >
-                      {
-                        link.label
-                      }
+                      {link.label}
                     </Link>
                   </li>
                 ),
@@ -151,23 +139,15 @@ export default function Footer() {
               ISR
             </h2>
 
-            <ul className="mt-4 space-y-3 text-sm text-white/75">
+            <ul className="mt-4 space-y-3 text-sm text-white/70">
               {organisationLinks.map(
                 (link) => (
-                  <li
-                    key={
-                      link.href
-                    }
-                  >
+                  <li key={link.href}>
                     <Link
-                      href={
-                        link.href
-                      }
+                      href={link.href}
                       className="transition hover:text-white"
                     >
-                      {
-                        link.label
-                      }
+                      {link.label}
                     </Link>
                   </li>
                 ),
@@ -178,23 +158,15 @@ export default function Footer() {
               Policies
             </h2>
 
-            <ul className="mt-4 space-y-3 text-sm text-white/75">
+            <ul className="mt-4 space-y-3 text-sm text-white/70">
               {policyLinks.map(
                 (link) => (
-                  <li
-                    key={
-                      link.href
-                    }
-                  >
+                  <li key={link.href}>
                     <Link
-                      href={
-                        link.href
-                      }
+                      href={link.href}
                       className="transition hover:text-white"
                     >
-                      {
-                        link.label
-                      }
+                      {link.label}
                     </Link>
                   </li>
                 ),
@@ -204,98 +176,83 @@ export default function Footer() {
 
           <div>
             <h2 className="font-bold">
-              Connect
+              Contact
             </h2>
 
-            <div className="mt-5 space-y-4">
+            <div className="mt-4 space-y-4 text-sm">
               <a
                 href={`mailto:${ISR_PUBLIC.email}`}
-                className="flex items-center gap-3 text-sm text-white/75 transition hover:text-white"
+                className="block break-all text-white/70 transition hover:text-white"
               >
-                <MailIcon className="h-5 w-5 shrink-0" />
-
-                <span>
-                  {
-                    ISR_PUBLIC
-                      .email
-                  }
-                </span>
+                {ISR_PUBLIC.email}
               </a>
 
               <a
-                href={
-                  ISR_PUBLIC
-                    .whatsapp.url
-                }
+                href={ISR_PUBLIC.phone.href}
+                className="block text-white/70 transition hover:text-white"
+              >
+                {ISR_PUBLIC.phone.label}
+              </a>
+
+              <a
+                href={ISR_PUBLIC.whatsapp.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 text-sm text-white/75 transition hover:text-white"
+                className="block text-white/70 transition hover:text-white"
               >
-                <WhatsappIcon className="h-5 w-5 shrink-0" />
-
-                <span>
-                  WhatsApp
-                </span>
+                WhatsApp
               </a>
 
               <a
-                href={
-                  ISR_PUBLIC
-                    .instagram.url
-                }
+                href={ISR_PUBLIC.instagram.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 text-sm text-white/75 transition hover:text-white"
+                className="block text-white/70 transition hover:text-white"
               >
-                <InstagramIcon className="h-5 w-5 shrink-0" />
-
-                <span>
-                  Instagram
-                </span>
+                Instagram
               </a>
 
               <a
-                href={
-                  ISR_PUBLIC
-                    .tiktok.url
-                }
+                href={ISR_PUBLIC.tiktok.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 text-sm text-white/75 transition hover:text-white"
+                className="block text-white/70 transition hover:text-white"
               >
-                <span className="flex h-5 w-5 items-center justify-center text-[9px] font-bold">
-                  TT
-                </span>
-
-                <span>
-                  TikTok
-                </span>
-              </a>
-
-              <a
-                href={
-                  ISR_PUBLIC
-                    .phone.href
-                }
-                className="block text-sm text-white/75 transition hover:text-white"
-              >
-                {
-                  ISR_PUBLIC
-                    .phone.label
-                }
+                TikTok
               </a>
             </div>
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-3 border-t border-white/15 pt-7 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {currentYear} Islamic Society of RMIT
-          </p>
+        <div className="mt-10 border-t border-white/15 pt-7">
+          <div className="flex flex-col gap-3 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              © {currentYear} Islamic Society of RMIT
+            </p>
 
-          <p>
-            The home of Muslim students at RMIT.
-          </p>
+            <div className="flex flex-wrap gap-x-4 gap-y-2">
+              <Link
+                href="/privacy"
+                className="hover:text-white"
+              >
+                Privacy
+              </Link>
+
+              <Link
+                href="/accessibility"
+                className="hover:text-white"
+              >
+                Accessibility
+              </Link>
+
+              <Link
+                href="/sitemap.xml"
+                className="hover:text-white"
+              >
+                Sitemap
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

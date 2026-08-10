@@ -30,6 +30,11 @@ export default function sitemap():
       priority: 0.9,
     },
     {
+      path: '/updates',
+      frequency: 'weekly',
+      priority: 0.85,
+    },
+    {
       path: '/join',
       frequency: 'monthly',
       priority: 0.85,
@@ -55,14 +60,9 @@ export default function sitemap():
       priority: 0.7,
     },
     {
-      path: '/updates',
-      frequency: 'weekly',
-      priority: 0.65,
-    },
-    {
       path: '/governance',
-      frequency: 'monthly',
-      priority: 0.4,
+      frequency: 'yearly',
+      priority: 0.35,
     },
     {
       path: '/privacy',
@@ -80,8 +80,10 @@ export default function sitemap():
     (page) => ({
       url:
         `${baseUrl}${page.path}`,
+
       changeFrequency:
         page.frequency,
+
       priority:
         page.priority,
     }),

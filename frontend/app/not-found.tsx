@@ -9,42 +9,79 @@ export default function NotFound() {
 
       <main
         id="main-content"
-        className="flex min-h-[65vh] items-center px-4 py-16"
+        className="px-4 py-20 sm:py-28"
       >
-        <div className="container-isr mx-auto max-w-4xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-isr-turquoise">
-            404
-          </p>
+        <div className="container-isr mx-auto max-w-4xl">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-isr-turquoise">
+              404
+            </p>
 
-          <h1 className="mt-3 text-4xl font-bold text-isr-dark-red sm:text-5xl">
-            We could not find that page
-          </h1>
+            <h1 className="mt-4 text-4xl font-bold leading-tight text-isr-dark-red sm:text-5xl">
+              We couldn&apos;t find that page
+            </h1>
 
-          <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-gray-700">
-            The page may have moved, expired or never existed. Use one of the
-            links below to continue.
-          </p>
+            <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-gray-700">
+              The page may have moved, the link may be
+              outdated, or the address may have been
+              entered incorrectly.
+            </p>
 
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <Link
+                href="/"
+                className="isr-button-primary"
+              >
+                Go to homepage
+              </Link>
+
+              <Link
+                href="/start"
+                className="isr-button-secondary"
+              >
+                Start Here
+              </Link>
+            </div>
+          </div>
+
+          <div className="mx-auto mt-14 grid max-w-3xl gap-4 sm:grid-cols-3">
             <Link
-              href="/"
-              className="isr-button-primary"
+              href="/pray"
+              className="isr-card isr-card-interactive p-5 text-center"
             >
-              Return home
+              <p className="font-bold text-isr-dark-red">
+                Pray at RMIT
+              </p>
+
+              <p className="mt-2 text-sm text-gray-600">
+                Prayer rooms and Jumu&apos;ah
+              </p>
             </Link>
 
             <Link
               href="/events"
-              className="isr-button-secondary"
+              className="isr-card isr-card-interactive p-5 text-center"
             >
-              View events
+              <p className="font-bold text-isr-dark-red">
+                Events
+              </p>
+
+              <p className="mt-2 text-sm text-gray-600">
+                See what&apos;s happening
+              </p>
             </Link>
 
             <Link
               href="/contact"
-              className="isr-button-secondary"
+              className="isr-card isr-card-interactive p-5 text-center"
             >
-              Contact ISR
+              <p className="font-bold text-isr-dark-red">
+                Contact ISR
+              </p>
+
+              <p className="mt-2 text-sm text-gray-600">
+                Get in touch
+              </p>
             </Link>
           </div>
         </div>
