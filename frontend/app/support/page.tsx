@@ -1,3 +1,4 @@
+import SupportTriage from '@/components/SupportTriage'
 import type {
   Metadata,
 } from 'next'
@@ -42,7 +43,14 @@ export default function SupportPage() {
             <StudentSupportDirectory />
           </div>
         </section>
-      </main>
+
+        <section className="px-4 pb-16 sm:pb-20">
+          <div className="container-isr mx-auto max-w-6xl">
+            <SupportTriage />
+          </div>
+        </section>
+
+</main>
 
       <Footer />
     </div>

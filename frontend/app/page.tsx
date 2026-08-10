@@ -1,3 +1,4 @@
+import HomeStudentDashboard from '@/components/HomeStudentDashboard'
 import type {
   Metadata,
 } from 'next'
@@ -17,7 +18,9 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       <Navbar />
       <HomeExperience />
-      <Footer />
+              <HomeStudentDashboard />
+
+<Footer />
     </div>
   )
 }

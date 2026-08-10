@@ -128,6 +128,7 @@ const audits = [
   'scripts/d5-audit.mjs',
   'scripts/content-safety-audit.mjs',
   'scripts/d6-audit.mjs',
+  'scripts/d7-audit.mjs',
 ]
 
 for (
