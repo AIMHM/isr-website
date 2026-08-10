@@ -1,30 +1,22 @@
+import type {
+  Metadata,
+} from 'next'
 import Navbar from '@/components/Navbar'
-import Hero from '@/components/Hero'
-import QuickActions from '@/components/QuickActions'
-import TodayAtISR from '@/components/TodayAtISR'
-import EventsPreview from '@/components/EventsPreview'
-import PrayerSpacesPreview from '@/components/PrayerSpacesPreview'
-import NewStudentPreview from '@/components/NewStudentPreview'
-import ParticipationJourney from '@/components/ParticipationJourney'
-import WhatISRDoes from '@/components/WhatISRDoes'
 import Footer from '@/components/Footer'
+import HomeExperience from '@/components/HomeExperience'
 
-export default function Home() {
+export const metadata: Metadata = {
+  title:
+    'Islamic Society of RMIT',
+  description:
+    'The home of Muslim students at RMIT. Find prayer spaces, Jumu’ah, events, community, membership and student support.',
+}
+
+export default function HomePage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       <Navbar />
-
-      <main id="main-content">
-        <Hero />
-        <QuickActions />
-        <TodayAtISR />
-        <EventsPreview />
-        <PrayerSpacesPreview />
-        <NewStudentPreview />
-        <ParticipationJourney />
-        <WhatISRDoes />
-      </main>
-
+      <HomeExperience />
       <Footer />
     </div>
   )
