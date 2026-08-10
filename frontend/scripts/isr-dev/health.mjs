@@ -126,6 +126,8 @@ const audits = [
   'scripts/d4-regression-audit.mjs',
   'scripts/d4-services-audit.mjs',
   'scripts/d5-audit.mjs',
+  'scripts/content-safety-audit.mjs',
+  'scripts/d6-audit.mjs',
 ]
 
 for (

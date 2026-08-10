@@ -1,3 +1,4 @@
+import GlobalQuickAccess from '@/components/GlobalQuickAccess'
 import PublicStructuredData from '@/components/PublicStructuredData'
 import type { Metadata } from 'next'
 import './globals.css'
@@ -82,6 +83,8 @@ export default function RootLayout({
         >
           {children}
         </div>
+
+        <GlobalQuickAccess />
       </body>
     </html>
   )

@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start -p ${PORT:-3000}",
-    "lint": "next lint"
+    "lint": "next lint",
+    "isr:health": "node scripts/isr-dev/health.mjs",
+    "isr:github": "node scripts/isr-dev/verify-github.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

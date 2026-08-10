@@ -1,3 +1,4 @@
+import PrayerIssueReporter from '@/components/PrayerIssueReporter'
 import PrayerQuickNav from '@/components/PrayerQuickNav'
 import NextPrayerCountdown from '@/components/NextPrayerCountdown'
 import type {
@@ -360,7 +361,14 @@ export default function PrayPage() {
             </div>
           </div>
         </section>
-      </main>
+
+        <section className="bg-isr-cream px-4 pb-16 sm:pb-20">
+          <div className="container-isr mx-auto max-w-6xl">
+            <PrayerIssueReporter />
+          </div>
+        </section>
+
+</main>
 
       <Footer />
     </div>
