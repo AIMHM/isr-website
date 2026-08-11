@@ -232,13 +232,7 @@ const contentPatterns = [
     label:
       'under review',
   },
-  {
-    regex:
-      /placeholder/gi,
 
-    label:
-      'placeholder',
-  },
 ]
 
 for (

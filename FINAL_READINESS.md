@@ -18,13 +18,7 @@ Development branch: ideas
 
 ## Content requiring confirmation or replacement
 
-- [ ] components\AnnouncementsList.tsx: placeholder (1)
-- [ ] components\EventDiscoveryBar.tsx: placeholder (1)
-- [ ] components\EventsExperience.tsx: placeholder (1)
-- [ ] components\FindExperience.tsx: placeholder (2)
-- [ ] components\NewsletterSignup.tsx: placeholder (4)
-- [ ] components\ui\input.tsx: placeholder (1)
-- [ ] components\ui\textarea.tsx: placeholder (1)
+- No development or verification wording detected.
 
 ## Technical follow-up
 
