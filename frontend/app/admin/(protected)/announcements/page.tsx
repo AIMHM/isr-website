@@ -820,8 +820,7 @@ export default function AdminAnnouncementsPage() {
                             <Link
                               href="/updates"
                               target="_blank"
-                              className="inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-sm font-semibold text-isr-dark-red hover:bg-isr-cream"
-                            >
+                              className="inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-sm font-semibold text-isr-dark-red hover:bg-isr-cream" rel="noopener noreferrer">
                               <ExternalLinkIcon className="h-4 w-4" />
                               Preview
                             </Link>

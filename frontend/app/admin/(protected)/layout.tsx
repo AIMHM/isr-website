@@ -134,8 +134,7 @@ export default function AdminProtectedLayout({
               <Link
                 href="/"
                 target="_blank"
-                className="rounded-lg border border-white/20 px-3 py-2 text-sm font-semibold text-white/80 transition hover:bg-white/10 hover:text-white"
-              >
+                className="rounded-lg border border-white/20 px-3 py-2 text-sm font-semibold text-white/80 transition hover:bg-white/10 hover:text-white" rel="noopener noreferrer">
                 View website ↗
               </Link>
 

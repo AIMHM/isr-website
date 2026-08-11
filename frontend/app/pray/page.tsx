@@ -1,3 +1,4 @@
+import PrayerPageGuidance from '@/components/PrayerPageGuidance'
 import PrayerIssueReporter from '@/components/PrayerIssueReporter'
 import PrayerQuickNav from '@/components/PrayerQuickNav'
 import NextPrayerCountdown from '@/components/NextPrayerCountdown'
@@ -323,6 +324,8 @@ export default function PrayPage() {
               </div>
 
               <div className="isr-prayer-tool-stack">
+          <PrayerPageGuidance />
+
                 <NextPrayerCountdown />
 
                 <PrayerTimesTable />

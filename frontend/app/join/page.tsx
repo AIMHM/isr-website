@@ -2,7 +2,6 @@ import JoinMembershipSpotlight from '@/components/JoinMembershipSpotlight'
 import type {
   Metadata,
 } from 'next'
-import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import {

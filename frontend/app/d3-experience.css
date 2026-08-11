@@ -1620,3 +1620,98 @@ select:focus-visible {
       none;
   }
 }
+
+/* ISR TOOLKIT FINISH SPRINT */
+
+/* Events */
+
+.isr-event-discovery {
+  border: 1px solid rgba(152, 174, 168, 0.28);
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.96);
+  padding: 1.25rem;
+  box-shadow:
+    0 8px 26px rgba(91, 11, 5, 0.04);
+}
+
+.isr-event-filter {
+  min-height: 2.6rem;
+  border: 1px solid rgba(152, 174, 168, 0.34);
+  border-radius: 9999px;
+  background: #ffffff;
+  padding: 0.55rem 1rem;
+  color: #5B0B05;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.isr-event-filter:hover,
+.isr-event-filter.is-active {
+  border-color: #509589;
+  background: rgba(80, 149, 137, 0.1);
+  color: #509589;
+}
+
+/* Prayer */
+
+.isr-prayer-guidance {
+  border: 1px solid rgba(152, 174, 168, 0.28);
+  border-radius: 1.75rem;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(234, 227, 216, 0.5),
+      #ffffff
+    );
+  padding: 1.5rem;
+}
+
+/* Updates */
+
+[id^="update-"] {
+  scroll-margin-top: 8rem;
+}
+
+[id^="update-"]:target {
+  outline:
+    3px solid rgba(80, 149, 137, 0.35);
+  outline-offset:
+    4px;
+  border-color:
+    rgba(80, 149, 137, 0.7);
+  box-shadow:
+    0 18px 46px rgba(80, 149, 137, 0.12);
+}
+
+/* Admin */
+
+.isr-admin-content-shell {
+  max-width: 82rem;
+  margin-inline: auto;
+}
+
+.isr-admin-content-heading {
+  letter-spacing: -0.025em;
+}
+
+/* Mobile reliability */
+
+@media (max-width: 639px) {
+  .isr-event-discovery,
+  .isr-prayer-guidance {
+    border-radius: 1.35rem;
+    padding: 1rem;
+  }
+
+  [id^="update-"] {
+    scroll-margin-top: 6rem;
+  }
+}
+
+/* Accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+  [id^="update-"]:target {
+    scroll-behavior: auto;
+  }
+}
