@@ -47,15 +47,15 @@ Development branch: ideas
 - [x] Prayer-space locations are current.
 - [x] Jumuah venues and times are current.
 - [x] Membership link is current.
-- [ ] Community links are current.
-- [ ] ISR contact details are current.
+- [x] Community links are current.
+- [x] ISR contact details are current.
 - [ ] Event links and registration links are current.
-- [ ] Policies shown publicly are approved for publication.
+- [x] Policies shown publicly are approved for publication.
 - [ ] History claims have completed the separate history research process.
-- [ ] Mobile visual QA completed.
-- [ ] Keyboard QA completed.
+- [x] Mobile visual QA completed.
+- [x] Keyboard QA completed.
 - [x] Production build completed.
-- [ ] Final deployment decision explicitly approved.
+- [ ] Final deployment decision explicitly approved. — NOT APPROVED YET
 
 ## Repository boundary
 
