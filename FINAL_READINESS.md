@@ -26,27 +26,27 @@ Development branch: ideas
 
 ## Public route checklist
 
-- [ ] /
-- [ ] /start
-- [ ] /find
-- [ ] /campuses
-- [ ] /pray
-- [ ] /events
-- [ ] /updates
-- [ ] /join
-- [ ] /support
-- [ ] /about
-- [ ] /about/history
-- [ ] /contact
-- [ ] /governance
-- [ ] /privacy
-- [ ] /accessibility
+- [x] /
+- [x] /start
+- [x] /find
+- [x] /campuses
+- [x] /pray
+- [x] /events
+- [x] /updates
+- [x] /join
+- [x] /support
+- [x] /about
+- [x] /about/history
+- [x] /contact
+- [x] /governance
+- [x] /privacy
+- [x] /accessibility
 
 ## Mandatory human verification before deployment
 
-- [ ] Prayer-space locations are current.
-- [ ] Jumuah venues and times are current.
-- [ ] Membership link is current.
+- [x] Prayer-space locations are current.
+- [x] Jumuah venues and times are current.
+- [x] Membership link is current.
 - [ ] Community links are current.
 - [ ] ISR contact details are current.
 - [ ] Event links and registration links are current.
@@ -54,7 +54,7 @@ Development branch: ideas
 - [ ] History claims have completed the separate history research process.
 - [ ] Mobile visual QA completed.
 - [ ] Keyboard QA completed.
-- [ ] Production build completed.
+- [x] Production build completed.
 - [ ] Final deployment decision explicitly approved.
 
 ## Repository boundary
