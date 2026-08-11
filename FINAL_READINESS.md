@@ -22,7 +22,7 @@ Development branch: ideas
 
 ## Technical follow-up
 
-- [ ] Lint command still uses deprecated Next.js next lint.
+- [x] Lint command migrated from deprecated next lint to ESLint CLI.
 
 ## Public route checklist
 
