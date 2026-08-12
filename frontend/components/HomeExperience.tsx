@@ -188,7 +188,7 @@ export default function HomeExperience() {
     )
 
   return (
-    <main id="main-content">
+    <>
       <section className="isr-hero-grid relative overflow-hidden bg-isr-dark-red px-4 py-14 text-white sm:py-20 lg:py-24">
         <div
           aria-hidden="true"
@@ -730,6 +730,6 @@ export default function HomeExperience() {
           </div>
         </div>
       </section>
-    </main>
+    </>
   )
 }

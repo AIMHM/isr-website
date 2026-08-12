@@ -1,4 +1,12 @@
+import {
+  ISR_PUBLIC,
+} from '@/lib/siteContent'
+
 export default function PublicStructuredData() {
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    'http://localhost:3000'
+
   const data = {
     '@context':
       'https://schema.org',
@@ -7,16 +15,21 @@ export default function PublicStructuredData() {
       'Organization',
 
     name:
-      'Islamic Society of RMIT',
+      ISR_PUBLIC.name,
 
     url:
-      'https://theisr.com.au',
+      siteUrl,
 
     email:
-      'isr@rmit.edu.au',
+      ISR_PUBLIC.email,
 
     telephone:
-      '+61 418 835 013',
+      ISR_PUBLIC.phone.label,
+
+    sameAs: [
+      ISR_PUBLIC.instagram.url,
+      ISR_PUBLIC.tiktok.url,
+    ],
   }
 
   return (

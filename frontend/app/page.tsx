@@ -17,10 +17,13 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      <HomeExperience />
-              <HomeStudentDashboard />
 
-<Footer />
+      <main id="main-content">
+        <HomeExperience />
+        <HomeStudentDashboard />
+      </main>
+
+      <Footer />
     </div>
   )
 }

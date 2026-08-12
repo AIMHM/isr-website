@@ -25,6 +25,12 @@ import {
 const NAV_LINKS = [
   {
     href:
+      '/admin',
+    label:
+      'Overview',
+  },
+  {
+    href:
       '/admin/events',
     label:
       'Events',
@@ -117,7 +123,7 @@ export default function AdminProtectedLayout({
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-wrap items-center gap-3">
               <Link
-                href="/admin/events"
+                href="/admin"
                 className="text-lg font-bold"
               >
                 ISR Admin
@@ -155,9 +161,11 @@ export default function AdminProtectedLayout({
             {NAV_LINKS.map(
               (link) => {
                 const active =
-                  pathname.startsWith(
-                    link.href,
-                  )
+                  link.href === '/admin'
+                    ? pathname === '/admin'
+                    : pathname.startsWith(
+                        link.href,
+                      )
 
                 return (
                   <Link

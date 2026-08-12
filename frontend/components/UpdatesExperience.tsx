@@ -9,6 +9,7 @@ import {
 import Link from 'next/link'
 import {
   fetchAnnouncements,
+  formatAnnouncementDate,
   type Announcement,
 } from '@/lib/announcements'
 
@@ -75,30 +76,6 @@ function priorityClass(
   }
 
   return 'bg-isr-turquoise/10 text-isr-turquoise'
-}
-
-function formatDate(
-  value: string,
-): string {
-  const date =
-    new Date(value)
-
-  if (
-    Number.isNaN(
-      date.getTime(),
-    )
-  ) {
-    return ''
-  }
-
-  return new Intl.DateTimeFormat(
-    'en-AU',
-    {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    },
-  ).format(date)
 }
 
 function UpdateAction({
@@ -356,6 +333,7 @@ export default function UpdatesExperience() {
                     (item) => (
                       <article
                         key={item.id}
+                        id={`update-${item.id}`}
                         className={`overflow-hidden rounded-[1.75rem] border bg-white ${
                           item.priority ===
                           'urgent'
@@ -381,7 +359,7 @@ export default function UpdatesExperience() {
                               )}
 
                               <span className="text-xs font-semibold text-gray-500">
-                                {formatDate(
+                                {formatAnnouncementDate(
                                   item.createdAt,
                                 )}
                               </span>
@@ -449,6 +427,7 @@ export default function UpdatesExperience() {
                     (item) => (
                       <article
                         key={item.id}
+                        id={`update-${item.id}`}
                         className="overflow-hidden rounded-[1.75rem] border border-isr-light-blue/20 bg-white"
                       >
                         <div className="grid md:grid-cols-[1fr_auto]">
@@ -463,7 +442,7 @@ export default function UpdatesExperience() {
                               </span>
 
                               <span className="text-xs font-semibold text-gray-500">
-                                {formatDate(
+                                {formatAnnouncementDate(
                                   item.createdAt,
                                 )}
                               </span>

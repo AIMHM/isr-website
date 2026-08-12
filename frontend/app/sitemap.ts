@@ -25,6 +25,11 @@ export default function sitemap():
       priority: 0.95,
     },
     {
+      path: '/campuses',
+      frequency: 'monthly',
+      priority: 0.9,
+    },
+    {
       path: '/events',
       frequency: 'weekly',
       priority: 0.9,

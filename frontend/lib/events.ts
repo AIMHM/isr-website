@@ -1,3 +1,6 @@
+import {
+  MELBOURNE_TIME_ZONE,
+} from '@/lib/dateTime'
 import { API_BASE_URL } from '@/lib/api'
 import { MOCK_EVENTS } from '@/lib/mockData'
 import { IS_LOCAL_MOCK_DATA } from '@/lib/mockMode'
@@ -43,7 +46,6 @@ export type EventResponse = {
   data: Event
 }
 
-const TIMEZONE = 'Australia/Melbourne'
 
 function formatDatetimeLocalInTimeZone(
   date: Date,
@@ -73,7 +75,7 @@ function formatDatetimeLocalInTimeZone(
 export function toDatetimeLocalValue(isoDate: string): string {
   return formatDatetimeLocalInTimeZone(
     new Date(isoDate),
-    TIMEZONE,
+    MELBOURNE_TIME_ZONE,
   )
 }
 
@@ -95,7 +97,7 @@ export function fromDatetimeLocalValue(
   for (let i = 0; i < 4; i++) {
     const formatted = formatDatetimeLocalInTimeZone(
       new Date(utcMs),
-      TIMEZONE,
+      MELBOURNE_TIME_ZONE,
     )
 
     if (formatted === localValue) {
@@ -141,7 +143,7 @@ export function formatEventDate(isoDate: string): {
   const parsed = new Date(isoDate)
 
   const date = new Intl.DateTimeFormat('en-AU', {
-    timeZone: TIMEZONE,
+    timeZone: MELBOURNE_TIME_ZONE,
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -149,7 +151,7 @@ export function formatEventDate(isoDate: string): {
   }).format(parsed)
 
   const time = new Intl.DateTimeFormat('en-AU', {
-    timeZone: TIMEZONE,
+    timeZone: MELBOURNE_TIME_ZONE,
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
@@ -160,7 +162,7 @@ export function formatEventDate(isoDate: string): {
 
 export function formatEventTime(isoDate: string): string {
   return new Intl.DateTimeFormat('en-AU', {
-    timeZone: TIMEZONE,
+    timeZone: MELBOURNE_TIME_ZONE,
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,

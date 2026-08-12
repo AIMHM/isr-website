@@ -1,7 +1,7 @@
 import Link from 'next/link'
-
-const MEMBERSHIP_URL =
-  'https://campus.hellorubric.com/?s=10733'
+import {
+  ISR_PUBLIC,
+} from '@/lib/siteContent'
 
 const JOURNEY = [
   {
@@ -75,7 +75,7 @@ export default function JoinMembershipSpotlight() {
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <a
               href={
-                MEMBERSHIP_URL
+                ISR_PUBLIC.membership.url
               }
               target="_blank"
               rel="noopener noreferrer"

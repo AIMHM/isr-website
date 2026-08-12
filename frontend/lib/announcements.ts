@@ -1,3 +1,6 @@
+import {
+  MELBOURNE_TIME_ZONE,
+} from '@/lib/dateTime'
 import { API_BASE_URL } from '@/lib/api'
 import { MOCK_ANNOUNCEMENTS } from '@/lib/mockData'
 import { IS_LOCAL_MOCK_DATA } from '@/lib/mockMode'
@@ -31,13 +34,12 @@ type AnnouncementsResponse = {
   data: Announcement[]
 }
 
-const TIMEZONE = 'Australia/Melbourne'
 
 export function formatAnnouncementDate(
   isoDate: string,
 ): string {
   return new Intl.DateTimeFormat('en-AU', {
-    timeZone: TIMEZONE,
+    timeZone: MELBOURNE_TIME_ZONE,
     day: 'numeric',
     month: 'long',
     year: 'numeric',

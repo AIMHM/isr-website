@@ -110,13 +110,6 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-isr-light-blue/20 bg-white/95 backdrop-blur-md">
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-[100] focus:rounded-lg focus:bg-isr-dark-red focus:px-4 focus:py-2 focus:font-bold focus:text-white"
-      >
-        Skip to content
-      </a>
-
       <div className="container-isr mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
         <Link
           href="/"
