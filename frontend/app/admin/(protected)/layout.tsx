@@ -37,6 +37,12 @@ const NAV_LINKS = [
   },
   {
     href:
+      '/admin/programs',
+    label:
+      'Programs',
+  },
+  {
+    href:
       '/admin/announcements',
     label:
       'ISR Updates',

@@ -16,6 +16,13 @@ export type EventStatus =
   | 'cancelled'
   | 'completed'
 
+export type EventRegistrationMode =
+  | 'none'
+  | 'required'
+  | 'optional'
+  | 'closed'
+  | 'unknown'
+
 export type Event = {
   id: number
   name: string
@@ -23,6 +30,9 @@ export type Event = {
   imageUrl: string
   description: string
   ticketUrl: string | null
+
+  registrationMode?: EventRegistrationMode
+  category?: string | null
 
   endDate?: string | null
   venue?: string | null
@@ -208,16 +218,71 @@ export function getEventStatusLabel(
   return labels[status]
 }
 
+export function getEventRegistrationMode(
+  event: Event,
+): EventRegistrationMode {
+  if (event.registrationMode) {
+    return event.registrationMode
+  }
+
+  if (event.ticketUrl) {
+    return 'required'
+  }
+
+  return 'unknown'
+}
+
+export function getEventRegistrationLabel(
+  event: Event,
+): string {
+  const mode =
+    getEventRegistrationMode(
+      event,
+    )
+
+  const labels:
+    Record<
+      EventRegistrationMode,
+      string
+    > = {
+      none:
+        'No registration required',
+      required:
+        'Registration required',
+      optional:
+        'Registration optional',
+      closed:
+        'Registration closed',
+      unknown:
+        'Registration information to be confirmed',
+    }
+
+  return labels[mode]
+}
+
 export function canRegisterForEvent(
   event: Event,
 ): boolean {
-  const status = getEventStatus(event)
+  const status =
+    getEventStatus(
+      event,
+    )
+
+  const mode =
+    getEventRegistrationMode(
+      event,
+    )
 
   return (
     Boolean(event.ticketUrl) &&
+    (
+      mode === 'required' ||
+      mode === 'optional'
+    ) &&
     status !== 'cancelled' &&
     status !== 'postponed' &&
-    status !== 'completed'
+    status !== 'completed' &&
+    status !== 'sold-out'
   )
 }
 

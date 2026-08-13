@@ -6,13 +6,7 @@ import {
   useState,
 } from 'react'
 import Link from 'next/link'
-import EventCard from '@/components/EventCard'
-import type {
-  Event,
-} from '@/lib/events'
-import {
-  fetchEvents,
-} from '@/lib/events'
+import HomeWhatsOn from '@/components/HomeWhatsOn'
 import {
   fetchAnnouncements,
   type Announcement,
@@ -33,7 +27,7 @@ const studentActions = [
   },
   {
     number: '02',
-    label: 'Events',
+    label: 'What’s On',
     title: 'What is happening?',
     description:
       'See upcoming classes, workshops, socials and community programs.',
@@ -119,52 +113,37 @@ function priorityScore(
 
 export default function HomeExperience() {
   const [
-    events,
-    setEvents,
-  ] =
-    useState<Event[]>([])
-
-  const [
     announcements,
     setAnnouncements,
   ] =
     useState<Announcement[]>([])
 
-  const [
-    loading,
-    setLoading,
-  ] =
-    useState(true)
-
   useEffect(() => {
-    Promise.all([
-      fetchEvents('upcoming'),
-      fetchAnnouncements(),
-    ])
-      .then(
-        ([
-          eventData,
-          announcementData,
-        ]) => {
-          setEvents(
-            eventData.slice(
-              0,
-              3,
-            ),
-          )
+    let active = true
 
-          setAnnouncements(
-            announcementData,
-          )
+    fetchAnnouncements()
+      .then(
+        (
+          data,
+        ) => {
+          if (active) {
+            setAnnouncements(
+              data,
+            )
+          }
         },
       )
       .catch(() => {
-        setEvents([])
-        setAnnouncements([])
+        if (active) {
+          setAnnouncements(
+            [],
+          )
+        }
       })
-      .finally(() => {
-        setLoading(false)
-      })
+
+    return () => {
+      active = false
+    }
   }, [])
 
   const importantUpdate =
@@ -423,73 +402,7 @@ export default function HomeExperience() {
         </div>
       </section>
 
-      <section className="bg-white px-4 py-14 sm:py-20">
-        <div className="container-isr mx-auto max-w-7xl">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="isr-eyebrow text-isr-turquoise">
-                Upcoming
-              </p>
-
-              <h2 className="mt-4 text-3xl font-bold text-isr-dark-red sm:text-4xl">
-                What’s happening at ISR?
-              </h2>
-
-              <p className="mt-3 max-w-2xl text-gray-700">
-                Find your next event, class, workshop or
-                community activity.
-              </p>
-            </div>
-
-            <Link href="/events" className="isr-text-link">
-              View all events →
-            </Link>
-          </div>
-
-          {loading ? (
-            <div className="mt-9 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3].map(
-                (item) => (
-                  <div
-                    key={item}
-                    className="h-96 animate-pulse rounded-3xl bg-isr-cream"
-                  />
-                ),
-              )}
-            </div>
-          ) : events.length > 0 ? (
-            <div className="isr-mobile-card-stack mt-9 sm:grid sm:grid-cols-2 lg:grid-cols-3">
-              {events.map(
-                (event) => (
-                  <EventCard
-                    key={event.id}
-                    event={event}
-                    compact
-                  />
-                ),
-              )}
-            </div>
-          ) : (
-            <div className="mt-9 rounded-3xl bg-isr-cream/65 p-8 text-center">
-              <h3 className="text-xl font-bold text-isr-dark-red">
-                No upcoming events are listed yet
-              </h3>
-
-              <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-gray-700">
-                Check ISR Updates and the community for
-                the latest announcements.
-              </p>
-
-              <Link
-                href="/updates"
-                className="isr-text-link mt-5"
-              >
-                View ISR Updates →
-              </Link>
-            </div>
-          )}
-        </div>
-      </section>
+      <HomeWhatsOn />
 
       <section className="bg-isr-dark-red px-4 py-14 text-white sm:py-20">
         <div className="container-isr mx-auto max-w-7xl">

@@ -269,8 +269,8 @@ export default function HomeStudentDashboard() {
               </h2>
 
               <p className="mt-4 max-w-xl leading-relaxed text-gray-700">
-                Prayer, events and important ISR
-                information without having to search
+                Prayer, the next listed event and important
+                ISR information without having to search
                 across the website.
               </p>
             </div>
@@ -406,7 +406,7 @@ export default function HomeStudentDashboard() {
               <article className="isr-dashboard-card">
                 <div className="flex items-center justify-between gap-3">
                   <p className="isr-dashboard-label">
-                    Coming up
+                    Next event
                   </p>
 
                   <span

@@ -17,9 +17,9 @@ const activeTools = [
 
 const nextSystems = [
   {
-    title: 'Programs',
+    title: 'Programs persistence',
     description:
-      'Weekly halaqas, workshops and recurring campus programs.',
+      'The recurring-program preview is now available; database editing arrives in Batch 2B.',
   },
   {
     title: 'Prayer & Jumu’ah',

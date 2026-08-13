@@ -3,16 +3,24 @@ import {
   type Event,
   type EventStatus,
 } from '@/lib/events'
+import {
+  MELBOURNE_TIME_ZONE,
+} from '@/lib/dateTime'
 
 export const EVENT_STATUS_LABELS: Record<
   EventStatus,
   string
 > = {
-  scheduled: 'Scheduled',
-  'sold-out': 'Sold out',
-  postponed: 'Postponed',
-  cancelled: 'Cancelled',
-  completed: 'Completed',
+  scheduled:
+    'Scheduled',
+  'sold-out':
+    'Sold out',
+  postponed:
+    'Postponed',
+  cancelled:
+    'Cancelled',
+  completed:
+    'Completed',
 }
 
 export const EVENT_STATUS_CLASSES: Record<
@@ -40,7 +48,8 @@ export function eventStatus(
 export function formatEventDate(
   value: string,
 ): string {
-  const date = new Date(value)
+  const date =
+    new Date(value)
 
   if (
     Number.isNaN(
@@ -53,12 +62,20 @@ export function formatEventDate(
   return new Intl.DateTimeFormat(
     'en-AU',
     {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
+      timeZone:
+        MELBOURNE_TIME_ZONE,
+      weekday:
+        'short',
+      day:
+        'numeric',
+      month:
+        'short',
+      year:
+        'numeric',
+      hour:
+        'numeric',
+      minute:
+        '2-digit',
     },
   ).format(date)
 }
@@ -69,7 +86,8 @@ export function formatEventDay(
   day: string
   month: string
 } {
-  const date = new Date(value)
+  const date =
+    new Date(value)
 
   if (
     Number.isNaN(
@@ -77,8 +95,10 @@ export function formatEventDay(
     )
   ) {
     return {
-      day: '–',
-      month: 'TBC',
+      day:
+        '–',
+      month:
+        'TBC',
     }
   }
 
@@ -87,7 +107,10 @@ export function formatEventDay(
       new Intl.DateTimeFormat(
         'en-AU',
         {
-          day: '2-digit',
+          timeZone:
+            MELBOURNE_TIME_ZONE,
+          day:
+            '2-digit',
         },
       ).format(date),
 
@@ -95,7 +118,10 @@ export function formatEventDay(
       new Intl.DateTimeFormat(
         'en-AU',
         {
-          month: 'short',
+          timeZone:
+            MELBOURNE_TIME_ZONE,
+          month:
+            'short',
         },
       )
         .format(date)

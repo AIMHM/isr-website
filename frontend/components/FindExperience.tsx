@@ -16,8 +16,20 @@ import {
   type Announcement,
 } from '@/lib/announcements'
 import {
+  fetchPrograms,
+  formatProgramSchedule,
+  type Program,
+} from '@/lib/programs'
+import {
   PRAYER_SPACES,
 } from '@/lib/siteContent'
+
+type SearchCategory =
+  | 'Page'
+  | 'Prayer'
+  | 'Event'
+  | 'Program'
+  | 'ISR Update'
 
 type SearchItem = {
   id: string
@@ -25,121 +37,229 @@ type SearchItem = {
   description: string
   href: string
   category:
-    | 'Page'
-    | 'Prayer'
-    | 'Event'
-    | 'ISR Update'
+    SearchCategory
 }
 
-const STATIC_ITEMS: SearchItem[] = [
+const STATIC_ITEMS:
+  SearchItem[] = [
   {
-    id: 'start',
-    title: 'Start Here',
+    id:
+      'start',
+
+    title:
+      'Student Guide',
+
     description:
-      'New to RMIT or ISR? Start with the essentials.',
-    href: '/start',
-    category: 'Page',
+      'New to RMIT or ISR? Start with the Muslim student essentials.',
+
+    href:
+      '/start',
+
+    category:
+      'Page',
   },
   {
-    id: 'pray',
-    title: 'Pray at RMIT',
+    id:
+      'pray',
+
+    title:
+      'Pray at RMIT',
+
     description:
       'Prayer spaces, Jumu’ah and daily prayer times.',
-    href: '/pray',
-    category: 'Page',
+
+    href:
+      '/pray',
+
+    category:
+      'Page',
   },
   {
-    id: 'jumuah',
-    title: 'Jumu’ah at RMIT',
+    id:
+      'jumuah',
+
+    title:
+      'Jumu’ah at RMIT',
+
     description:
       'Current Friday prayer locations and times.',
-    href: '/pray#jumuah',
-    category: 'Prayer',
+
+    href:
+      '/pray#jumuah',
+
+    category:
+      'Prayer',
   },
   {
-    id: 'events',
-    title: 'ISR Events',
+    id:
+      'events',
+
+    title:
+      'What’s On at ISR',
+
     description:
-      'Upcoming and past Islamic Society of RMIT events.',
-    href: '/events',
-    category: 'Page',
+      'This week, one-off events, weekly programs and past events.',
+
+    href:
+      '/events',
+
+    category:
+      'Page',
   },
   {
-    id: 'updates',
-    title: 'ISR Updates',
+    id:
+      'programs',
+
+    title:
+      'Weekly ISR Programs',
+
+    description:
+      'Regular halaqas, workshops and recurring campus activities.',
+
+    href:
+      '/events#programs',
+
+    category:
+      'Page',
+  },
+  {
+    id:
+      'updates',
+
+    title:
+      'ISR Updates',
+
     description:
       'Operational notices and time-sensitive ISR information.',
-    href: '/updates',
-    category: 'Page',
+
+    href:
+      '/updates',
+
+    category:
+      'Page',
   },
   {
-    id: 'support',
-    title: 'Student Support',
+    id:
+      'support',
+
+    title:
+      'Student Support',
+
     description:
-      'Contact ISR about a concern or support need.',
-    href: '/support',
-    category: 'Page',
+      'Support pathways for Muslim students at RMIT.',
+
+    href:
+      '/support',
+
+    category:
+      'Page',
   },
   {
-    id: 'join',
-    title: 'Join ISR',
+    id:
+      'join',
+
+    title:
+      'Join ISR',
+
     description:
-      'Free membership, volunteering and team pathways.',
-    href: '/join',
-    category: 'Page',
+      'Free membership, community, volunteering and team pathways.',
+
+    href:
+      '/join',
+
+    category:
+      'Page',
   },
   {
-    id: 'contact',
-    title: 'Contact ISR',
+    id:
+      'contact',
+
+    title:
+      'Contact ISR',
+
     description:
       'Official Islamic Society of RMIT contact channels.',
-    href: '/contact',
-    category: 'Page',
+
+    href:
+      '/contact',
+
+    category:
+      'Page',
   },
   {
-    id: 'about',
-    title: 'About ISR',
+    id:
+      'about',
+
+    title:
+      'About ISR',
+
     description:
       'Who ISR is, what it does and why it exists.',
-    href: '/about',
-    category: 'Page',
+
+    href:
+      '/about',
+
+    category:
+      'Page',
   },
   {
-    id: 'history',
-    title: 'ISR History',
+    id:
+      'history',
+
+    title:
+      'ISR History',
+
     description:
       'The current historical record and research gateway.',
-    href: '/about/history',
-    category: 'Page',
+
+    href:
+      '/about/history',
+
+    category:
+      'Page',
   },
   {
-    id: 'campuses',
-    title: 'Campus Guide',
+    id:
+      'campuses',
+
+    title:
+      'Campus Guide',
+
     description:
-      'Prayer-space shortcuts across RMIT campuses.',
-    href: '/campuses',
-    category: 'Page',
+      'Muslim student information across RMIT campuses.',
+
+    href:
+      '/campuses',
+
+    category:
+      'Page',
   },
 ]
 
-const CATEGORY_ORDER = [
+const CATEGORY_ORDER:
+  SearchCategory[] = [
   'Page',
   'Prayer',
+  'Program',
   'Event',
   'ISR Update',
-] as const
+]
 
 function normalize(
   value: string,
-) {
+): string {
   return value
     .toLowerCase()
     .normalize(
       'NFKD',
     )
     .replace(
-      /[\u0300-\u036f]/g,
+      /[̀-ͯ]/g,
       '',
+    )
+    .replace(
+      /jumu'?ah|jummah/g,
+      'jumuah',
     )
 }
 
@@ -154,17 +274,19 @@ export default function FindExperience() {
     events,
     setEvents,
   ] =
-    useState<Event[]>(
-      [],
-    )
+    useState<Event[]>([])
+
+  const [
+    programs,
+    setPrograms,
+  ] =
+    useState<Program[]>([])
 
   const [
     updates,
     setUpdates,
   ] =
-    useState<Announcement[]>(
-      [],
-    )
+    useState<Announcement[]>([])
 
   const [
     loading,
@@ -173,11 +295,11 @@ export default function FindExperience() {
     useState(true)
 
   useEffect(() => {
-    let active =
-      true
+    let active = true
 
     Promise.allSettled([
       fetchEvents(),
+      fetchPrograms(),
       fetchAnnouncements(),
     ])
       .then(
@@ -190,6 +312,7 @@ export default function FindExperience() {
 
           const [
             eventResult,
+            programResult,
             updateResult,
           ] =
             results
@@ -204,6 +327,15 @@ export default function FindExperience() {
           }
 
           if (
+            programResult.status ===
+            'fulfilled'
+          ) {
+            setPrograms(
+              programResult.value,
+            )
+          }
+
+          if (
             updateResult.status ===
             'fulfilled'
           ) {
@@ -213,15 +345,11 @@ export default function FindExperience() {
           }
         },
       )
-      .finally(
-        () => {
-          if (active) {
-            setLoading(
-              false,
-            )
-          }
-        },
-      )
+      .finally(() => {
+        if (active) {
+          setLoading(false)
+        }
+      })
 
     return () => {
       active = false
@@ -263,6 +391,47 @@ export default function FindExperience() {
 
               category:
                 'Prayer',
+            }),
+          )
+
+        const programItems:
+          SearchItem[] =
+          programs.map(
+            (
+              program,
+            ) => ({
+              id:
+                'program-' +
+                program.id,
+
+              title:
+                program.name,
+
+              description:
+                [
+                  formatProgramSchedule(
+                    program,
+                  ),
+                  program.campusLabel,
+                  program.venue,
+                  program.audience,
+                  program.localDemo
+                    ? 'Local demo'
+                    : null,
+                ]
+                  .filter(
+                    Boolean,
+                  )
+                  .join(
+                    ' · ',
+                  ),
+
+              href:
+                '/programs/' +
+                program.slug,
+
+              category:
+                'Program',
             }),
           )
 
@@ -336,12 +505,14 @@ export default function FindExperience() {
         return [
           ...STATIC_ITEMS,
           ...prayerItems,
+          ...programItems,
           ...eventItems,
           ...updateItems,
         ]
       },
       [
         events,
+        programs,
         updates,
       ],
     )
@@ -361,7 +532,7 @@ export default function FindExperience() {
         const terms =
           value
             .split(
-              /\s+/,
+              /s+/,
             )
             .filter(
               Boolean,
@@ -448,15 +619,15 @@ export default function FindExperience() {
             value={
               query
             }
-            onChange={
-              (
-                event,
-              ) =>
-                setQuery(
-                  event.target.value,
-                )
+            onChange={(
+              event,
+            ) =>
+              setQuery(
+                event.target
+                  .value,
+              )
             }
-            placeholder="Try Jumu’ah, Bundoora, membership, support..."
+            placeholder="Try Jumu’ah, halaqa, Bundoora, membership, support..."
             className="min-h-14 w-full rounded-2xl border border-isr-light-blue/35 bg-white px-5 text-base text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-isr-turquoise focus:ring-4 focus:ring-isr-turquoise/10"
           />
 
@@ -474,17 +645,17 @@ export default function FindExperience() {
         </div>
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-gray-600">
-          <p
-            aria-live="polite"
-          >
+          <p aria-live="polite">
             {loading
               ? 'Loading current ISR information…'
               : results.length +
                 ' result' +
-                (results.length ===
-                1
-                  ? ''
-                  : 's')}
+                (
+                  results.length ===
+                    1
+                    ? ''
+                    : 's'
+                )}
           </p>
 
           <Link
@@ -504,8 +675,8 @@ export default function FindExperience() {
           </h2>
 
           <p className="mx-auto mt-3 max-w-xl leading-relaxed text-gray-600">
-            Try a campus name, prayer, event, membership,
-            support or another shorter search term.
+            Try Jumu&apos;ah, halaqa, a campus name,
+            event, membership or another shorter term.
           </p>
 
           <div className="mt-6 flex flex-wrap justify-center gap-3">
@@ -542,7 +713,7 @@ export default function FindExperience() {
                   group.category
                     .toLowerCase()
                     .replace(
-                      /\s+/g,
+                      /s+/g,
                       '-',
                     )
                 }
@@ -554,7 +725,7 @@ export default function FindExperience() {
                       group.category
                         .toLowerCase()
                         .replace(
-                          /\s+/g,
+                          /s+/g,
                           '-',
                         )
                     }

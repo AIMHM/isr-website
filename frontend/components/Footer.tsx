@@ -23,7 +23,7 @@ const studentLinks = [
   },
   {
     href: '/events',
-    label: 'Events',
+    label: 'What’s On',
   },
   {
     href: '/support',

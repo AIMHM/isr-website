@@ -9,6 +9,7 @@ import {
 import Link from 'next/link'
 import {
   fetchEventById,
+  getEventRegistrationMode,
   type Event,
 } from '@/lib/events'
 import {
@@ -131,9 +132,20 @@ export default function EventDetailExperience({
   const status =
     eventStatus(event)
 
+  const registrationMode =
+    getEventRegistrationMode(
+      event,
+    )
+
   const registrationAvailable =
     Boolean(
       event.ticketUrl,
+    ) &&
+    (
+      registrationMode ===
+        'required' ||
+      registrationMode ===
+        'optional'
     ) &&
     status !==
       'cancelled' &&
@@ -154,6 +166,16 @@ export default function EventDetailExperience({
         >
           Register for this event
         </a>
+      ) : registrationMode ===
+        'none' ? (
+        <p className="rounded-xl bg-isr-turquoise/10 px-5 py-3 text-center font-bold text-isr-dark-red">
+          No registration required — just attend.
+        </p>
+      ) : registrationMode ===
+        'closed' ? (
+        <p className="rounded-xl bg-gray-100 px-5 py-3 text-center font-bold text-gray-700">
+          Registration is closed
+        </p>
       ) : status ===
         'sold-out' ? (
         <p className="rounded-xl bg-isr-yellow/50 px-5 py-3 text-center font-bold text-isr-dark-red">
