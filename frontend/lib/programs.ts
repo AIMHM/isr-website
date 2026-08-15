@@ -1,6 +1,10 @@
 import {
   IS_LOCAL_ADMIN_MODE,
+  localAdminApiUrl,
 } from '@/lib/localAdminMode'
+import {
+  API_BASE_URL,
+} from '@/lib/api'
 import {
   IS_LOCAL_MOCK_DATA,
 } from '@/lib/mockMode'
@@ -264,251 +268,64 @@ export function getCurrentWeekBounds(
   }
 }
 
-function buildLocalDemoPrograms():
-  Program[] {
-  const week =
-    getCurrentWeekBounds()
-
-  const activeFrom =
-    addDaysToDateKey(
-      week.startDateKey,
-      -28,
-    )
-
-  const activeUntil =
-    addDaysToDateKey(
-      week.endDateKey,
-      90,
-    )
-
-  const nextWeekThursday =
-    addDaysToDateKey(
-      week.startDateKey,
-      10,
-    )
-
-  return [
-    {
-      id:
-        'local-demo-weekly-halaqa',
-
-      slug:
-        'local-demo-weekly-halaqa',
-
-      name:
-        'Local demo — Weekly Halaqa',
-
-      summary:
-        'Preview of how a recurring weekly halaqa will appear on ISR Website 2.0.',
-
-      description:
-        'This is local development data only. It demonstrates a regular weekly ISR program that students can attend without booking a ticket.',
-
-      category:
-        'Islamic Learning',
-
-      campusId:
-        'city',
-
-      campusLabel:
-        'City',
-
-      venue:
-        'Local preview venue',
-
-      audience:
-        'Everyone',
-
-      weekday:
-        4,
-
-      startTime:
-        '18:00',
-
-      endTime:
-        '19:15',
-
-      intervalWeeks:
-        1,
-
-      activeFrom,
-      activeUntil,
-
-      registrationMode:
-        'none',
-
-      price:
-        'Free',
-
-      status:
-        'active',
-
-      publicationStatus:
-        'published',
-
-      exceptions: [
-        {
-          date:
-            nextWeekThursday,
-
-          status:
-            'changed',
-
-          venue:
-            'Local preview alternate venue',
-
-          note:
-            'Demo exception: venue changed for this session only.',
-        },
-      ],
-
-      localDemo:
-        true,
-    },
-
-    {
-      id:
-        'local-demo-sisters-workshop',
-
-      slug:
-        'local-demo-sisters-workshop',
-
-      name:
-        'Local demo — Sisters Weekly Workshop',
-
-      summary:
-        'Preview of a recurring sisters program with no registration requirement.',
-
-      description:
-        'Local-only development content showing how regular workshops can appear without requiring tickets or repeated event creation.',
-
-      category:
-        'Workshop',
-
-      campusId:
-        'bundoora',
-
-      campusLabel:
-        'Bundoora',
-
-      venue:
-        'Local preview venue',
-
-      audience:
-        'Sisters',
-
-      weekday:
-        5,
-
-      startTime:
-        '17:30',
-
-      endTime:
-        '18:30',
-
-      intervalWeeks:
-        1,
-
-      activeFrom,
-      activeUntil,
-
-      registrationMode:
-        'none',
-
-      price:
-        'Free',
-
-      status:
-        'active',
-
-      publicationStatus:
-        'published',
-
-      exceptions: [],
-
-      localDemo:
-        true,
-    },
-
-    {
-      id:
-        'local-demo-roots-academy',
-
-      slug:
-        'local-demo-roots-academy',
-
-      name:
-        'Local demo — Roots Academy',
-
-      summary:
-        'Preview of a structured recurring Islamic learning program.',
-
-      description:
-        'Local-only development content showing a recurring Saturday program inside the new Programs system.',
-
-      category:
-        'Islamic Learning',
-
-      campusId:
-        'city',
-
-      campusLabel:
-        'City',
-
-      venue:
-        'Local preview venue',
-
-      audience:
-        'Everyone',
-
-      weekday:
-        6,
-
-      startTime:
-        '10:00',
-
-      endTime:
-        '12:00',
-
-      intervalWeeks:
-        1,
-
-      activeFrom,
-      activeUntil,
-
-      registrationMode:
-        'none',
-
-      price:
-        'Free',
-
-      status:
-        'active',
-
-      publicationStatus:
-        'published',
-
-      exceptions: [],
-
-      localDemo:
-        true,
-    },
-  ]
-}
-
 export async function fetchPrograms():
   Promise<Program[]> {
   if (
-    IS_LOCAL_ADMIN_MODE ||
-    IS_LOCAL_MOCK_DATA
+    IS_LOCAL_ADMIN_MODE
   ) {
-    return buildLocalDemoPrograms()
+    const response =
+      await fetch(
+        localAdminApiUrl(
+          '/programs',
+        ),
+        {
+          cache:
+            'no-store',
+        },
+      )
+
+    if (!response.ok) {
+      throw new Error(
+        'Failed to fetch local programs',
+      )
+    }
+
+    const json =
+      await response.json()
+
+    return json.data as Program[]
   }
 
-  // Production persistence arrives in Batch 2B.
-  // Returning no programs prevents local demo
-  // content from becoming a public ISR claim.
-  return []
+  if (
+    IS_LOCAL_MOCK_DATA
+  ) {
+    return []
+  }
+
+  const response =
+    await fetch(
+      `${API_BASE_URL}/api/programs`,
+      typeof window ===
+        'undefined'
+        ? {
+            next: {
+              revalidate:
+                60,
+            },
+          }
+        : undefined,
+    )
+
+  if (!response.ok) {
+    throw new Error(
+      'Failed to fetch programs',
+    )
+  }
+
+  const json =
+    await response.json()
+
+  return json.data as Program[]
 }
 
 export async function fetchProgramBySlug(

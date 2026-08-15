@@ -11,6 +11,9 @@ import type {
 import type {
   Announcement,
 } from '@/lib/announcements'
+import type {
+  Program,
+} from '@/lib/programs'
 
 function authHeaders(
   token: string,
@@ -347,6 +350,167 @@ export async function deleteAnnouncement(
     throw new Error(
       json.error ??
         'Failed to delete ISR update',
+    )
+  }
+}
+
+
+export async function fetchAllPrograms():
+  Promise<Program[]> {
+  const response =
+    await fetch(
+      endpoint(
+        '/programs',
+        '/api/programs',
+      ),
+      {
+        cache:
+          'no-store',
+      },
+    )
+
+  const json =
+    await readJson(
+      response,
+    )
+
+  if (!response.ok) {
+    throw new Error(
+      json.error ??
+        'Failed to fetch programs',
+    )
+  }
+
+  return json.data as Program[]
+}
+
+export async function createProgram(
+  token: string,
+  program: Omit<
+    Program,
+    'id'
+  >,
+): Promise<Program> {
+  const response =
+    await fetch(
+      endpoint(
+        '/programs',
+        '/api/programs',
+      ),
+      {
+        method:
+          'POST',
+
+        headers: {
+          ...authHeaders(
+            token,
+          ),
+
+          'Content-Type':
+            'application/json',
+        },
+
+        body:
+          JSON.stringify(
+            program,
+          ),
+      },
+    )
+
+  const json =
+    await readJson(
+      response,
+    )
+
+  if (!response.ok) {
+    throw new Error(
+      json.error ??
+        'Failed to create program',
+    )
+  }
+
+  return json.data as Program
+}
+
+export async function updateProgram(
+  token: string,
+  id: string,
+  program: Omit<
+    Program,
+    'id'
+  >,
+): Promise<Program> {
+  const response =
+    await fetch(
+      endpoint(
+        `/programs/${id}`,
+        `/api/programs/${id}`,
+      ),
+      {
+        method:
+          'PUT',
+
+        headers: {
+          ...authHeaders(
+            token,
+          ),
+
+          'Content-Type':
+            'application/json',
+        },
+
+        body:
+          JSON.stringify(
+            program,
+          ),
+      },
+    )
+
+  const json =
+    await readJson(
+      response,
+    )
+
+  if (!response.ok) {
+    throw new Error(
+      json.error ??
+        'Failed to update program',
+    )
+  }
+
+  return json.data as Program
+}
+
+export async function deleteProgram(
+  token: string,
+  id: string,
+): Promise<void> {
+  const response =
+    await fetch(
+      endpoint(
+        `/programs/${id}`,
+        `/api/programs/${id}`,
+      ),
+      {
+        method:
+          'DELETE',
+
+        headers:
+          authHeaders(
+            token,
+          ),
+      },
+    )
+
+  if (!response.ok) {
+    const json =
+      await readJson(
+        response,
+      )
+
+    throw new Error(
+      json.error ??
+        'Failed to delete program',
     )
   }
 }

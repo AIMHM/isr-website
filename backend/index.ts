@@ -7,6 +7,7 @@ import cors from "cors";
 import prayerTimesRouter from "./routes/prayerTimes";
 import authRouter from "./routes/auth";
 import eventsRouter from "./routes/events";
+import programsRouter from "./routes/programs";
 import contactRouter from "./routes/contact";
 import weatherRouter from "./routes/weather";
 import announcementsRouter from "./routes/announcements";
@@ -122,6 +123,11 @@ app.use(
 app.use(
   "/api/events",
   eventsRouter,
+);
+
+app.use(
+  "/api/programs",
+  programsRouter,
 );
 
 app.use(

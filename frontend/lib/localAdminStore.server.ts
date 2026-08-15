@@ -10,6 +10,9 @@ import type {
   Announcement,
   AnnouncementPriority,
 } from '@/lib/announcements'
+import type {
+  Program,
+} from '@/lib/programs'
 import {
   MOCK_EVENTS,
   MOCK_ANNOUNCEMENTS,
@@ -18,6 +21,7 @@ import {
 type LocalStore = {
   events: Event[]
   announcements: Announcement[]
+  programs: Program[]
 }
 
 const DATA_DIR = path.join(
@@ -113,6 +117,8 @@ function starterStore(): LocalStore {
           ...announcement,
         }),
       ) as Announcement[],
+
+    programs: [],
   }
 }
 
@@ -155,6 +161,13 @@ export async function readStore():
         parsed.announcements,
       )
         ? parsed.announcements
+        : [],
+
+    programs:
+      Array.isArray(
+        parsed.programs,
+      )
+        ? parsed.programs
         : [],
   }
 }

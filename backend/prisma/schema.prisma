@@ -1,4 +1,4 @@
-generator client {
+﻿generator client {
   provider = "prisma-client-js"
 }
 
@@ -40,4 +40,70 @@ model Announcement {
 
   @@index([createdAt])
   @@index([expiresAt])
+}
+
+
+model Program {
+  id               Int      @id @default(autoincrement())
+  slug             String   @unique
+  name             String
+  summary          String
+  description      String
+  category         String
+
+  campusId         String
+  campusLabel      String
+  venue            String
+  audience         String
+
+  weekday          Int
+  startTime        String
+  endTime          String
+  intervalWeeks    Int      @default(1)
+
+  activeFrom       DateTime
+  activeUntil      DateTime
+
+  registrationMode String   @default("none")
+  registrationUrl  String?
+  price             String?
+
+  status            String   @default("active")
+  publicationStatus String   @default("published")
+
+  imageUrl          String?
+
+  contentOwner      String?
+  lastReviewedAt    DateTime?
+  reviewDueAt       DateTime?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  exceptions ProgramException[]
+
+  @@index([status])
+  @@index([publicationStatus])
+  @@index([campusId])
+  @@index([activeFrom, activeUntil])
+}
+
+model ProgramException {
+  id        Int      @id @default(autoincrement())
+  programId Int
+
+  date      DateTime
+  status    String
+  startTime String?
+  endTime   String?
+  venue     String?
+  note      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  program Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@unique([programId, date])
+  @@index([date])
 }
