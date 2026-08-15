@@ -16,10 +16,12 @@ import type {
   ProgramAudience,
   ProgramCategory,
   ProgramRegistrationMode,
+  ProgramException,
 } from '@/lib/programs'
 import type {
   CampusId,
 } from '@/lib/contentTypes'
+import ProgramExceptionsEditor from '@/components/admin/ProgramExceptionsEditor'
 
 type FormState = {
   name: string
@@ -145,10 +147,14 @@ export default function ProgramEditor({
     )
 
   const [
+    exceptions,
+    setExceptions,
+  ] = useState<ProgramException[]>([])
+
+  const [
     saving,
     setSaving,
-  ] =
-    useState(false)
+  ] = useState(false)
 
   const [
     error,
@@ -161,6 +167,8 @@ export default function ProgramEditor({
       setForm(
         EMPTY,
       )
+
+      setExceptions([])
 
       return
     }
@@ -232,6 +240,10 @@ export default function ProgramEditor({
         program.contentOwner ??
         '',
     })
+
+    setExceptions(
+      program.exceptions ?? [],
+    )
   }, [
     program,
   ])
@@ -368,9 +380,7 @@ export default function ProgramEditor({
         reviewDueAt:
           null,
 
-        exceptions:
-          program?.exceptions ??
-          [],
+        exceptions,
       }
 
       const saved =
@@ -999,6 +1009,11 @@ export default function ProgramEditor({
         </label>
       </div>
 
+      <ProgramExceptionsEditor
+        exceptions={exceptions}
+        onChange={setExceptions}
+      />
+
       <div className="mt-7 flex flex-wrap justify-end gap-3">
         <button
           type="button"
@@ -1027,4 +1042,3 @@ export default function ProgramEditor({
     </form>
   )
 }
-
