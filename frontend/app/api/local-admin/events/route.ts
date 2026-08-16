@@ -10,6 +10,7 @@ import {
   optionalString,
   readStore,
   safeHttpUrl,
+  validEventRegistrationMode,
   validEventStatus,
   writeStore,
 } from '@/lib/localAdminStore.server'
@@ -145,6 +146,12 @@ export async function POST(
         'status',
       ) || 'scheduled'
 
+    const registrationMode =
+      formString(
+        form,
+        'registrationMode',
+      ) || 'unknown'
+
     if (
       !name ||
       !date ||
@@ -238,6 +245,33 @@ export async function POST(
       )
     }
 
+    if (
+      !validEventRegistrationMode(
+        registrationMode,
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            'Invalid registration mode',
+        },
+        { status: 400 },
+      )
+    }
+
+    if (
+      registrationMode === 'required' &&
+      !ticketUrl
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            'Registration URL is required when registration is required',
+        },
+        { status: 400 },
+      )
+    }
+
     const imageUrl =
       await imageToDataUrl(
         form.get('image'),
@@ -262,6 +296,28 @@ export async function POST(
       ticketUrl:
         optionalString(
           ticketUrl,
+        ),
+      registrationMode,
+      category:
+        optionalString(
+          formString(
+            form,
+            'category',
+          ),
+        ),
+      contentOwner:
+        optionalString(
+          formString(
+            form,
+            'contentOwner',
+          ),
+        ),
+      reviewedAt:
+        optionalString(
+          formString(
+            form,
+            'reviewedAt',
+          ),
         ),
       venue:
         optionalString(

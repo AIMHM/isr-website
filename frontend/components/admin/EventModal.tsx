@@ -28,6 +28,7 @@ import {
   fromDatetimeLocalValue,
   toDatetimeLocalValue,
   type Event,
+  type EventRegistrationMode,
   type EventStatus,
 } from '@/lib/events'
 
@@ -132,6 +133,20 @@ export function EventModal({
   const [
     ticketUrl,
     setTicketUrl,
+  ] =
+    useState('')
+
+  const [
+    registrationMode,
+    setRegistrationMode,
+  ] =
+    useState<EventRegistrationMode>(
+      'unknown',
+    )
+
+  const [
+    category,
+    setCategory,
   ] =
     useState('')
 
@@ -242,6 +257,18 @@ export function EventModal({
         '',
     )
 
+    setRegistrationMode(
+      event?.registrationMode ??
+        (event?.ticketUrl
+          ? 'required'
+          : 'unknown'),
+    )
+
+    setCategory(
+      event?.category ??
+        '',
+    )
+
     setStatus(
       event?.status ??
         'scheduled',
@@ -337,16 +364,6 @@ export function EventModal({
       return
     }
 
-    if (
-      !isEdit &&
-      !imageFile
-    ) {
-      setError(
-        'A poster image is required when creating a new event.',
-      )
-
-      return
-    }
 
     if (
       endDate &&
@@ -375,6 +392,18 @@ export function EventModal({
     ) {
       setError(
         'Registration URL must be a valid http or https link.',
+      )
+
+      return
+    }
+
+    if (
+      registrationMode ===
+        'required' &&
+      !ticketUrl.trim()
+    ) {
+      setError(
+        'A registration URL is required when registration is required.',
       )
 
       return
@@ -426,6 +455,16 @@ export function EventModal({
     formData.set(
       'ticketUrl',
       ticketUrl.trim(),
+    )
+
+    formData.set(
+      'registrationMode',
+      registrationMode,
+    )
+
+    formData.set(
+      'category',
+      category.trim(),
     )
 
     formData.set(
@@ -750,6 +789,94 @@ export function EventModal({
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
+                <Label htmlFor="ev-category">
+                  Category
+                </Label>
+
+                <select
+                  id="ev-category"
+                  value={category}
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setCategory,
+                      inputEvent
+                        .target
+                        .value,
+                    )
+                  }
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                >
+                  <option value="">
+                    Not specified
+                  </option>
+                  <option value="Islamic Learning">
+                    Islamic Learning
+                  </option>
+                  <option value="Community">
+                    Community
+                  </option>
+                  <option value="Workshop">
+                    Workshop
+                  </option>
+                  <option value="Social">
+                    Social
+                  </option>
+                  <option value="Sports">
+                    Sports
+                  </option>
+                  <option value="Professional">
+                    Professional
+                  </option>
+                  <option value="Charity">
+                    Charity
+                  </option>
+                  <option value="Other">
+                    Other
+                  </option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="ev-registration-mode">
+                  Registration
+                </Label>
+
+                <select
+                  id="ev-registration-mode"
+                  value={registrationMode}
+                  onChange={(
+                    inputEvent,
+                  ) => {
+                    setRegistrationMode(
+                      inputEvent
+                        .target
+                        .value as EventRegistrationMode,
+                    )
+                    setDirty(true)
+                  }}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                >
+                  <option value="none">
+                    No registration required
+                  </option>
+                  <option value="required">
+                    Registration required
+                  </option>
+                  <option value="optional">
+                    Registration optional
+                  </option>
+                  <option value="closed">
+                    Registration closed
+                  </option>
+                  <option value="unknown">
+                    To be confirmed
+                  </option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
                 <Label htmlFor="ev-ticket">
                   Registration URL
                 </Label>
@@ -885,11 +1012,6 @@ export function EventModal({
               <div className="space-y-1.5">
                 <Label
                   htmlFor="ev-image"
-                  className={
-                    isEdit
-                      ? ''
-                      : 'isr-admin-required'
-                  }
                 >
                   {isEdit
                     ? 'Replace poster'

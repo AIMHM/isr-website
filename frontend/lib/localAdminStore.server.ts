@@ -4,6 +4,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import type {
   Event,
+  EventRegistrationMode,
   EventStatus,
 } from '@/lib/events'
 import type {
@@ -41,6 +42,15 @@ const EVENT_STATUSES = new Set<EventStatus>([
   'cancelled',
   'completed',
 ])
+
+const EVENT_REGISTRATION_MODES =
+  new Set<EventRegistrationMode>([
+    'none',
+    'required',
+    'optional',
+    'closed',
+    'unknown',
+  ])
 
 const ANNOUNCEMENT_PRIORITIES =
   new Set<AnnouncementPriority>([
@@ -230,6 +240,14 @@ export function validEventStatus(
 ): value is EventStatus {
   return EVENT_STATUSES.has(
     value as EventStatus,
+  )
+}
+
+export function validEventRegistrationMode(
+  value: string,
+): value is EventRegistrationMode {
+  return EVENT_REGISTRATION_MODES.has(
+    value as EventRegistrationMode,
   )
 }
 

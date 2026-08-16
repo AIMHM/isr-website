@@ -27,7 +27,7 @@ export type Event = {
   id: number
   name: string
   date: string
-  imageUrl: string
+  imageUrl: string | null
   description: string
   ticketUrl: string | null
 

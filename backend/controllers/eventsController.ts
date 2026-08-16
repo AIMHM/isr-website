@@ -13,6 +13,14 @@ const EVENT_STATUSES = new Set([
   "completed",
 ]);
 
+const EVENT_REGISTRATION_MODES = new Set([
+  "none",
+  "required",
+  "optional",
+  "closed",
+  "unknown",
+]);
+
 function normalizeNullableString(value: unknown): string | null {
   if (typeof value !== "string") return null;
   const trimmed = value.trim();
@@ -180,6 +188,10 @@ export const createEvent = async (
     accessibility,
     status,
     statusNote,
+    registrationMode,
+    category,
+    contentOwner,
+    reviewedAt,
   } = req.body;
 
   const normalizedName =
@@ -241,15 +253,47 @@ export const createEvent = async (
     });
   }
 
-  if (!req.file) {
+  const normalizedRegistrationMode =
+    normalizeNullableString(registrationMode) ??
+    "unknown";
+
+  if (
+    !EVENT_REGISTRATION_MODES.has(
+      normalizedRegistrationMode,
+    )
+  ) {
     return res.status(400).json({
-      error: "An image file is required",
+      error: "Invalid registration mode",
+    });
+  }
+
+  if (
+    normalizedRegistrationMode === "required" &&
+    !normalizedTicketUrl
+  ) {
+    return res.status(400).json({
+      error:
+        "Registration URL is required when registration is required",
+    });
+  }
+
+  const parsedReviewedAt =
+    parseOptionalDate(reviewedAt);
+
+  if (
+    reviewedAt !== undefined &&
+    parsedReviewedAt === undefined
+  ) {
+    return res.status(400).json({
+      error: "reviewedAt must be a valid date",
     });
   }
 
   try {
     const imageUrl =
-      await uploadEventImage(req.file);
+      req.file
+        ? await uploadEventImage(req.file)
+        : null;
 
     const event = await prisma.event.create({
       data: {
@@ -258,6 +302,14 @@ export const createEvent = async (
         endDate: parsedEndDate,
         description: normalizedDescription,
         ticketUrl: normalizedTicketUrl,
+        registrationMode:
+          normalizedRegistrationMode,
+        category:
+          normalizeNullableString(category),
+        contentOwner:
+          normalizeNullableString(contentOwner),
+        reviewedAt:
+          parsedReviewedAt ?? null,
         imageUrl,
         venue: normalizeNullableString(venue),
         campus: normalizeNullableString(campus),
@@ -406,6 +458,74 @@ export const updateEvent = async (
       }
 
       data.status = value;
+    }
+
+    if (
+      req.body.registrationMode !== undefined
+    ) {
+      const value =
+        normalizeNullableString(
+          req.body.registrationMode,
+        ) ?? "unknown";
+
+      if (
+        !EVENT_REGISTRATION_MODES.has(value)
+      ) {
+        return res.status(400).json({
+          error: "Invalid registration mode",
+        });
+      }
+
+      const effectiveTicketUrl =
+        data.ticketUrl !== undefined
+          ? data.ticketUrl
+          : existing.ticketUrl;
+
+      if (
+        value === "required" &&
+        !effectiveTicketUrl
+      ) {
+        return res.status(400).json({
+          error:
+            "Registration URL is required when registration is required",
+        });
+      }
+
+      data.registrationMode = value;
+    }
+
+    if (req.body.category !== undefined) {
+      data.category =
+        normalizeNullableString(
+          req.body.category,
+        );
+    }
+
+    if (
+      req.body.contentOwner !== undefined
+    ) {
+      data.contentOwner =
+        normalizeNullableString(
+          req.body.contentOwner,
+        );
+    }
+
+    if (
+      req.body.reviewedAt !== undefined
+    ) {
+      const value =
+        parseOptionalDate(
+          req.body.reviewedAt,
+        );
+
+      if (value === undefined) {
+        return res.status(400).json({
+          error:
+            "reviewedAt must be a valid date",
+        });
+      }
+
+      data.reviewedAt = value;
     }
 
     if (req.file) {
