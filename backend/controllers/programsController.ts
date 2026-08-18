@@ -126,6 +126,11 @@ export const getPrograms =
     try {
       const programs =
         await prisma.program.findMany({
+          where: {
+            publicationStatus:
+              "published",
+          },
+
           include: {
             exceptions: {
               orderBy: {
@@ -166,6 +171,46 @@ export const getPrograms =
     }
   };
 
+export const getAdminPrograms =
+  async (
+    _req: Request,
+    res: Response,
+  ) => {
+    try {
+      const programs =
+        await prisma.program.findMany({
+          include: {
+            exceptions: {
+              orderBy: {
+                date: "asc",
+              },
+            },
+          },
+
+          orderBy: {
+            name: "asc",
+          },
+        });
+
+      return res.status(200).json({
+        data:
+          programs.map(
+            serializeProgram,
+          ),
+      });
+    }
+    catch (error) {
+      console.error(
+        "getAdminPrograms failed:",
+        error,
+      );
+
+      return res.status(500).json({
+        error:
+          "Failed to fetch admin programs",
+      });
+    }
+  };
 export const getProgramBySlug =
   async (
     req: Request,
@@ -173,10 +218,13 @@ export const getProgramBySlug =
   ) => {
     try {
       const program =
-        await prisma.program.findUnique({
+        await prisma.program.findFirst({
           where: {
             slug:
               req.params.slug,
+
+            publicationStatus:
+              "published",
           },
 
           include: {
@@ -291,7 +339,7 @@ function parseProgramBody(
   const publicationStatus =
     stringValue(
       body.publicationStatus,
-    ) || "published";
+    ) || "draft";
 
   if (
     !name ||

@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import {
   useCallback,
@@ -59,8 +59,19 @@ export default function AdminProgramsPage() {
         setError('')
 
         try {
+          const token =
+            getToken()
+
+          if (!token) {
+            throw new Error(
+              'Admin session missing',
+            )
+          }
+
           setPrograms(
-            await fetchAllPrograms(),
+            await fetchAllPrograms(
+              token,
+            ),
           )
         }
         catch (caught) {

@@ -11,6 +11,7 @@ import {
   safeHttpUrl,
   validEventRegistrationMode,
   validEventStatus,
+  validPublicationStatus,
   writeStore,
 } from '@/lib/localAdminStore.server'
 
@@ -21,7 +22,7 @@ type Context = {
 }
 
 export async function GET(
-  _request: Request,
+  request: Request,
   context: Context,
 ) {
   if (!localAdminEnabled()) {
@@ -58,6 +59,26 @@ export async function GET(
     )
 
   if (!event) {
+    return NextResponse.json(
+      { error: 'Event not found' },
+      { status: 404 },
+    )
+  }
+
+  const publicScope =
+    new URL(
+      request.url,
+    ).searchParams.get(
+      'scope',
+    ) === 'public'
+
+  if (
+    publicScope &&
+    (
+      event.publicationStatus ??
+      'published'
+    ) !== 'published'
+  ) {
     return NextResponse.json(
       { error: 'Event not found' },
       { status: 404 },
@@ -160,6 +181,12 @@ export async function PUT(
         'registrationMode',
       ) || 'unknown'
 
+    const publicationStatus =
+      formString(
+        form,
+        'publicationStatus',
+      )
+
     if (
       !name ||
       !date ||
@@ -251,6 +278,21 @@ export async function PUT(
     }
 
     if (
+      publicationStatus &&
+      !validPublicationStatus(
+        publicationStatus,
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            'Invalid publication status',
+        },
+        { status: 400 },
+      )
+    }
+
+    if (
       registrationMode === 'required' &&
       !ticketUrl
     ) {
@@ -282,6 +324,13 @@ export async function PUT(
           ticketUrl,
         ),
       registrationMode,
+      publicationStatus:
+        validPublicationStatus(
+          publicationStatus,
+        )
+          ? publicationStatus
+          : existing.publicationStatus ??
+            'published',
       category:
         optionalString(
           formString(

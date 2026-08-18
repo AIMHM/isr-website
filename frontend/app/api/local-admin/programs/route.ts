@@ -83,7 +83,9 @@ function validateProgram(
   return null
 }
 
-export async function GET() {
+export async function GET(
+  request: Request,
+) {
   if (!localAdminEnabled()) {
     return NextResponse.json(
       {
@@ -100,9 +102,25 @@ export async function GET() {
   const store =
     await readStore()
 
+  const publicScope =
+    new URL(
+      request.url,
+    ).searchParams.get(
+      'scope',
+    ) === 'public'
+
+  const programs =
+    publicScope
+      ? store.programs.filter(
+          (program) =>
+            program.publicationStatus ===
+            'published',
+        )
+      : store.programs
+
   return NextResponse.json({
     data:
-      store.programs,
+      programs,
   })
 }
 
@@ -274,7 +292,7 @@ export async function POST(
 
     publicationStatus:
       body.publicationStatus ??
-      'published',
+      'draft',
 
     imageUrl:
       body.imageUrl ??

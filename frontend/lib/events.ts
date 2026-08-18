@@ -8,6 +8,9 @@ import {
   IS_LOCAL_ADMIN_MODE,
   localAdminApiUrl,
 } from '@/lib/localAdminMode'
+import type {
+  PublicationStatus,
+} from '@/lib/contentTypes'
 
 export type EventStatus =
   | 'scheduled'
@@ -42,6 +45,7 @@ export type Event = {
   accessibility?: string | null
   status?: EventStatus
   statusNote?: string | null
+  publicationStatus?: PublicationStatus
   contentOwner?: string | null
   reviewedAt?: string | null
 }
@@ -325,15 +329,24 @@ export async function fetchEvents(
   filter: EventsFilter = 'all',
 ): Promise<Event[]> {
   if (IS_LOCAL_ADMIN_MODE) {
-    const query =
-      filter === 'all'
-        ? ''
-        : `?filter=${filter}`
+    const params =
+      new URLSearchParams({
+        scope: 'public',
+      })
+
+    if (
+      filter !== 'all'
+    ) {
+      params.set(
+        'filter',
+        filter,
+      )
+    }
 
     const response =
       await fetch(
         localAdminApiUrl(
-          `/events${query}`,
+          `/events?${params.toString()}`,
         ),
         {
           cache: 'no-store',
@@ -422,7 +435,7 @@ export async function fetchEventById(
     const response =
       await fetch(
         localAdminApiUrl(
-          `/events/${id}`,
+          `/events/${id}?scope=public`,
         ),
         {
           cache: 'no-store',

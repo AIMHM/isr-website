@@ -21,6 +21,13 @@ const EVENT_REGISTRATION_MODES = new Set([
   "unknown",
 ]);
 
+const PUBLICATION_STATUSES = new Set([
+  "draft",
+  "review",
+  "published",
+  "archived",
+]);
+
 function normalizeNullableString(value: unknown): string | null {
   if (typeof value !== "string") return null;
   const trimmed = value.trim();
@@ -61,6 +68,7 @@ export const getEvents = async (req: Request, res: Response) => {
   const where =
     filter === "upcoming"
       ? {
+          publicationStatus: "published",
           AND: [
             { status: { not: "completed" } },
             {
@@ -78,6 +86,7 @@ export const getEvents = async (req: Request, res: Response) => {
         }
       : filter === "past"
         ? {
+            publicationStatus: "published",
             OR: [
               { status: "completed" },
               { endDate: { lt: now } },
@@ -89,7 +98,9 @@ export const getEvents = async (req: Request, res: Response) => {
               },
             ],
           }
-        : undefined;
+        : {
+            publicationStatus: "published",
+          };
 
   try {
     const events = await prisma.event.findMany({
@@ -99,9 +110,10 @@ export const getEvents = async (req: Request, res: Response) => {
       },
     });
 
-    if (!where) {
+    if (!filter) {
       const upcoming = events.filter((event) => {
-        const effectiveEnd = event.endDate ?? event.date;
+        const effectiveEnd =
+          event.endDate ?? event.date;
 
         return (
           event.status !== "completed" &&
@@ -111,7 +123,8 @@ export const getEvents = async (req: Request, res: Response) => {
 
       const past = events
         .filter((event) => {
-          const effectiveEnd = event.endDate ?? event.date;
+          const effectiveEnd =
+            event.endDate ?? event.date;
 
           return (
             event.status === "completed" ||
@@ -120,7 +133,8 @@ export const getEvents = async (req: Request, res: Response) => {
         })
         .sort(
           (a, b) =>
-            b.date.getTime() - a.date.getTime(),
+            b.date.getTime() -
+            a.date.getTime(),
         );
 
       return res.status(200).json({
@@ -128,16 +142,48 @@ export const getEvents = async (req: Request, res: Response) => {
       });
     }
 
-    return res.status(200).json({ data: events });
+    return res.status(200).json({
+      data: events,
+    });
   } catch (err) {
-    console.error("getEvents failed:", err);
+    console.error(
+      "getEvents failed:",
+      err,
+    );
 
-    return res
-      .status(500)
-      .json({ error: "Failed to fetch events" });
+    return res.status(500).json({
+      error: "Failed to fetch events",
+    });
   }
 };
 
+export const getAdminEvents = async (
+  _req: Request,
+  res: Response,
+) => {
+  try {
+    const events =
+      await prisma.event.findMany({
+        orderBy: {
+          date: "desc",
+        },
+      });
+
+    return res.status(200).json({
+      data: events,
+    });
+  } catch (err) {
+    console.error(
+      "getAdminEvents failed:",
+      err,
+    );
+
+    return res.status(500).json({
+      error:
+        "Failed to fetch admin events",
+    });
+  }
+};
 export const getEventById = async (
   req: Request,
   res: Response,
@@ -151,8 +197,12 @@ export const getEventById = async (
   }
 
   try {
-    const event = await prisma.event.findUnique({
-      where: { id },
+    const event = await prisma.event.findFirst({
+      where: {
+        id,
+        publicationStatus:
+          "published",
+      },
     });
 
     if (!event) {
@@ -191,8 +241,9 @@ export const createEvent = async (
     registrationMode,
     category,
     contentOwner,
-    reviewedAt,
-  } = req.body;
+      reviewedAt,
+      publicationStatus,
+    } = req.body;
 
   const normalizedName =
     normalizeNullableString(name);
@@ -277,6 +328,22 @@ export const createEvent = async (
     });
   }
 
+  const normalizedPublicationStatus =
+    normalizeNullableString(
+      publicationStatus,
+    ) ?? "draft";
+
+  if (
+    !PUBLICATION_STATUSES.has(
+      normalizedPublicationStatus,
+    )
+  ) {
+    return res.status(400).json({
+      error:
+        "Invalid publication status",
+    });
+  }
+
   const parsedReviewedAt =
     parseOptionalDate(reviewedAt);
 
@@ -304,6 +371,8 @@ export const createEvent = async (
         ticketUrl: normalizedTicketUrl,
         registrationMode:
           normalizedRegistrationMode,
+        publicationStatus:
+          normalizedPublicationStatus,
         category:
           normalizeNullableString(category),
         contentOwner:
@@ -492,6 +561,29 @@ export const updateEvent = async (
       }
 
       data.registrationMode = value;
+    }
+
+    if (
+      req.body.publicationStatus !==
+      undefined
+    ) {
+      const value =
+        normalizeNullableString(
+          req.body.publicationStatus,
+        );
+
+      if (
+        !value ||
+        !PUBLICATION_STATUSES.has(value)
+      ) {
+        return res.status(400).json({
+          error:
+            "Invalid publication status",
+        });
+      }
+
+      data.publicationStatus =
+        value;
     }
 
     if (req.body.category !== undefined) {

@@ -14,6 +14,9 @@ import type {
 import type {
   Program,
 } from '@/lib/programs'
+import type {
+  PublicationStatus,
+} from '@/lib/contentTypes'
 import {
   MOCK_EVENTS,
   MOCK_ANNOUNCEMENTS,
@@ -50,6 +53,14 @@ const EVENT_REGISTRATION_MODES =
     'optional',
     'closed',
     'unknown',
+  ])
+
+const PUBLICATION_STATUSES =
+  new Set<PublicationStatus>([
+    'draft',
+    'review',
+    'published',
+    'archived',
   ])
 
 const ANNOUNCEMENT_PRIORITIES =
@@ -248,6 +259,14 @@ export function validEventRegistrationMode(
 ): value is EventRegistrationMode {
   return EVENT_REGISTRATION_MODES.has(
     value as EventRegistrationMode,
+  )
+}
+
+export function validPublicationStatus(
+  value: string,
+): value is PublicationStatus {
+  return PUBLICATION_STATUSES.has(
+    value as PublicationStatus,
   )
 }
 

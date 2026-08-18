@@ -276,7 +276,7 @@ export async function fetchPrograms():
     const response =
       await fetch(
         localAdminApiUrl(
-          '/programs',
+          '/programs?scope=public',
         ),
         {
           cache:

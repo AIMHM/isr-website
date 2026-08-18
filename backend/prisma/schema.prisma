@@ -21,14 +21,16 @@ model Event {
   audience         String?
   price            String?
   accessibility    String?
-  status           String   @default("scheduled")
-  statusNote       String?
-  contentOwner     String?
+  status            String   @default("scheduled")
+  statusNote        String?
+  publicationStatus String   @default("draft")
+  contentOwner      String?
   reviewedAt       DateTime?
 
   @@index([date])
   @@index([status])
   @@index([registrationMode])
+  @@index([publicationStatus])
 }
 
 model Announcement {
@@ -74,7 +76,7 @@ model Program {
   price             String?
 
   status            String   @default("active")
-  publicationStatus String   @default("published")
+  publicationStatus String   @default("draft")
 
   imageUrl          String?
 

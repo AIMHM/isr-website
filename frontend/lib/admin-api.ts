@@ -120,15 +120,18 @@ export async function getMe(
   return json.data?.user
 }
 
-export async function fetchAllEvents():
-  Promise<Event[]> {
+export async function fetchAllEvents(
+  token: string,
+): Promise<Event[]> {
   const response =
     await fetch(
       endpoint(
         '/events',
-        '/api/events',
+        '/api/events/admin/all',
       ),
       {
+        headers:
+          authHeaders(token),
         cache: 'no-store',
       },
     )
@@ -355,15 +358,18 @@ export async function deleteAnnouncement(
 }
 
 
-export async function fetchAllPrograms():
-  Promise<Program[]> {
+export async function fetchAllPrograms(
+  token: string,
+): Promise<Program[]> {
   const response =
     await fetch(
       endpoint(
         '/programs',
-        '/api/programs',
+        '/api/programs/admin/all',
       ),
       {
+        headers:
+          authHeaders(token),
         cache:
           'no-store',
       },

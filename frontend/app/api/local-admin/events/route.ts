@@ -12,6 +12,7 @@ import {
   safeHttpUrl,
   validEventRegistrationMode,
   validEventStatus,
+  validPublicationStatus,
   writeStore,
 } from '@/lib/localAdminStore.server'
 
@@ -53,6 +54,22 @@ export async function GET(
 
   let events =
     [...store.events]
+
+  const publicScope =
+    url.searchParams.get(
+      'scope',
+    ) === 'public'
+
+  if (publicScope) {
+    events =
+      events.filter(
+        (event) =>
+          (
+            event.publicationStatus ??
+            'published'
+          ) === 'published',
+      )
+  }
 
   if (filter === 'upcoming') {
     events =
@@ -151,6 +168,12 @@ export async function POST(
         form,
         'registrationMode',
       ) || 'unknown'
+
+    const publicationStatus =
+      formString(
+        form,
+        'publicationStatus',
+      ) || 'draft'
 
     if (
       !name ||
@@ -260,6 +283,20 @@ export async function POST(
     }
 
     if (
+      !validPublicationStatus(
+        publicationStatus,
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            'Invalid publication status',
+        },
+        { status: 400 },
+      )
+    }
+
+    if (
       registrationMode === 'required' &&
       !ticketUrl
     ) {
@@ -298,6 +335,7 @@ export async function POST(
           ticketUrl,
         ),
       registrationMode,
+      publicationStatus,
       category:
         optionalString(
           formString(

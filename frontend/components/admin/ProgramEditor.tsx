@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import {
   useEffect,
@@ -105,7 +105,7 @@ const EMPTY: FormState = {
     'active',
 
   publicationStatus:
-    'published',
+    'draft',
 
   contentOwner: '',
 }

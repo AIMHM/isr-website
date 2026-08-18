@@ -6,6 +6,7 @@ import {
   deleteProgram,
   getProgramBySlug,
   getPrograms,
+  getAdminPrograms,
   updateProgram,
 } from "../controllers/programsController";
 import {
@@ -18,6 +19,12 @@ const router =
 router.get(
   "/",
   getPrograms,
+);
+
+router.get(
+  "/admin/all",
+  checkAuth,
+  getAdminPrograms,
 );
 
 router.get(
