@@ -31,7 +31,9 @@ import {
   type EventRegistrationMode,
   type EventStatus,
 } from '@/lib/events'
-
+import type {
+  PublicationStatus,
+} from '@/lib/contentTypes'
 interface Props {
   open: boolean
   event: Event | null
@@ -165,6 +167,13 @@ export function EventModal({
     useState('')
 
   const [
+    publicationStatus,
+    setPublicationStatus,
+  ] =
+    useState<PublicationStatus>(
+      'draft',
+    )
+  const [
     contentOwner,
     setContentOwner,
   ] =
@@ -279,6 +288,10 @@ export function EventModal({
         '',
     )
 
+    setPublicationStatus(
+      event?.publicationStatus ??
+        'draft',
+    )
     setContentOwner(
       event?.contentOwner ??
         '',
@@ -502,6 +515,10 @@ export function EventModal({
       statusNote.trim(),
     )
 
+    formData.set(
+      'publicationStatus',
+      publicationStatus,
+    )
     formData.set(
       'contentOwner',
       contentOwner.trim(),
@@ -922,6 +939,71 @@ export function EventModal({
               </div>
             </div>
           </section>
+          <section className="isr-admin-fieldset">
+            <h3 className="isr-admin-fieldset-title">
+              Publication workflow
+            </h3>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="ev-publication-status">
+                  Publication state
+                </Label>
+
+                <select
+                  id="ev-publication-status"
+                  value={publicationStatus}
+                  onChange={(
+                    inputEvent,
+                  ) => {
+                    setPublicationStatus(
+                      inputEvent
+                        .target
+                        .value as PublicationStatus,
+                    )
+
+                    setDirty(true)
+                  }}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                >
+                  <option value="draft">
+                    Draft
+                  </option>
+
+                  <option value="review">
+                    Review
+                  </option>
+
+                  <option value="published">
+                    Published
+                  </option>
+
+                  <option value="archived">
+                    Archived
+                  </option>
+                </select>
+              </div>
+
+              <div className="rounded-xl bg-isr-cream/70 p-4 text-xs leading-relaxed text-gray-600">
+                <strong className="text-isr-dark-red">
+                  Draft
+                </strong>
+                {' → '}
+                Review
+                {' → '}
+                Published
+                {' → '}
+                Archived
+
+                <p className="mt-2">
+                  Only published events appear on the public website.
+                  Archiving keeps the event and its poster in the system.
+                </p>
+              </div>
+            </div>
+          </section>
+
+
 
           <section className="isr-admin-fieldset">
             <h3 className="isr-admin-fieldset-title">

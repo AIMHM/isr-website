@@ -14,7 +14,7 @@ import {
   PencilIcon,
   PlusIcon,
   SearchIcon,
-  Trash2Icon,
+  ArchiveIcon,
 } from 'lucide-react'
 import {
   Button,
@@ -26,14 +26,10 @@ import {
   EventModal,
 } from '@/components/admin/EventModal'
 import {
-  ConfirmDeleteDialog,
-} from '@/components/admin/ConfirmDeleteDialog'
-import {
   getToken,
 } from '@/lib/auth'
 import {
   createEvent,
-  deleteEvent,
   fetchAllEvents,
   updateEvent,
 } from '@/lib/admin-api'
@@ -64,6 +60,39 @@ const STATUS_CLASSES: Record<
     'bg-gray-100 text-gray-600',
 }
 
+const PUBLICATION_CLASSES = {
+  draft:
+    'bg-gray-100 text-gray-700',
+  review:
+    'bg-amber-100 text-amber-800',
+  published:
+    'bg-emerald-100 text-emerald-800',
+  archived:
+    'bg-slate-200 text-slate-700',
+} as const
+
+function getPublicationStatus(
+  event: Event,
+) {
+  return (
+    event.publicationStatus ??
+    'published'
+  )
+}
+
+function getPublicationLabel(
+  event: Event,
+): string {
+  const status =
+    getPublicationStatus(
+      event,
+    )
+
+  return (
+    status.charAt(0).toUpperCase() +
+    status.slice(1)
+  )
+}
 type StatusFilter =
   | 'all'
   | EventStatus
@@ -136,20 +165,6 @@ export default function AdminEventsPage() {
   const [
     selectedEvent,
     setSelectedEvent,
-  ] =
-    useState<Event | null>(
-      null,
-    )
-
-  const [
-    deleteOpen,
-    setDeleteOpen,
-  ] =
-    useState(false)
-
-  const [
-    eventToDelete,
-    setEventToDelete,
   ] =
     useState<Event | null>(
       null,
@@ -347,22 +362,9 @@ export default function AdminEventsPage() {
     setFeedback('')
   }
 
-  function openDelete(
-    event: Event,
-  ) {
-    setEventToDelete(event)
-    setDeleteOpen(true)
-    setFeedback('')
-  }
-
   function closeModal() {
     setModalOpen(false)
     setSelectedEvent(null)
-  }
-
-  function closeDelete() {
-    setDeleteOpen(false)
-    setEventToDelete(null)
   }
 
   async function handleSubmit(
@@ -425,9 +427,13 @@ export default function AdminEventsPage() {
     }
   }
 
-  async function handleDelete() {
+  async function handleArchive(
+    event: Event,
+  ) {
     if (
-      !eventToDelete
+      !window.confirm(
+        `Archive "${event.name}"? It will disappear from the public website but remain available in admin.`,
+      )
     ) {
       return
     }
@@ -440,31 +446,124 @@ export default function AdminEventsPage() {
         'Your admin session has expired.',
       )
 
-      closeDelete()
-
       return
     }
 
-    const name =
-      eventToDelete.name
+    const formData =
+      new FormData()
+
+    formData.set(
+      'name',
+      event.name,
+    )
+
+    formData.set(
+      'date',
+      event.date,
+    )
+
+    formData.set(
+      'endDate',
+      event.endDate ?? '',
+    )
+
+    formData.set(
+      'description',
+      event.description,
+    )
+
+    formData.set(
+      'ticketUrl',
+      event.ticketUrl ?? '',
+    )
+
+    formData.set(
+      'registrationMode',
+      event.registrationMode ??
+        'unknown',
+    )
+
+    formData.set(
+      'category',
+      event.category ?? '',
+    )
+
+    formData.set(
+      'venue',
+      event.venue ?? '',
+    )
+
+    formData.set(
+      'campus',
+      event.campus ?? '',
+    )
+
+    formData.set(
+      'audience',
+      event.audience ?? '',
+    )
+
+    formData.set(
+      'price',
+      event.price ?? '',
+    )
+
+    formData.set(
+      'accessibility',
+      event.accessibility ?? '',
+    )
+
+    formData.set(
+      'status',
+      event.status ??
+        getEventStatus(
+          event,
+        ),
+    )
+
+    formData.set(
+      'statusNote',
+      event.statusNote ?? '',
+    )
+
+    formData.set(
+      'publicationStatus',
+      'archived',
+    )
+
+    formData.set(
+      'contentOwner',
+      event.contentOwner ?? '',
+    )
+
+    formData.set(
+      'reviewedAt',
+      event.reviewedAt ?? '',
+    )
 
     try {
-      await deleteEvent(
-        token,
-        eventToDelete.id,
-      )
+      const updated =
+        await updateEvent(
+          token,
+          event.id,
+          formData,
+        )
 
       setEvents(
         (previous) =>
-          previous.filter(
-            (event) =>
-              event.id !==
-              eventToDelete.id,
+          sortEvents(
+            previous.map(
+              (item) =>
+                item.id ===
+                updated.id
+                  ? updated
+                  : item,
+            ),
           ),
       )
 
       setFeedback(
-        `Deleted "${name}".`,
+        `Archived "${updated.name}".`,
       )
     }
     catch (
@@ -474,14 +573,10 @@ export default function AdminEventsPage() {
         caught instanceof
           Error
           ? caught.message
-          : `Could not delete "${name}".`,
+          : `Could not archive "${event.name}".`,
       )
     }
-    finally {
-      closeDelete()
-    }
   }
-
   const hasFilters =
     Boolean(
       search.trim(),
@@ -801,6 +896,14 @@ export default function AdminEventsPage() {
                                 )}
                               </span>
 
+                              <span
+                                className={`isr-admin-status ${PUBLICATION_CLASSES[getPublicationStatus(event)]}`}
+                              >
+                                {getPublicationLabel(
+                                  event,
+                                )}
+                              </span>
+
                               {event.campus && (
                                 <span className="rounded-full bg-isr-cream px-2.5 py-1 text-xs font-semibold text-isr-dark-red">
                                   {event.campus}
@@ -844,13 +947,20 @@ export default function AdminEventsPage() {
                           </div>
 
                           <div className="isr-admin-mobile-actions flex shrink-0 flex-col gap-2 sm:flex-row">
-                            <Link
-                              href={`/events/${event.id}`}
-                              target="_blank"
-                              className="inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-sm font-semibold text-isr-dark-red hover:bg-isr-cream" rel="noopener noreferrer">
-                              <ExternalLinkIcon className="h-4 w-4" />
-                              Preview
-                            </Link>
+                            {getPublicationStatus(
+                              event,
+                            ) ===
+                              'published' && (
+                              <Link
+                                href={`/events/${event.id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-sm font-semibold text-isr-dark-red hover:bg-isr-cream"
+                              >
+                                <ExternalLinkIcon className="h-4 w-4" />
+                                Preview
+                              </Link>
+                            )}
 
                             <Button
                               variant="outline"
@@ -865,20 +975,24 @@ export default function AdminEventsPage() {
                               <PencilIcon className="h-4 w-4" />
                               Edit
                             </Button>
-
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() =>
-                                openDelete(
-                                  event,
-                                )
-                              }
-                              className="gap-2 border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
-                            >
-                              <Trash2Icon className="h-4 w-4" />
-                              Delete
-                            </Button>
+                            {getPublicationStatus(
+                              event,
+                            ) !==
+                              'archived' && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  void handleArchive(
+                                    event,
+                                  )
+                                }
+                                className="gap-2 border-slate-300 text-slate-700 hover:bg-slate-50"
+                              >
+                                <ArchiveIcon className="h-4 w-4" />
+                                Archive
+                              </Button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -897,16 +1011,6 @@ export default function AdminEventsPage() {
         onSubmit={handleSubmit}
       />
 
-      <ConfirmDeleteDialog
-        open={deleteOpen}
-        title="Permanently delete event?"
-        description={`This will delete "${eventToDelete?.name ?? ''}". This cannot be undone.`}
-        confirmationText={
-          eventToDelete?.name
-        }
-        onConfirm={handleDelete}
-        onCancel={closeDelete}
-      />
     </div>
   )
 }

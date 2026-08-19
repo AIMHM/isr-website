@@ -7,7 +7,7 @@ import {
 } from 'react'
 import ProgramEditor from '@/components/admin/ProgramEditor'
 import {
-  deleteProgram,
+  updateProgram,
   fetchAllPrograms,
 } from '@/lib/admin-api'
 import {
@@ -94,14 +94,14 @@ export default function AdminProgramsPage() {
     load,
   ])
 
-  async function remove(
+  async function archive(
     program: Program,
   ) {
     if (
       !window.confirm(
-        'Delete "' +
+        'Archive "' +
         program.name +
-        '" from the local program store?',
+        '"? It will disappear from the public website but remain available in admin.',
       )
     ) {
       return
@@ -117,9 +117,19 @@ export default function AdminProgramsPage() {
         )
       }
 
-      await deleteProgram(
+      const {
+        id,
+        ...payload
+      } = program
+
+      await updateProgram(
         token,
-        program.id,
+        id,
+        {
+          ...payload,
+          publicationStatus:
+            'archived',
+        },
       )
 
       await load()
@@ -128,11 +138,10 @@ export default function AdminProgramsPage() {
       setError(
         caught instanceof Error
           ? caught.message
-          : 'Failed to delete program',
+          : 'Failed to archive program',
       )
     }
   }
-
   if (
     creating ||
     editing
@@ -271,18 +280,20 @@ export default function AdminProgramsPage() {
                   >
                     Edit
                   </button>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      void remove(
-                        program,
-                      )
-                    }
-                    className="rounded-full border border-red-200 px-4 py-2 text-sm font-bold text-red-700 hover:bg-red-50"
-                  >
-                    Delete
-                  </button>
+                  {program.publicationStatus !==
+                    'archived' && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        void archive(
+                          program,
+                        )
+                      }
+                      className="rounded-full border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                    >
+                      Archive
+                    </button>
+                  )}
                 </div>
               </article>
             ),
