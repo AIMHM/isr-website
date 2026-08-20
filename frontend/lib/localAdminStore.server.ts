@@ -16,6 +16,10 @@ import type {
   Program,
 } from '@/lib/programs'
 import type {
+  PrayerSpaceRecord,
+  JumuahServiceRecord,
+} from '@/lib/prayerRecords'
+import type {
   PublicationStatus,
 } from '@/lib/contentTypes'
 import {
@@ -27,6 +31,8 @@ type LocalStore = {
   events: Event[]
   announcements: Announcement[]
   programs: Program[]
+  prayerSpaces: PrayerSpaceRecord[]
+  jumuahServices: JumuahServiceRecord[]
 }
 
 const DATA_DIR = path.join(
@@ -151,6 +157,10 @@ function starterStore(): LocalStore {
       ) as Announcement[],
 
     programs: [],
+
+    prayerSpaces: [],
+
+    jumuahServices: [],
   }
 }
 
@@ -200,6 +210,20 @@ export async function readStore():
         parsed.programs,
       )
         ? parsed.programs
+        : [],
+
+    prayerSpaces:
+      Array.isArray(
+        parsed.prayerSpaces,
+      )
+        ? parsed.prayerSpaces
+        : [],
+
+    jumuahServices:
+      Array.isArray(
+        parsed.jumuahServices,
+      )
+        ? parsed.jumuahServices
         : [],
   }
 }

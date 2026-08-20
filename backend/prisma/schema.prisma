@@ -124,3 +124,63 @@ model ProgramException {
   @@unique([programId, date])
   @@index([date])
 }
+model PrayerSpace {
+  id                Int      @id @default(autoincrement())
+  slug              String   @unique
+  name              String
+  campus            String
+  summary           String
+  building          String
+  room              String
+  accessHours       String
+  wudu              String
+  brothers          String
+  sisters           String
+  accessibility     String
+
+  publicationStatus String   @default("draft")
+  verificationStatus String  @default("needs-review")
+
+  contentOwner      String?
+  sourceLabel       String?
+  reviewedAt        DateTime?
+  reviewDueAt       DateTime?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([campus])
+  @@index([publicationStatus])
+  @@index([verificationStatus])
+  @@index([reviewDueAt])
+}
+
+model JumuahService {
+  id                 Int      @id @default(autoincrement())
+  slug               String   @unique
+  campus             String
+  venue              String
+  brothers           String
+  sisters            String
+  notes              String
+
+  timeRule           String
+  standardTime       String?
+  daylightSavingTime String?
+
+  publicationStatus  String   @default("draft")
+  verificationStatus String   @default("needs-review")
+
+  contentOwner       String?
+  sourceLabel        String?
+  reviewedAt         DateTime?
+  reviewDueAt        DateTime?
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([campus])
+  @@index([publicationStatus])
+  @@index([verificationStatus])
+  @@index([reviewDueAt])
+}
