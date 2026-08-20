@@ -15,7 +15,7 @@ import {
   PinIcon,
   PlusIcon,
   SearchIcon,
-  Trash2Icon,
+  ArchiveIcon,
 } from 'lucide-react'
 import {
   Button,
@@ -26,15 +26,12 @@ import {
 import {
   AnnouncementModal,
 } from '@/components/admin/AnnouncementModal'
-import {
-  ConfirmDeleteDialog,
-} from '@/components/admin/ConfirmDeleteDialog'
+
 import {
   getToken,
 } from '@/lib/auth'
 import {
   createAnnouncement,
-  deleteAnnouncement,
   fetchAllAnnouncements,
   updateAnnouncement,
 } from '@/lib/admin-api'
@@ -42,9 +39,14 @@ import {
   formatAnnouncementDate,
   isAnnouncementExpired,
   sortAnnouncements,
+  ANNOUNCEMENT_SCOPES,
   type Announcement,
   type AnnouncementPriority,
+  type AnnouncementScope,
 } from '@/lib/announcements'
+import type {
+  PublicationStatus,
+} from '@/lib/contentTypes'
 import {
   IS_LOCAL_ADMIN_MODE,
 } from '@/lib/localAdminMode'
@@ -52,6 +54,14 @@ import {
 type PriorityFilter =
   | 'all'
   | AnnouncementPriority
+
+type PublicationFilter =
+  | 'all'
+  | PublicationStatus
+
+type ScopeFilter =
+  | 'all'
+  | AnnouncementScope
 
 const PRIORITY_CLASSES: Record<
   AnnouncementPriority,
@@ -65,6 +75,46 @@ const PRIORITY_CLASSES: Record<
     'bg-red-50 text-red-700',
 }
 
+const PUBLICATION_CLASSES: Record<
+  PublicationStatus,
+  string
+> = {
+  draft:
+    'bg-gray-100 text-gray-700',
+  review:
+    'bg-amber-100 text-amber-800',
+  published:
+    'bg-emerald-100 text-emerald-800',
+  archived:
+    'bg-slate-200 text-slate-700',
+}
+
+function publicationOf(
+  announcement: Announcement,
+): PublicationStatus {
+  return (
+    announcement.publicationStatus ??
+    'published'
+  )
+}
+
+function scopeOf(
+  announcement: Announcement,
+): AnnouncementScope {
+  return (
+    announcement.scope ??
+    'general'
+  )
+}
+
+function titleCase(
+  value: string,
+): string {
+  return (
+    value.charAt(0).toUpperCase() +
+    value.slice(1)
+  )
+}
 export default function AdminAnnouncementsPage() {
   const [
     announcements,
@@ -107,6 +157,22 @@ export default function AdminAnnouncementsPage() {
     )
 
   const [
+    publicationFilter,
+    setPublicationFilter,
+  ] =
+    useState<PublicationFilter>(
+      'all',
+    )
+
+  const [
+    scopeFilter,
+    setScopeFilter,
+  ] =
+    useState<ScopeFilter>(
+      'all',
+    )
+
+  const [
     visibilityFilter,
     setVisibilityFilter,
   ] =
@@ -132,19 +198,6 @@ export default function AdminAnnouncementsPage() {
       null,
     )
 
-  const [
-    deleteOpen,
-    setDeleteOpen,
-  ] =
-    useState(false)
-
-  const [
-    announcementToDelete,
-    setAnnouncementToDelete,
-  ] =
-    useState<Announcement | null>(
-      null,
-    )
 
   const loadAnnouncements =
     useCallback(
@@ -200,10 +253,25 @@ export default function AdminAnnouncementsPage() {
         total:
           announcements.length,
 
-        pinned:
+        published:
           announcements.filter(
             (item) =>
-              item.pinned,
+              publicationOf(item) ===
+              'published',
+          ).length,
+
+        review:
+          announcements.filter(
+            (item) =>
+              publicationOf(item) ===
+              'review',
+          ).length,
+
+        archived:
+          announcements.filter(
+            (item) =>
+              publicationOf(item) ===
+              'archived',
           ).length,
 
         urgent:
@@ -246,6 +314,28 @@ export default function AdminAnnouncementsPage() {
               priority ===
                 priorityFilter
 
+            const publicationStatus =
+              publicationOf(
+                item,
+              )
+
+            const scope =
+              scopeOf(
+                item,
+              )
+
+            const matchesPublication =
+              publicationFilter ===
+                'all' ||
+              publicationStatus ===
+                publicationFilter
+
+            const matchesScope =
+              scopeFilter ===
+                'all' ||
+              scope ===
+                scopeFilter
+
             const matchesVisibility =
               visibilityFilter ===
                 'all' ||
@@ -262,6 +352,10 @@ export default function AdminAnnouncementsPage() {
                 item.body,
                 item.actionLabel,
                 item.contentOwner,
+                item.campus,
+                item.audience,
+                item.scope,
+                item.publicationStatus,
               ]
                 .filter(
                   Boolean,
@@ -271,6 +365,8 @@ export default function AdminAnnouncementsPage() {
 
             return (
               matchesPriority &&
+              matchesPublication &&
+              matchesScope &&
               matchesVisibility &&
               (
                 !normalized ||
@@ -286,6 +382,8 @@ export default function AdminAnnouncementsPage() {
         announcements,
         search,
         priorityFilter,
+        publicationFilter,
+        scopeFilter,
         visibilityFilter,
       ],
     )
@@ -311,17 +409,6 @@ export default function AdminAnnouncementsPage() {
     setFeedback('')
   }
 
-  function openDelete(
-    announcement:
-      Announcement,
-  ) {
-    setAnnouncementToDelete(
-      announcement,
-    )
-
-    setDeleteOpen(true)
-    setFeedback('')
-  }
 
   function closeModal() {
     setModalOpen(false)
@@ -330,12 +417,6 @@ export default function AdminAnnouncementsPage() {
     )
   }
 
-  function closeDelete() {
-    setDeleteOpen(false)
-    setAnnouncementToDelete(
-      null,
-    )
-  }
 
   async function handleSubmit(
     formData:
@@ -398,9 +479,13 @@ export default function AdminAnnouncementsPage() {
     }
   }
 
-  async function handleDelete() {
+  async function handleArchive(
+    announcement: Announcement,
+  ) {
     if (
-      !announcementToDelete
+      !window.confirm(
+        `Archive "${announcement.title}"? It will disappear from the public ISR Updates feed but remain available in admin.`,
+      )
     ) {
       return
     }
@@ -412,55 +497,132 @@ export default function AdminAnnouncementsPage() {
       setFeedback(
         'Your admin session has expired.',
       )
-
-      closeDelete()
-
       return
     }
 
-    const title =
-      announcementToDelete
-        .title
+    const formData =
+      new FormData()
+
+    formData.set(
+      'title',
+      announcement.title,
+    )
+
+    formData.set(
+      'body',
+      announcement.body,
+    )
+
+    formData.set(
+      'pinned',
+      announcement.pinned
+        ? 'true'
+        : 'false',
+    )
+
+    formData.set(
+      'priority',
+      announcement.priority ??
+        'normal',
+    )
+
+    formData.set(
+      'expiresAt',
+      announcement.expiresAt ??
+        '',
+    )
+
+    formData.set(
+      'actionLabel',
+      announcement.actionLabel ??
+        '',
+    )
+
+    formData.set(
+      'actionUrl',
+      announcement.actionUrl ??
+        '',
+    )
+
+    formData.set(
+      'publicationStatus',
+      'archived',
+    )
+
+    formData.set(
+      'scope',
+      announcement.scope ??
+        'general',
+    )
+
+    formData.set(
+      'campus',
+      announcement.campus ??
+        '',
+    )
+
+    formData.set(
+      'audience',
+      announcement.audience ??
+        '',
+    )
+
+    formData.set(
+      'contentOwner',
+      announcement.contentOwner ??
+        '',
+    )
+
+    formData.set(
+      'reviewedAt',
+      announcement.reviewedAt ??
+        '',
+    )
 
     try {
-      await deleteAnnouncement(
-        token,
-        announcementToDelete.id,
-      )
+      const updated =
+        await updateAnnouncement(
+          token,
+          announcement.id,
+          formData,
+        )
 
       setAnnouncements(
         (previous) =>
-          previous.filter(
-            (item) =>
-              item.id !==
-              announcementToDelete.id,
+          sortAnnouncements(
+            previous.map(
+              (item) =>
+                item.id ===
+                updated.id
+                  ? updated
+                  : item,
+            ),
           ),
       )
 
       setFeedback(
-        `Deleted "${title}".`,
+        `Archived "${updated.title}".`,
       )
     }
     catch (
       caught
     ) {
       setFeedback(
-        caught instanceof
-          Error
+        caught instanceof Error
           ? caught.message
-          : `Could not delete "${title}".`,
+          : `Could not archive "${announcement.title}".`,
       )
     }
-    finally {
-      closeDelete()
-    }
   }
-
   const hasFilters =
     Boolean(
       search.trim(),
     ) ||
     priorityFilter !==
+      'all' ||
+    publicationFilter !==
+      'all' ||
+    scopeFilter !==
       'all' ||
     visibilityFilter !==
       'all'
@@ -502,12 +664,11 @@ export default function AdminAnnouncementsPage() {
         </Button>
       </header>
 
-      <section className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         <div className="isr-admin-stat">
           <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
             Total
           </p>
-
           <p className="mt-2 text-2xl font-bold text-isr-dark-red">
             {stats.total}
           </p>
@@ -515,11 +676,28 @@ export default function AdminAnnouncementsPage() {
 
         <div className="isr-admin-stat">
           <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
-            Pinned
+            Published
           </p>
+          <p className="mt-2 text-2xl font-bold text-emerald-700">
+            {stats.published}
+          </p>
+        </div>
 
-          <p className="mt-2 text-2xl font-bold text-isr-turquoise">
-            {stats.pinned}
+        <div className="isr-admin-stat">
+          <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
+            Review
+          </p>
+          <p className="mt-2 text-2xl font-bold text-amber-700">
+            {stats.review}
+          </p>
+        </div>
+
+        <div className="isr-admin-stat">
+          <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
+            Archived
+          </p>
+          <p className="mt-2 text-2xl font-bold text-slate-600">
+            {stats.archived}
           </p>
         </div>
 
@@ -527,7 +705,6 @@ export default function AdminAnnouncementsPage() {
           <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
             Urgent
           </p>
-
           <p className="mt-2 text-2xl font-bold text-red-700">
             {stats.urgent}
           </p>
@@ -537,13 +714,11 @@ export default function AdminAnnouncementsPage() {
           <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
             Expired
           </p>
-
           <p className="mt-2 text-2xl font-bold text-gray-600">
             {stats.expired}
           </p>
         </div>
       </section>
-
       {feedback && (
         <div
           role="status"
@@ -554,7 +729,7 @@ export default function AdminAnnouncementsPage() {
       )}
 
       <section className="isr-admin-toolbar mt-6">
-        <div className="grid gap-3 lg:grid-cols-[1fr_190px_190px_auto]">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[1fr_160px_175px_160px_165px_auto]">
           <label className="relative">
             <span className="sr-only">
               Search ISR Updates
@@ -577,9 +752,7 @@ export default function AdminAnnouncementsPage() {
           </label>
 
           <select
-            value={
-              priorityFilter
-            }
+            value={priorityFilter}
             onChange={(
               event,
             ) =>
@@ -588,30 +761,84 @@ export default function AdminAnnouncementsPage() {
                   .value as PriorityFilter,
               )
             }
-            aria-label="Filter ISR Update priority"
+            aria-label="Filter priority"
             className="flex h-9 rounded-md border border-input bg-white px-3 text-sm"
           >
             <option value="all">
               All priorities
             </option>
-
             <option value="normal">
               Normal
             </option>
-
             <option value="important">
               Important
             </option>
-
             <option value="urgent">
               Urgent
             </option>
           </select>
 
           <select
-            value={
-              visibilityFilter
+            value={publicationFilter}
+            onChange={(
+              event,
+            ) =>
+              setPublicationFilter(
+                event.target
+                  .value as PublicationFilter,
+              )
             }
+            aria-label="Filter publication state"
+            className="flex h-9 rounded-md border border-input bg-white px-3 text-sm"
+          >
+            <option value="all">
+              All publication states
+            </option>
+            <option value="draft">
+              Draft
+            </option>
+            <option value="review">
+              Review
+            </option>
+            <option value="published">
+              Published
+            </option>
+            <option value="archived">
+              Archived
+            </option>
+          </select>
+
+          <select
+            value={scopeFilter}
+            onChange={(
+              event,
+            ) =>
+              setScopeFilter(
+                event.target
+                  .value as ScopeFilter,
+              )
+            }
+            aria-label="Filter update type"
+            className="flex h-9 rounded-md border border-input bg-white px-3 text-sm"
+          >
+            <option value="all">
+              All types
+            </option>
+
+            {ANNOUNCEMENT_SCOPES.map(
+              (value) => (
+                <option
+                  key={value}
+                  value={value}
+                >
+                  {titleCase(value)}
+                </option>
+              ),
+            )}
+          </select>
+
+          <select
+            value={visibilityFilter}
             onChange={(
               event,
             ) =>
@@ -623,17 +850,15 @@ export default function AdminAnnouncementsPage() {
                   | 'expired',
               )
             }
-            aria-label="Filter ISR Update visibility"
+            aria-label="Filter expiry"
             className="flex h-9 rounded-md border border-input bg-white px-3 text-sm"
           >
             <option value="all">
               Active & expired
             </option>
-
             <option value="active">
               Active only
             </option>
-
             <option value="expired">
               Expired only
             </option>
@@ -645,6 +870,12 @@ export default function AdminAnnouncementsPage() {
               onClick={() => {
                 setSearch('')
                 setPriorityFilter(
+                  'all',
+                )
+                setPublicationFilter(
+                  'all',
+                )
+                setScopeFilter(
                   'all',
                 )
                 setVisibilityFilter(
@@ -664,7 +895,6 @@ export default function AdminAnnouncementsPage() {
             </p>
           )}
       </section>
-
       {loading && (
         <div className="mt-6 space-y-4">
           {[1, 2, 3].map(
@@ -732,6 +962,16 @@ export default function AdminAnnouncementsPage() {
                     announcement,
                   )
 
+                const publicationStatus =
+                  publicationOf(
+                    announcement,
+                  )
+
+                const scope =
+                  scopeOf(
+                    announcement,
+                  )
+
                 return (
                   <article
                     key={
@@ -769,8 +1009,32 @@ export default function AdminAnnouncementsPage() {
                               <span
                                 className={`isr-admin-status ${PRIORITY_CLASSES[priority]}`}
                               >
-                                {priority}
+                                {titleCase(
+                                  priority,
+                                )}
                               </span>
+
+                              <span
+                                className={`isr-admin-status ${PUBLICATION_CLASSES[publicationStatus]}`}
+                              >
+                                {titleCase(
+                                  publicationStatus,
+                                )}
+                              </span>
+
+                              <span className="isr-admin-status bg-isr-turquoise/10 text-isr-turquoise">
+                                {titleCase(
+                                  scope,
+                                )}
+                              </span>
+
+                              {announcement.campus && (
+                                <span className="isr-admin-status bg-isr-light-blue/15 text-isr-dark-red">
+                                  {titleCase(
+                                    announcement.campus,
+                                  )}
+                                </span>
+                              )}
 
                               {announcement.pinned && (
                                 <span className="inline-flex items-center gap-1 rounded-full bg-isr-turquoise/10 px-2.5 py-1 text-xs font-bold text-isr-turquoise">
@@ -802,7 +1066,9 @@ export default function AdminAnnouncementsPage() {
 
                             {(announcement.actionLabel ||
                               announcement.expiresAt ||
-                              announcement.contentOwner) && (
+                              announcement.contentOwner ||
+                              announcement.audience ||
+                              announcement.reviewedAt) && (
                               <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-gray-500">
                                 {announcement.actionLabel && (
                                   <span>
@@ -818,9 +1084,23 @@ export default function AdminAnnouncementsPage() {
                                   </span>
                                 )}
 
+                                {announcement.audience && (
+                                  <span>
+                                    Audience: {announcement.audience}
+                                  </span>
+                                )}
+
                                 {announcement.contentOwner && (
                                   <span>
                                     Owner: {announcement.contentOwner}
+                                  </span>
+                                )}
+
+                                {announcement.reviewedAt && (
+                                  <span>
+                                    Reviewed: {formatAnnouncementDate(
+                                      announcement.reviewedAt,
+                                    )}
                                   </span>
                                 )}
                               </div>
@@ -828,13 +1108,19 @@ export default function AdminAnnouncementsPage() {
                           </div>
 
                           <div className="isr-admin-mobile-actions flex shrink-0 flex-col gap-2 sm:flex-row">
-                            <Link
-                              href="/updates"
-                              target="_blank"
-                              className="inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-sm font-semibold text-isr-dark-red hover:bg-isr-cream" rel="noopener noreferrer">
-                              <ExternalLinkIcon className="h-4 w-4" />
-                              Preview
-                            </Link>
+                            {publicationStatus ===
+                              'published' &&
+                              !expired && (
+                              <Link
+                                href="/updates"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-sm font-semibold text-isr-dark-red hover:bg-isr-cream"
+                              >
+                                <ExternalLinkIcon className="h-4 w-4" />
+                                Preview
+                              </Link>
+                            )}
 
                             <Button
                               variant="outline"
@@ -850,19 +1136,22 @@ export default function AdminAnnouncementsPage() {
                               Edit
                             </Button>
 
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() =>
-                                openDelete(
-                                  announcement,
-                                )
-                              }
-                              className="gap-2 border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
-                            >
-                              <Trash2Icon className="h-4 w-4" />
-                              Delete
-                            </Button>
+                            {publicationStatus !==
+                              'archived' && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  void handleArchive(
+                                    announcement,
+                                  )
+                                }
+                                className="gap-2 border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                              >
+                                <ArchiveIcon className="h-4 w-4" />
+                                Archive
+                              </Button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -887,22 +1176,7 @@ export default function AdminAnnouncementsPage() {
         }
       />
 
-      <ConfirmDeleteDialog
-        open={
-          deleteOpen
-        }
-        title="Permanently delete ISR Update?"
-        description={`This will delete "${announcementToDelete?.title ?? ''}". This cannot be undone.`}
-        confirmationText={
-          announcementToDelete?.title
-        }
-        onConfirm={
-          handleDelete
-        }
-        onCancel={
-          closeDelete
-        }
-      />
+
     </div>
   )
 }

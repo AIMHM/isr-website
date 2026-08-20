@@ -30,10 +30,15 @@ import {
   fromDatetimeLocalValue,
   toDatetimeLocalValue,
 } from '@/lib/events'
-import type {
-  Announcement,
-  AnnouncementPriority,
+import {
+  ANNOUNCEMENT_SCOPES,
+  type Announcement,
+  type AnnouncementPriority,
+  type AnnouncementScope,
 } from '@/lib/announcements'
+import type {
+  PublicationStatus,
+} from '@/lib/contentTypes'
 
 interface Props {
   open: boolean
@@ -116,6 +121,34 @@ export function AnnouncementModal({
     )
 
   const [
+    publicationStatus,
+    setPublicationStatus,
+  ] =
+    useState<PublicationStatus>(
+      'draft',
+    )
+
+  const [
+    scope,
+    setScope,
+  ] =
+    useState<AnnouncementScope>(
+      'general',
+    )
+
+  const [
+    campus,
+    setCampus,
+  ] =
+    useState('')
+
+  const [
+    audience,
+    setAudience,
+  ] =
+    useState('')
+
+  const [
     expiresAt,
     setExpiresAt,
   ] =
@@ -136,6 +169,12 @@ export function AnnouncementModal({
   const [
     contentOwner,
     setContentOwner,
+  ] =
+    useState('')
+
+  const [
+    reviewedAt,
+    setReviewedAt,
   ] =
     useState('')
 
@@ -190,6 +229,26 @@ export function AnnouncementModal({
         'normal',
     )
 
+    setPublicationStatus(
+      announcement?.publicationStatus ??
+        'draft',
+    )
+
+    setScope(
+      announcement?.scope ??
+        'general',
+    )
+
+    setCampus(
+      announcement?.campus ??
+        '',
+    )
+
+    setAudience(
+      announcement?.audience ??
+        '',
+    )
+
     setExpiresAt(
       announcement?.expiresAt
         ? toDatetimeLocalValue(
@@ -212,6 +271,14 @@ export function AnnouncementModal({
     setContentOwner(
       announcement?.contentOwner ??
         '',
+    )
+
+    setReviewedAt(
+      announcement?.reviewedAt
+        ? toDatetimeLocalValue(
+            announcement.reviewedAt,
+          )
+        : '',
     )
 
     setImageFile(null)
@@ -326,6 +393,26 @@ export function AnnouncementModal({
     )
 
     formData.set(
+      'publicationStatus',
+      publicationStatus,
+    )
+
+    formData.set(
+      'scope',
+      scope,
+    )
+
+    formData.set(
+      'campus',
+      campus.trim(),
+    )
+
+    formData.set(
+      'audience',
+      audience.trim(),
+    )
+
+    formData.set(
       'expiresAt',
       expiresAt
         ? fromDatetimeLocalValue(
@@ -347,6 +434,15 @@ export function AnnouncementModal({
     formData.set(
       'contentOwner',
       contentOwner.trim(),
+    )
+
+    formData.set(
+      'reviewedAt',
+      reviewedAt
+        ? fromDatetimeLocalValue(
+            reviewedAt,
+          )
+        : '',
     )
 
     if (
@@ -476,6 +572,155 @@ export function AnnouncementModal({
             </div>
           </section>
 
+          <section className="isr-admin-fieldset">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h3 className="isr-admin-fieldset-title">
+                  Publishing & targeting
+                </h3>
+
+                <p className="mt-1 text-xs leading-relaxed text-gray-500">
+                  Control whether this update is public and who it applies to.
+                </p>
+              </div>
+
+              <span className="rounded-full bg-isr-cream px-3 py-1 text-xs font-bold text-isr-dark-red">
+                Draft → Review → Published → Archived
+              </span>
+            </div>
+
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="an-publication">
+                  Publication state
+                </Label>
+
+                <select
+                  id="an-publication"
+                  value={publicationStatus}
+                  onChange={(
+                    inputEvent,
+                  ) => {
+                    setPublicationStatus(
+                      inputEvent.target
+                        .value as PublicationStatus,
+                    )
+                    setDirty(true)
+                  }}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                >
+                  <option value="draft">
+                    Draft
+                  </option>
+
+                  <option value="review">
+                    Review
+                  </option>
+
+                  <option value="published">
+                    Published
+                  </option>
+
+                  <option value="archived">
+                    Archived
+                  </option>
+                </select>
+
+                <p className="text-xs text-gray-500">
+                  Only Published updates appear publicly.
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="an-scope">
+                  Update type
+                </Label>
+
+                <select
+                  id="an-scope"
+                  value={scope}
+                  onChange={(
+                    inputEvent,
+                  ) => {
+                    setScope(
+                      inputEvent.target
+                        .value as AnnouncementScope,
+                    )
+                    setDirty(true)
+                  }}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                >
+                  {ANNOUNCEMENT_SCOPES.map(
+                    (value) => (
+                      <option
+                        key={value}
+                        value={value}
+                      >
+                        {value.charAt(0).toUpperCase() +
+                          value.slice(1)}
+                      </option>
+                    ),
+                  )}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="an-campus">
+                  Campus
+                </Label>
+
+                <select
+                  id="an-campus"
+                  value={campus}
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setCampus,
+                      inputEvent.target.value,
+                    )
+                  }
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                >
+                  <option value="">
+                    All campuses / not campus-specific
+                  </option>
+
+                  <option value="city">
+                    City
+                  </option>
+
+                  <option value="bundoora">
+                    Bundoora
+                  </option>
+
+                  <option value="brunswick">
+                    Brunswick
+                  </option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="an-audience">
+                  Audience
+                </Label>
+
+                <Input
+                  id="an-audience"
+                  value={audience}
+                  onChange={(
+                    inputEvent,
+                  ) =>
+                    change(
+                      setAudience,
+                      inputEvent.target.value,
+                    )
+                  }
+                  placeholder="e.g. All students / Sisters / Brothers"
+                />
+              </div>
+            </div>
+          </section>
           <section className="isr-admin-fieldset">
             <h3 className="isr-admin-fieldset-title">
               Visibility & priority
@@ -682,30 +927,50 @@ export function AnnouncementModal({
                 )}
               </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="an-owner">
-                  Internal content owner
-                </Label>
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="an-owner">
+                    Internal content owner
+                  </Label>
 
-                <Input
-                  id="an-owner"
-                  value={contentOwner}
-                  onChange={(
-                    inputEvent,
-                  ) =>
-                    change(
-                      setContentOwner,
-                      inputEvent
-                        .target
-                        .value,
-                    )
-                  }
-                  placeholder="e.g. Administration"
-                />
+                  <Input
+                    id="an-owner"
+                    value={contentOwner}
+                    onChange={(
+                      inputEvent,
+                    ) =>
+                      change(
+                        setContentOwner,
+                        inputEvent.target.value,
+                      )
+                    }
+                    placeholder="e.g. Administration"
+                  />
+                </div>
 
-                <p className="text-xs text-gray-500">
-                  Internal management information only.
-                </p>
+                <div className="space-y-1.5">
+                  <Label htmlFor="an-reviewed">
+                    Last reviewed
+                  </Label>
+
+                  <Input
+                    id="an-reviewed"
+                    type="datetime-local"
+                    value={reviewedAt}
+                    onChange={(
+                      inputEvent,
+                    ) =>
+                      change(
+                        setReviewedAt,
+                        inputEvent.target.value,
+                      )
+                    }
+                  />
+
+                  <p className="text-xs text-gray-500">
+                    Internal governance record for information accuracy.
+                  </p>
+                </div>
               </div>
             </div>
           </section>
