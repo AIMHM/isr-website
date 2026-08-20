@@ -6,6 +6,10 @@ import {
 import {
   PRAYER_SPACES,
 } from '@/lib/siteContent'
+import {
+  getPrayerGovernance,
+  getPrayerVerificationLabel,
+} from '@/lib/prayerGovernance'
 
 export default function PrayerSpaceDirectory() {
   return (
@@ -18,6 +22,11 @@ export default function PrayerSpaceDirectory() {
             space,
             index,
           ) => {
+            const governance =
+              getPrayerGovernance(
+                space.id,
+              )
+
             const isFirstBundoora =
               space.id
                 .toLowerCase()
@@ -62,8 +71,17 @@ export default function PrayerSpaceDirectory() {
                       <LocationIcon className="h-5 w-5" />
                     </span>
 
-                    <span className="rounded-full bg-isr-turquoise/10 px-3 py-1 text-xs font-semibold text-isr-turquoise">
-                      Confirmed
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                        governance.verification ===
+                        'verified'
+                          ? 'bg-emerald-50 text-emerald-800'
+                          : 'bg-amber-50 text-amber-800'
+                      }`}
+                    >
+                      {getPrayerVerificationLabel(
+                        space.id,
+                      )}
                     </span>
                   </div>
 
@@ -73,6 +91,11 @@ export default function PrayerSpaceDirectory() {
 
                   <p className="mt-3 text-sm leading-relaxed text-gray-700">
                     {space.summary}
+                  </p>
+
+                  <p className="mt-3 text-xs leading-relaxed text-gray-500">
+                    Operational information managed by {governance.contentOwner}.
+                    Temporary access changes should be checked in ISR Updates.
                   </p>
 
                   <dl className="mt-6 space-y-4">
