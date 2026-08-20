@@ -11,6 +11,7 @@ import programsRouter from "./routes/programs";
 import contactRouter from "./routes/contact";
 import weatherRouter from "./routes/weather";
 import announcementsRouter from "./routes/announcements";
+import prayerContentRouter from "./routes/prayerContent";
 
 import {
   createRateLimiter,
@@ -143,6 +144,11 @@ app.use(
 app.use(
   "/api/announcements",
   announcementsRouter,
+);
+
+app.use(
+  "/api/prayer-info",
+  prayerContentRouter,
 );
 
 const errorHandler: ErrorRequestHandler = (
