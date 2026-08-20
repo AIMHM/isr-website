@@ -10,6 +10,7 @@ import type {
 import type {
   Announcement,
   AnnouncementPriority,
+  AnnouncementScope,
 } from '@/lib/announcements'
 import type {
   Program,
@@ -68,6 +69,16 @@ const ANNOUNCEMENT_PRIORITIES =
     'normal',
     'important',
     'urgent',
+  ])
+
+const ANNOUNCEMENT_SCOPES =
+  new Set<AnnouncementScope>([
+    'general',
+    'prayer',
+    'campus',
+    'event',
+    'service',
+    'emergency',
   ])
 
 export function localAdminEnabled(): boolean {
@@ -275,6 +286,14 @@ export function validPriority(
 ): value is AnnouncementPriority {
   return ANNOUNCEMENT_PRIORITIES.has(
     value as AnnouncementPriority,
+  )
+}
+
+export function validAnnouncementScope(
+  value: string,
+): value is AnnouncementScope {
+  return ANNOUNCEMENT_SCOPES.has(
+    value as AnnouncementScope,
   )
 }
 

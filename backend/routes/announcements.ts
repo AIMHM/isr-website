@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   getAnnouncements,
+  getAdminAnnouncements,
   getAnnouncementById,
   createAnnouncement,
   updateAnnouncement,
@@ -12,9 +13,36 @@ import { upload } from "../middleware/upload";
 const router = Router();
 
 router.get("/", getAnnouncements);
-router.get("/:id", getAnnouncementById);
-router.post("/", checkAuth, upload.single("image"), createAnnouncement);
-router.put("/:id", checkAuth, upload.single("image"), updateAnnouncement);
-router.delete("/:id", checkAuth, deleteAnnouncement);
+
+router.get(
+  "/admin/all",
+  checkAuth,
+  getAdminAnnouncements,
+);
+
+router.get(
+  "/:id",
+  getAnnouncementById,
+);
+
+router.post(
+  "/",
+  checkAuth,
+  upload.single("image"),
+  createAnnouncement,
+);
+
+router.put(
+  "/:id",
+  checkAuth,
+  upload.single("image"),
+  updateAnnouncement,
+);
+
+router.delete(
+  "/:id",
+  checkAuth,
+  deleteAnnouncement,
+);
 
 export default router;

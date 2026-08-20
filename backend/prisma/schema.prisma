@@ -34,19 +34,29 @@ model Event {
 }
 
 model Announcement {
-  id          Int      @id @default(autoincrement())
-  title       String
-  body        String
-  pinned      Boolean  @default(false)
-  imageUrl    String?
-  createdAt   DateTime @default(now())
-  priority    String   @default("normal")
-  expiresAt   DateTime?
-  actionLabel String?
-  actionUrl   String?
+  id                Int      @id @default(autoincrement())
+  title             String
+  body              String
+  pinned            Boolean  @default(false)
+  imageUrl          String?
+  createdAt         DateTime @default(now())
+  priority          String   @default("normal")
+  expiresAt         DateTime?
+  actionLabel       String?
+  actionUrl         String?
+
+  scope             String   @default("general")
+  campus            String?
+  audience          String?
+  publicationStatus String   @default("draft")
+  contentOwner      String?
+  reviewedAt        DateTime?
 
   @@index([createdAt])
   @@index([expiresAt])
+  @@index([publicationStatus])
+  @@index([scope])
+  @@index([campus])
 }
 
 

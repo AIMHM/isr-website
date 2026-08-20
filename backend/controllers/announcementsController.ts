@@ -11,6 +11,22 @@ const PRIORITIES = new Set([
   "urgent",
 ]);
 
+const PUBLICATION_STATUSES = new Set([
+  "draft",
+  "review",
+  "published",
+  "archived",
+]);
+
+const ANNOUNCEMENT_SCOPES = new Set([
+  "general",
+  "prayer",
+  "campus",
+  "event",
+  "service",
+  "emergency",
+]);
+
 function normalizeNullableString(
   value: unknown,
 ): string | null {
@@ -68,9 +84,26 @@ export const getAnnouncements = async (
   try {
     const announcements =
       await prisma.announcement.findMany({
+        where: {
+          publicationStatus: "published",
+          OR: [
+            {
+              expiresAt: null,
+            },
+            {
+              expiresAt: {
+                gt: new Date(),
+              },
+            },
+          ],
+        },
         orderBy: [
-          { pinned: "desc" },
-          { createdAt: "desc" },
+          {
+            pinned: "desc",
+          },
+          {
+            createdAt: "desc",
+          },
         ],
       });
 
@@ -84,11 +117,44 @@ export const getAnnouncements = async (
     );
 
     return res.status(500).json({
-      error: "Failed to fetch announcements",
+      error:
+        "Failed to fetch announcements",
     });
   }
 };
 
+export const getAdminAnnouncements = async (
+  _req: Request,
+  res: Response,
+) => {
+  try {
+    const announcements =
+      await prisma.announcement.findMany({
+        orderBy: [
+          {
+            pinned: "desc",
+          },
+          {
+            createdAt: "desc",
+          },
+        ],
+      });
+
+    return res.status(200).json({
+      data: announcements,
+    });
+  } catch (err) {
+    console.error(
+      "getAdminAnnouncements failed:",
+      err,
+    );
+
+    return res.status(500).json({
+      error:
+        "Failed to fetch announcements",
+    });
+  }
+};
 export const getAnnouncementById = async (
   req: Request,
   res: Response,
@@ -103,8 +169,22 @@ export const getAnnouncementById = async (
 
   try {
     const announcement =
-      await prisma.announcement.findUnique({
-        where: { id },
+      await prisma.announcement.findFirst({
+        where: {
+          id,
+          publicationStatus:
+            "published",
+          OR: [
+            {
+              expiresAt: null,
+            },
+            {
+              expiresAt: {
+                gt: new Date(),
+              },
+            },
+          ],
+        },
       });
 
     if (!announcement) {
@@ -193,6 +273,68 @@ export const createAnnouncement = async (
     });
   }
 
+  const publicationStatus =
+    normalizeNullableString(
+      req.body.publicationStatus,
+    ) ?? "draft";
+
+  if (
+    !PUBLICATION_STATUSES.has(
+      publicationStatus,
+    )
+  ) {
+    return res.status(400).json({
+      error:
+        "Invalid publication status",
+    });
+  }
+
+  const scope =
+    normalizeNullableString(
+      req.body.scope,
+    ) ?? "general";
+
+  if (
+    !ANNOUNCEMENT_SCOPES.has(
+      scope,
+    )
+  ) {
+    return res.status(400).json({
+      error:
+        "Invalid announcement scope",
+    });
+  }
+
+  const campus =
+    normalizeNullableString(
+      req.body.campus,
+    );
+
+  const audience =
+    normalizeNullableString(
+      req.body.audience,
+    );
+
+  const contentOwner =
+    normalizeNullableString(
+      req.body.contentOwner,
+    );
+
+  const reviewedAt =
+    parseExpiry(
+      req.body.reviewedAt,
+    );
+
+  if (
+    req.body.reviewedAt !== undefined &&
+    reviewedAt === undefined
+  ) {
+    return res.status(400).json({
+      error:
+        "reviewedAt must be a valid date",
+    });
+  }
+
   try {
     let imageUrl: string | undefined;
 
@@ -213,6 +355,13 @@ export const createAnnouncement = async (
           expiresAt: expiresAt ?? null,
           actionLabel,
           actionUrl,
+          scope,
+          campus,
+          audience,
+          publicationStatus,
+          contentOwner,
+          reviewedAt:
+            reviewedAt ?? null,
           ...(imageUrl !== undefined && {
             imageUrl,
           }),
@@ -357,6 +506,98 @@ export const updateAnnouncement = async (
 
     if (req.body.actionUrl !== undefined) {
       data.actionUrl = nextActionUrl;
+    }
+
+    if (
+      req.body.publicationStatus !== undefined
+    ) {
+      const value =
+        normalizeNullableString(
+          req.body.publicationStatus,
+        );
+
+      if (
+        !value ||
+        !PUBLICATION_STATUSES.has(
+          value,
+        )
+      ) {
+        return res.status(400).json({
+          error:
+            "Invalid publication status",
+        });
+      }
+
+      data.publicationStatus =
+        value;
+    }
+
+    if (
+      req.body.scope !== undefined
+    ) {
+      const value =
+        normalizeNullableString(
+          req.body.scope,
+        );
+
+      if (
+        !value ||
+        !ANNOUNCEMENT_SCOPES.has(
+          value,
+        )
+      ) {
+        return res.status(400).json({
+          error:
+            "Invalid announcement scope",
+        });
+      }
+
+      data.scope = value;
+    }
+
+    if (
+      req.body.campus !== undefined
+    ) {
+      data.campus =
+        normalizeNullableString(
+          req.body.campus,
+        );
+    }
+
+    if (
+      req.body.audience !== undefined
+    ) {
+      data.audience =
+        normalizeNullableString(
+          req.body.audience,
+        );
+    }
+
+    if (
+      req.body.contentOwner !== undefined
+    ) {
+      data.contentOwner =
+        normalizeNullableString(
+          req.body.contentOwner,
+        );
+    }
+
+    if (
+      req.body.reviewedAt !== undefined
+    ) {
+      const parsed =
+        parseExpiry(
+          req.body.reviewedAt,
+        );
+
+      if (parsed === undefined) {
+        return res.status(400).json({
+          error:
+            "reviewedAt must be a valid date",
+        });
+      }
+
+      data.reviewedAt = parsed;
     }
 
     if (req.file) {

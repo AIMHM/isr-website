@@ -240,15 +240,18 @@ export async function deleteEvent(
   }
 }
 
-export async function fetchAllAnnouncements():
-  Promise<Announcement[]> {
+export async function fetchAllAnnouncements(
+  token: string,
+): Promise<Announcement[]> {
   const response =
     await fetch(
       endpoint(
         '/announcements',
-        '/api/announcements',
+        '/api/announcements/admin/all',
       ),
       {
+        headers:
+          authHeaders(token),
         cache: 'no-store',
       },
     )

@@ -11,10 +11,14 @@ import {
   readStore,
   safeActionUrl,
   validPriority,
+  validPublicationStatus,
+  validAnnouncementScope,
   writeStore,
 } from '@/lib/localAdminStore.server'
 
-export async function GET() {
+export async function GET(
+  request: Request,
+) {
   if (!localAdminEnabled()) {
     return NextResponse.json(
       { error: 'Not found' },
@@ -25,8 +29,33 @@ export async function GET() {
   const store =
     await readStore()
 
-  const announcements =
-    [...store.announcements].sort(
+  const publicScope =
+  new URL(
+    request.url,
+  ).searchParams.get(
+    'scope',
+  ) === 'public'
+
+let announcements =
+  publicScope
+    ? store.announcements.filter(
+        (announcement) =>
+          (
+            announcement.publicationStatus ??
+            'published'
+          ) === 'published' &&
+          (
+            !announcement.expiresAt ||
+            new Date(
+              announcement.expiresAt,
+            ).getTime() >
+              Date.now()
+          ),
+      )
+    : [...store.announcements]
+
+announcements =
+  [...announcements].sort(
       (a, b) => {
         if (
           a.pinned !== b.pinned
@@ -111,7 +140,42 @@ export async function POST(
         'actionUrl',
       )
 
-    if (
+        const publicationStatus =
+      formString(
+        form,
+        'publicationStatus',
+      ) || 'draft'
+
+    const scope =
+      formString(
+        form,
+        'scope',
+      ) || 'general'
+
+    const campus =
+      formString(
+        form,
+        'campus',
+      )
+
+    const audience =
+      formString(
+        form,
+        'audience',
+      )
+
+    const contentOwner =
+      formString(
+        form,
+        'contentOwner',
+      )
+
+    const reviewedAt =
+      formString(
+        form,
+        'reviewedAt',
+      )
+if (
       !title ||
       !body
     ) {
@@ -182,7 +246,51 @@ export async function POST(
       )
     }
 
-    const imageUrl =
+        if (
+      !validPublicationStatus(
+        publicationStatus,
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            'Invalid publication status',
+        },
+        { status: 400 },
+      )
+    }
+
+    if (
+      !validAnnouncementScope(
+        scope,
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            'Invalid update scope',
+        },
+        { status: 400 },
+      )
+    }
+
+    if (
+      reviewedAt &&
+      Number.isNaN(
+        new Date(
+          reviewedAt,
+        ).getTime(),
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            'Invalid review time',
+        },
+        { status: 400 },
+      )
+    }
+const imageUrl =
       await imageToDataUrl(
         form.get('image'),
       )
@@ -217,7 +325,24 @@ export async function POST(
         optionalString(
           actionUrl,
         ),
-    }
+      publicationStatus,
+      scope,
+      campus:
+        optionalString(
+          campus,
+        ),
+      audience:
+        optionalString(
+          audience,
+        ),
+      contentOwner:
+        optionalString(
+          contentOwner,
+        ),
+      reviewedAt:
+        optionalString(
+          reviewedAt,
+        ),    }
 
     store.announcements.push(
       announcement,

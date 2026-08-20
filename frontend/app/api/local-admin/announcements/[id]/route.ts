@@ -10,6 +10,8 @@ import {
   readStore,
   safeActionUrl,
   validPriority,
+  validPublicationStatus,
+  validAnnouncementScope,
   writeStore,
 } from '@/lib/localAdminStore.server'
 
@@ -20,7 +22,7 @@ type Context = {
 }
 
 export async function GET(
-  _request: Request,
+  request: Request,
   context: Context,
 ) {
   if (!localAdminEnabled()) {
@@ -56,11 +58,42 @@ export async function GET(
     )
   }
 
+  const publicScope =
+    new URL(
+      request.url,
+    ).searchParams.get(
+      'scope',
+    ) === 'public'
+
+  if (
+    publicScope &&
+    (
+      (
+        announcement.publicationStatus ??
+        'published'
+      ) !== 'published' ||
+      (
+        announcement.expiresAt &&
+        new Date(
+          announcement.expiresAt,
+        ).getTime() <=
+          Date.now()
+      )
+    )
+  ) {
+    return NextResponse.json(
+      {
+        error:
+          'ISR update not found',
+      },
+      { status: 404 },
+    )
+  }
+
   return NextResponse.json({
     data: announcement,
   })
 }
-
 export async function PUT(
   request: Request,
   context: Context,
@@ -150,7 +183,42 @@ export async function PUT(
         'actionUrl',
       )
 
-    if (
+        const publicationStatus =
+      formString(
+        form,
+        'publicationStatus',
+      )
+
+    const scope =
+      formString(
+        form,
+        'scope',
+      )
+
+    const campus =
+      formString(
+        form,
+        'campus',
+      )
+
+    const audience =
+      formString(
+        form,
+        'audience',
+      )
+
+    const contentOwner =
+      formString(
+        form,
+        'contentOwner',
+      )
+
+    const reviewedAt =
+      formString(
+        form,
+        'reviewedAt',
+      )
+if (
       !title ||
       !body
     ) {
@@ -204,7 +272,53 @@ export async function PUT(
       )
     }
 
-    const newImage =
+        if (
+      publicationStatus &&
+      !validPublicationStatus(
+        publicationStatus,
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            'Invalid publication status',
+        },
+        { status: 400 },
+      )
+    }
+
+    if (
+      scope &&
+      !validAnnouncementScope(
+        scope,
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            'Invalid update scope',
+        },
+        { status: 400 },
+      )
+    }
+
+    if (
+      reviewedAt &&
+      Number.isNaN(
+        new Date(
+          reviewedAt,
+        ).getTime(),
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            'Invalid review time',
+        },
+        { status: 400 },
+      )
+    }
+const newImage =
       await imageToDataUrl(
         form.get('image'),
       )
@@ -234,7 +348,59 @@ export async function PUT(
       imageUrl:
         newImage ??
         existing.imageUrl,
-    }
+          publicationStatus:
+        validPublicationStatus(
+          publicationStatus,
+        )
+          ? publicationStatus
+          : existing.publicationStatus ??
+            'published',
+
+      scope:
+        validAnnouncementScope(
+          scope,
+        )
+          ? scope
+          : existing.scope ??
+            'general',
+
+      campus:
+        form.has(
+          'campus',
+        )
+          ? optionalString(
+              campus,
+            )
+          : existing.campus ?? null,
+
+      audience:
+        form.has(
+          'audience',
+        )
+          ? optionalString(
+              audience,
+            )
+          : existing.audience ?? null,
+
+      contentOwner:
+        form.has(
+          'contentOwner',
+        )
+          ? optionalString(
+              contentOwner,
+            )
+          : existing.contentOwner ??
+            null,
+
+      reviewedAt:
+        form.has(
+          'reviewedAt',
+        )
+          ? optionalString(
+              reviewedAt,
+            )
+          : existing.reviewedAt ??
+            null,}
 
     store.announcements[index] =
       updated

@@ -153,8 +153,19 @@ export default function AdminAnnouncementsPage() {
         setLoadError('')
 
         try {
+          const token =
+            getToken()
+
+          if (!token) {
+            throw new Error(
+              'Your admin session has expired. Sign in again.',
+            )
+          }
+
           const data =
-            await fetchAllAnnouncements()
+            await fetchAllAnnouncements(
+              token,
+            )
 
           setAnnouncements(
             sortAnnouncements(

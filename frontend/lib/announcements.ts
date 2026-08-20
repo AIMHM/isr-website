@@ -9,10 +9,26 @@ import {
   localAdminApiUrl,
 } from '@/lib/localAdminMode'
 
+import type {
+  PublicationStatus,
+} from '@/lib/contentTypes'
+
 export type AnnouncementPriority =
   | 'normal'
   | 'important'
   | 'urgent'
+
+export const ANNOUNCEMENT_SCOPES = [
+  'general',
+  'prayer',
+  'campus',
+  'event',
+  'service',
+  'emergency',
+] as const
+
+export type AnnouncementScope =
+  (typeof ANNOUNCEMENT_SCOPES)[number]
 
 export type Announcement = {
   id: number
@@ -26,6 +42,10 @@ export type Announcement = {
   expiresAt?: string | null
   actionLabel?: string | null
   actionUrl?: string | null
+  scope?: AnnouncementScope
+  campus?: string | null
+  audience?: string | null
+  publicationStatus?: PublicationStatus
   contentOwner?: string | null
   reviewedAt?: string | null
 }
