@@ -8,11 +8,9 @@ import type {
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import PrayerSpaceDirectory from '@/components/PrayerSpaceDirectory'
+import ManagedPrayerSpaceDirectory from '@/components/ManagedPrayerSpaceDirectory'
 import PrayerTimesTable from '@/components/PrayerTimesTable'
-import {
-  JUMUAH_SERVICES,
-} from '@/lib/siteContent'
+import ManagedJumuahServices from '@/components/ManagedJumuahServices'
 
 export const metadata: Metadata = {
   title: 'Pray at RMIT',
@@ -170,69 +168,7 @@ export default function PrayPage() {
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                {JUMUAH_SERVICES.map(
-                  (service) => (
-                    <article
-                      key={service.id}
-                      className="isr-prayer-summary rounded-[1.75rem] border border-isr-light-blue/20 p-6 shadow-sm sm:p-7"
-                    >
-                      <div className="flex flex-wrap items-start justify-between gap-4">
-                        <div>
-                          <p className="text-xs font-bold uppercase tracking-[0.18em] text-isr-turquoise">
-                            Jumu’ah
-                          </p>
-
-                          <h3 className="mt-2 text-2xl font-bold text-isr-dark-red">
-                            {service.campus}
-                          </h3>
-                        </div>
-
-                        <span className="rounded-full bg-isr-dark-red px-4 py-2 text-sm font-bold text-white">
-                          {service.time}
-                        </span>
-                      </div>
-
-                      <p className="mt-5 text-sm leading-relaxed text-gray-700">
-                        {service.venue}
-                      </p>
-                    </article>
-                  ),
-                )}
-              </div>
-            </div>
-
-            <div className="mt-8 rounded-[1.75rem] bg-isr-dark-red p-6 text-white sm:p-8">
-              <div className="grid gap-6 lg:grid-cols-2">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-isr-yellow">
-                    City
-                  </p>
-
-                  <h3 className="mt-2 text-2xl font-bold">
-                    1:30 pm year-round
-                  </h3>
-
-                  <p className="mt-3 text-sm leading-relaxed text-white/70">
-                    City Jumu’ah remains at 1:30 pm.
-                  </p>
-                </div>
-
-                <div className="border-t border-white/15 pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-isr-yellow">
-                    Bundoora
-                  </p>
-
-                  <h3 className="mt-2 text-2xl font-bold">
-                    Time changes with daylight saving
-                  </h3>
-
-                  <p className="mt-3 text-sm leading-relaxed text-white/70">
-                    12:30 pm outside Victorian daylight
-                    saving and 1:30 pm during daylight saving.
-                  </p>
-                </div>
-              </div>
+              <ManagedJumuahServices />
             </div>
           </div>
         </section>
@@ -289,7 +225,7 @@ export default function PrayPage() {
             <PrayerQuickNav />
 
               <div className="mt-7">
-                <PrayerSpaceDirectory />
+                <ManagedPrayerSpaceDirectory />
               </div>
           </div>
         </section>
