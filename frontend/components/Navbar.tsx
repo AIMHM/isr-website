@@ -20,6 +20,10 @@ const links = [
     label: 'Pray at RMIT',
   },
   {
+    href: '/campuses',
+    label: 'Campuses',
+  },
+  {
     href: '/events',
     label: 'What’s On',
   },

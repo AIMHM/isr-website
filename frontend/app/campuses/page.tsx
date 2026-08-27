@@ -3,14 +3,14 @@ import type {
 } from 'next'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import CampusDirectoryExperience from '@/components/CampusDirectoryExperience'
+import CampusGuide2Experience from '@/components/CampusGuide2Experience'
 
 export const metadata: Metadata = {
   title:
     'RMIT Campus Guide',
 
   description:
-    'Find Islamic Society of RMIT prayer-space information across RMIT campuses.',
+    'Find prayer spaces, Jumu’ah information, activities, support and Muslim student essentials across RMIT campuses.',
 }
 
 export default function CampusesPage() {
@@ -26,17 +26,15 @@ export default function CampusesPage() {
             </p>
 
             <h1 className="mt-4 max-w-3xl text-4xl font-bold tracking-tight text-isr-dark-red sm:text-5xl">
-              Find your prayer space at RMIT
+              Your Muslim student guide to RMIT campuses
             </h1>
 
             <p className="mt-5 max-w-3xl text-lg leading-relaxed text-gray-700">
-              Use this directory as a quick campus entry point.
-              Full prayer and Jumu’ah information remains on the
-              dedicated Pray at RMIT page.
+              Start with your campus. Find prayer and Jumu’ah information, then move quickly to ISR activities, student support and operational updates.
             </p>
 
             <div className="mt-10">
-              <CampusDirectoryExperience />
+              <CampusGuide2Experience />
             </div>
           </div>
         </section>
