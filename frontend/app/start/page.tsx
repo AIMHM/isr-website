@@ -20,12 +20,12 @@ const steps = [
     number: '01',
     eyebrow: 'Prayer',
     title:
-      'Find your campus prayer room',
+      'Start with your campus',
     description:
-      'Know where to pray before you need it. City, Bundoora and Brunswick information is all in one place.',
-    href: '/pray#campus-prayer-spaces',
+      'Open the guide for City, Bundoora or Brunswick, then jump to prayer, Jumu’ah, activities and ISR services from one campus entry point.',
+    href: '/campuses',
     action:
-      'Find a prayer room',
+      'Open campus guide',
   },
   {
     number: '02',

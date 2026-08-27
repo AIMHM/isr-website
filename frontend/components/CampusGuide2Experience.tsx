@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react'
 import Link from 'next/link'
+import CampusActivityFeed from '@/components/CampusActivityFeed'
 import {
   JUMUAH_SERVICES,
   PRAYER_SPACES,
@@ -393,6 +394,11 @@ export default function CampusGuide2Experience() {
                   )}
                 </div>
               </div>
+
+              <CampusActivityFeed
+                campusKey={campus.key}
+                campusLabel={campus.label}
+              />
             </section>
           ),
         )}
@@ -411,7 +417,7 @@ export default function CampusGuide2Experience() {
           Move from your campus guide into ISR activities, student support and operational updates.
         </p>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <Link
             href="/pray"
             className="rounded-xl bg-white px-4 py-4 text-center text-sm font-bold text-isr-dark-red transition hover:bg-isr-yellow"
@@ -438,6 +444,20 @@ export default function CampusGuide2Experience() {
             className="rounded-xl border border-white/20 px-4 py-4 text-center text-sm font-bold text-white transition hover:bg-white/10"
           >
             ISR Updates
+          </Link>
+
+          <Link
+            href="/start"
+            className="rounded-xl border border-white/20 px-4 py-4 text-center text-sm font-bold text-white transition hover:bg-white/10"
+          >
+            Start Here
+          </Link>
+
+          <Link
+            href="/join"
+            className="rounded-xl border border-white/20 px-4 py-4 text-center text-sm font-bold text-white transition hover:bg-white/10"
+          >
+            Join ISR
           </Link>
         </div>
       </section>
