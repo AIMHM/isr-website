@@ -47,6 +47,12 @@ const NAV_LINKS = [
     label:
       'ISR Updates',
   },
+  {
+    href:
+      '/admin/prayer',
+    label:
+      'Prayer',
+  },
 ]
 
 export default function AdminProtectedLayout({
