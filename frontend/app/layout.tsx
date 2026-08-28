@@ -1,4 +1,5 @@
 import GlobalQuickAccess from '@/components/GlobalQuickAccess'
+import SiteTour from '@/components/SiteTour'
 import PublicStructuredData from '@/components/PublicStructuredData'
 import type { Metadata } from 'next'
 import './globals.css'
@@ -85,6 +86,7 @@ export default function RootLayout({
         </div>
 
         <GlobalQuickAccess />
+        <SiteTour />
       </body>
     </html>
   )

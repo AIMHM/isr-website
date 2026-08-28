@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import TourReplayButton from '@/components/TourReplayButton'
 import Link from 'next/link'
 import {
   ISR_PUBLIC,
@@ -14,8 +15,8 @@ const studentLinks = [
     label: 'Campus Guide',
   },
   {
-    href: '/start',
-    label: 'Start Here',
+    href: '/student-guide',
+    label: 'Student Guide',
   },
   {
     href: '/pray',
@@ -259,6 +260,8 @@ export default function Footer() {
               >
                 Sitemap
               </Link>
+
+              <TourReplayButton />
             </div>
           </div>
         </div>

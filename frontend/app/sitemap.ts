@@ -15,7 +15,7 @@ export default function sitemap():
       priority: 1,
     },
     {
-      path: '/start',
+      path: '/student-guide',
       frequency: 'monthly',
       priority: 0.95,
     },
