@@ -345,7 +345,7 @@ export default function SiteTour() {
               <span
                 key={stepIndex}
                 aria-hidden="true"
-                className={h-2 rounded-full transition-all }
+                className={stepIndex === index ? 'h-2 w-6 rounded-full bg-isr-turquoise transition-all' : 'h-2 w-2 rounded-full bg-gray-200 transition-all'}
               />
             ))}
           </div>
