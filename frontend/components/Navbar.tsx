@@ -12,8 +12,8 @@ import {
 
 const links = [
   {
-    href: '/start',
-    label: 'Start Here',
+    href: '/student-guide',
+    label: 'Student Guide',
   },
   {
     href: '/pray',

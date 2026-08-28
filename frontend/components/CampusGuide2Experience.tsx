@@ -447,10 +447,10 @@ export default function CampusGuide2Experience() {
           </Link>
 
           <Link
-            href="/start"
+            href="/student-guide"
             className="rounded-xl border border-white/20 px-4 py-4 text-center text-sm font-bold text-white transition hover:bg-white/10"
           >
-            Start Here
+            Student Guide
           </Link>
 
           <Link

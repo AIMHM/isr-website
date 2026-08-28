@@ -71,8 +71,8 @@ const supportItems = [
     description:
       'Find prayer spaces, Jumu’ah, community, membership, events and the easiest ways to get connected.',
     action:
-      'Start here',
-    href: '/start',
+      'Student guide',
+    href: '/student-guide',
   },
 ]
 
