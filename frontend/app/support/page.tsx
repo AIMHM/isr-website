@@ -1,4 +1,5 @@
 import SupportTriage from '@/components/SupportTriage'
+import SupportBoundary from '@/components/SupportBoundary'
 import type {
   Metadata,
 } from 'next'
@@ -30,15 +31,21 @@ export default function SupportPage() {
               </h1>
 
               <p className="mt-5 max-w-3xl text-base leading-relaxed text-white/80 sm:text-xl">
-                Start with ISR. Tell us what happened and
-                what you are looking for — you do not need
-                to identify the right internal team first.
+                Start with the closest pathway. Routine information
+                is available immediately, while personal concerns
+                can go directly to ISR for a human response.
               </p>
             </div>
           </div>
         </section>
 
         <section className="px-4 py-14 sm:py-20">
+          <div className="container-isr mx-auto max-w-7xl">
+            <SupportBoundary />
+          </div>
+        </section>
+
+        <section className="bg-isr-cream/45 px-4 py-14 sm:py-20">
           <div className="container-isr mx-auto max-w-7xl">
             <StudentSupportDirectory />
           </div>
