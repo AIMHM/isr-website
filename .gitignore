@@ -31,3 +31,6 @@ supabase/.temp/
 
 # Local ISR admin sandbox
 frontend/.local-data/
+
+# Local production database backups
+.production-backups/
