@@ -258,7 +258,7 @@ export default function AdminProgramsPage() {
 
                 <p className="mt-3 text-sm text-gray-600">
                   {program.campusLabel}
-                  {' Â· '}
+                  {' · '}
                   {program.venue}
                 </p>
 

@@ -21,14 +21,17 @@ import {
 
 export default function ProgramDetailExperience({
   slug,
+  initialProgram,
 }: {
   slug: string
+  initialProgram?: Program
 }) {
   const [
     program,
     setProgram,
   ] =
     useState<Program | null>(
+      initialProgram ??
       null,
     )
 
@@ -36,10 +39,26 @@ export default function ProgramDetailExperience({
     loading,
     setLoading,
   ] =
-    useState(true)
+    useState(
+      initialProgram ===
+        undefined,
+    )
+
+  const [
+    error,
+    setError,
+  ] =
+    useState(false)
 
   useEffect(() => {
-    let active = true
+    if (
+      initialProgram
+    ) {
+      return
+    }
+
+    let active =
+      true
 
     fetchProgramBySlug(
       slug,
@@ -49,10 +68,17 @@ export default function ProgramDetailExperience({
           data,
         ) => {
           if (active) {
-            setProgram(data)
+            setProgram(
+              data,
+            )
           }
         },
       )
+      .catch(() => {
+        if (active) {
+          setError(true)
+        }
+      })
       .finally(() => {
         if (active) {
           setLoading(false)
@@ -60,9 +86,13 @@ export default function ProgramDetailExperience({
       })
 
     return () => {
-      active = false
+      active =
+        false
     }
-  }, [slug])
+  }, [
+    slug,
+    initialProgram,
+  ])
 
   const upcoming =
     useMemo(
@@ -81,7 +111,9 @@ export default function ProgramDetailExperience({
           )
 
         return expandProgramOccurrences(
-          [program],
+          [
+            program,
+          ],
           start,
           end,
         ).slice(
@@ -99,7 +131,9 @@ export default function ProgramDetailExperience({
       () =>
         program
           ? getNextProgramOccurrence(
-              [program],
+              [
+                program,
+              ],
             )
           : null,
       [
@@ -113,6 +147,10 @@ export default function ProgramDetailExperience({
         id="main-content"
         className="px-4 py-16"
       >
+        <span className="sr-only">
+          Loading program
+        </span>
+
         <div className="container-isr mx-auto max-w-5xl">
           <div className="h-80 animate-pulse rounded-3xl bg-isr-cream" />
         </div>
@@ -120,7 +158,10 @@ export default function ProgramDetailExperience({
     )
   }
 
-  if (!program) {
+  if (
+    error ||
+    !program
+  ) {
     return (
       <main
         id="main-content"
@@ -132,8 +173,13 @@ export default function ProgramDetailExperience({
           </p>
 
           <h1 className="mt-4 text-4xl font-bold text-isr-dark-red">
-            We couldn&apos;t find this program
+            We couldn&apos;t load this program
           </h1>
+
+          <p className="mx-auto mt-4 max-w-xl leading-relaxed text-gray-700">
+            The program may no longer be available, or its
+            information may be temporarily unavailable.
+          </p>
 
           <Link
             href="/events"
@@ -145,6 +191,46 @@ export default function ProgramDetailExperience({
       </main>
     )
   }
+
+  const registrationAvailable =
+    program.status ===
+      'active' &&
+    program.registrationMode !==
+      'none' &&
+    Boolean(
+      program.registrationUrl,
+    )
+
+  const registrationBlock =
+    registrationAvailable &&
+    program.registrationUrl ? (
+      <a
+        href={
+          program.registrationUrl
+        }
+        target="_blank"
+        rel="noopener noreferrer"
+        className="isr-button-primary w-full"
+      >
+        Register for this program
+      </a>
+    ) : program.registrationMode ===
+        'none' &&
+      program.status ===
+        'active' ? (
+      <p className="rounded-xl bg-isr-turquoise/10 px-5 py-3 text-center text-sm font-bold text-isr-dark-red">
+        No registration required — just attend.
+      </p>
+    ) : null
+
+  const statusLabel =
+    program.status ===
+      'active'
+      ? 'Active program'
+      : program.status ===
+          'paused'
+        ? 'Program paused'
+        : 'Program ended'
 
   return (
     <main id="main-content">
@@ -160,11 +246,15 @@ export default function ProgramDetailExperience({
           <div className="mt-8 max-w-4xl">
             <div className="flex flex-wrap gap-2">
               <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold">
-                Weekly program
+                Regular program
               </span>
 
               <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold">
                 {program.category}
+              </span>
+
+              <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold">
+                {statusLabel}
               </span>
 
               {program.localDemo && (
@@ -174,13 +264,17 @@ export default function ProgramDetailExperience({
               )}
             </div>
 
-            <h1 className="mt-5 text-4xl font-bold leading-tight sm:text-5xl">
+            <h1 className="mt-5 break-words text-4xl font-bold leading-tight sm:text-5xl">
               {program.name}
             </h1>
 
             <p className="mt-5 max-w-3xl text-lg leading-relaxed text-white/80">
               {program.summary}
             </p>
+
+            <div className="mt-6 max-w-md lg:hidden">
+              {registrationBlock}
+            </div>
           </div>
         </div>
       </section>
@@ -189,9 +283,9 @@ export default function ProgramDetailExperience({
         <section className="border-b border-amber-200 bg-amber-50 px-4 py-4">
           <div className="container-isr mx-auto max-w-6xl">
             <p className="text-sm font-semibold text-amber-900">
-              This is local development data used to test the
-              recurring Programs system. It is not published
-              ISR program information.
+              This is local development data used to test
+              recurring Programs. It is not published ISR
+              program information.
             </p>
           </div>
         </section>
@@ -200,7 +294,7 @@ export default function ProgramDetailExperience({
       <section className="px-4 py-12 sm:py-16">
         <div className="container-isr mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1.25fr_0.75fr]">
           <div>
-            {next && (
+            {next ? (
               <section className="rounded-3xl border border-isr-turquoise/25 bg-isr-cream/40 p-6 sm:p-8">
                 <p className="isr-eyebrow text-isr-turquoise">
                   Next session
@@ -232,6 +326,21 @@ export default function ProgramDetailExperience({
                   </p>
                 )}
               </section>
+            ) : (
+              <section className="rounded-3xl border border-isr-light-blue/20 bg-isr-cream/40 p-6 sm:p-8">
+                <p className="isr-eyebrow text-isr-turquoise">
+                  Next session
+                </p>
+
+                <h2 className="mt-3 text-xl font-bold text-isr-dark-red">
+                  No upcoming session is currently listed
+                </h2>
+
+                <p className="mt-3 text-sm leading-relaxed text-gray-700">
+                  Check What&apos;s On or ISR Updates for
+                  current activity information.
+                </p>
+              </section>
             )}
 
             <section className="mt-8">
@@ -239,7 +348,7 @@ export default function ProgramDetailExperience({
                 About this program
               </h2>
 
-              <p className="mt-4 whitespace-pre-line leading-relaxed text-gray-700">
+              <p className="mt-4 whitespace-pre-line break-words leading-relaxed text-gray-700">
                 {program.description}
               </p>
             </section>
@@ -249,57 +358,64 @@ export default function ProgramDetailExperience({
                 Upcoming sessions
               </h2>
 
-              <div className="mt-5 space-y-3">
-                {upcoming.map(
-                  (
-                    occurrence,
-                  ) => (
-                    <article
-                      key={
-                        occurrence.id
-                      }
-                      className={
-                        'rounded-2xl border p-5 ' +
-                        (
-                          occurrence.status ===
-                            'cancelled'
-                            ? 'border-red-200 bg-red-50'
-                            : 'border-isr-light-blue/20 bg-white'
-                        )
-                      }
-                    >
-                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
-                          <p className="font-bold text-isr-dark-red">
-                            {formatOccurrenceDate(
-                              occurrence,
-                            )}
-                          </p>
+              {upcoming.length >
+              0 ? (
+                <div className="mt-5 space-y-3">
+                  {upcoming.map(
+                    (
+                      occurrence,
+                    ) => (
+                      <article
+                        key={
+                          occurrence.id
+                        }
+                        className={
+                          'rounded-2xl border p-5 ' +
+                          (
+                            occurrence.status ===
+                              'cancelled'
+                              ? 'border-red-200 bg-red-50'
+                              : 'border-isr-light-blue/20 bg-white'
+                          )
+                        }
+                      >
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                          <div>
+                            <p className="font-bold text-isr-dark-red">
+                              {formatOccurrenceDate(
+                                occurrence,
+                              )}
+                            </p>
 
-                          <p className="mt-1 text-sm text-gray-600">
-                            {occurrence.venue}
+                            <p className="mt-1 text-sm text-gray-600">
+                              {occurrence.venue}
+                            </p>
+                          </div>
+
+                          <p className="text-sm font-semibold text-isr-turquoise">
+                            {occurrence.status ===
+                              'cancelled'
+                              ? 'Cancelled'
+                              : formatProgramClock(
+                                  program.startTime,
+                                )}
                           </p>
                         </div>
 
-                        <p className="text-sm font-semibold text-isr-turquoise">
-                          {occurrence.status ===
-                            'cancelled'
-                            ? 'Cancelled'
-                            : formatProgramClock(
-                                program.startTime,
-                              )}
-                        </p>
-                      </div>
-
-                      {occurrence.note && (
-                        <p className="mt-3 text-sm leading-relaxed text-gray-700">
-                          {occurrence.note}
-                        </p>
-                      )}
-                    </article>
-                  ),
-                )}
-              </div>
+                        {occurrence.note && (
+                          <p className="mt-3 text-sm leading-relaxed text-gray-700">
+                            {occurrence.note}
+                          </p>
+                        )}
+                      </article>
+                    ),
+                  )}
+                </div>
+              ) : (
+                <p className="mt-4 text-sm leading-relaxed text-gray-600">
+                  No future sessions are currently listed.
+                </p>
+              )}
             </section>
           </div>
 
@@ -370,20 +486,23 @@ export default function ProgramDetailExperience({
               )}
             </dl>
 
-            {program.registrationMode !==
-              'none' &&
-              program.registrationUrl && (
-              <a
+            <div className="mt-7 hidden lg:block">
+              {registrationBlock}
+            </div>
+
+            <div className="mt-7 border-t border-isr-light-blue/20 pt-5">
+              <Link
                 href={
-                  program.registrationUrl
+                  '/events?campus=' +
+                  encodeURIComponent(
+                    program.campusLabel,
+                  )
                 }
-                target="_blank"
-                rel="noopener noreferrer"
-                className="isr-button-primary mt-7 w-full"
+                className="isr-text-link"
               >
-                Register
-              </a>
-            )}
+                More {program.campusLabel} activities →
+              </Link>
+            </div>
           </aside>
         </div>
       </section>

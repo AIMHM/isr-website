@@ -250,6 +250,33 @@ const sourceFiles = [
 const errors = []
 const warnings = []
 
+const ENCODING_ARTIFACTS = [
+  {
+    label:
+      'replacement character',
+    value:
+      '\uFFFD',
+  },
+  {
+    label:
+      'UTF-8 mojibake sequence',
+    value:
+      '\u00e2\u20ac',
+  },
+  {
+    label:
+      'double-encoded character marker',
+    value:
+      '\u00c2',
+  },
+  {
+    label:
+      'UTF-8 interpreted as Latin-1 marker',
+    value:
+      '\u00c3',
+  },
+]
+
 const internalLinks =
   new Map()
 
@@ -262,6 +289,21 @@ for (
       file,
       'utf8',
     )
+
+  for (
+    const artifact
+    of ENCODING_ARTIFACTS
+  ) {
+    if (
+      content.includes(
+        artifact.value,
+      )
+    ) {
+      errors.push(
+        `Possible text encoding corruption (${artifact.label}) in ${relative(file)}`,
+      )
+    }
+  }
 
   const hrefRegex =
     /\bhref\s*=\s*["'](\/[^"'?#]*)[^"']*["']/g

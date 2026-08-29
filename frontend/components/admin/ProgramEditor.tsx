@@ -1033,7 +1033,7 @@ export default function ProgramEditor({
           className="isr-button-primary"
         >
           {saving
-            ? 'Savingâ€¦'
+            ? 'Saving…'
             : program
               ? 'Save changes'
               : 'Create program'}

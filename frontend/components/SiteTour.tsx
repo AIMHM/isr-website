@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useRef,
   useState,
 } from 'react'
 import {
@@ -29,51 +30,81 @@ type SpotlightRect = {
 
 const STEPS: TourStep[] = [
   {
-    title: 'Welcome to ISR',
+    title:
+      'Welcome to ISR',
+
     description:
       'Here is a quick guide to the main parts of the website so you always know where to go.',
   },
   {
-    title: 'Pray at RMIT',
+    title:
+      'Pray at RMIT',
+
     description:
       'Find prayer spaces, Jumuah arrangements and current prayer information across RMIT campuses.',
-    selector: 'a[href="/pray"]',
+
+    selector:
+      'a[href="/pray"]',
   },
   {
-    title: 'Whatâ€™s On',
+    title:
+      'What\u2019s On',
+
     description:
       'This is where ISR events and recurring weekly programs come together in one place.',
-    selector: 'a[href="/events"]',
+
+    selector:
+      'a[href="/events"]',
   },
   {
-    title: 'Campuses',
+    title:
+      'Campuses',
+
     description:
       'Open City, Bundoora and Brunswick campus information, including prayer and campus-specific activity.',
-    selector: 'a[href="/campuses"]',
+
+    selector:
+      'a[href="/campuses"]',
   },
   {
-    title: 'Student Guide',
+    title:
+      'Student Guide',
+
     description:
-      'Use the Student Guide for the Muslim student essentials and the journey from attending to joining, volunteering and leading.',
-    selector: 'a[href="/student-guide"]',
+      'Use the Student Guide for Muslim student essentials and the journey from attending to joining, volunteering and leading.',
+
+    selector:
+      'a[href="/student-guide"]',
   },
   {
-    title: 'Student Support',
+    title:
+      'Student Support',
+
     description:
       'If something is affecting your experience as a Muslim student, start here to find the right information or support pathway.',
-    selector: 'a[href="/support"]',
+
+    selector:
+      'a[href="/support"]',
   },
   {
-    title: 'Join ISR',
+    title:
+      'Join ISR',
+
     description:
       'Membership, community, volunteering and ways to become more involved with ISR live here.',
-    selector: 'a[href="/join"]',
+
+    selector:
+      'a[href="/join"]',
   },
   {
-    title: 'Search',
+    title:
+      'Search',
+
     description:
       'Not sure where something lives? Search ISR to quickly find the right page or information.',
-    selector: 'a[href="/find"]',
+
+    selector:
+      'a[href="/find"]',
   },
 ]
 
@@ -92,22 +123,31 @@ function findVisibleElement(
     )
 
   return (
-    elements.find((element) => {
-      const rect =
-        element.getBoundingClientRect()
+    elements.find(
+      (
+        element,
+      ) => {
+        const rect =
+          element.getBoundingClientRect()
 
-      const style =
-        window.getComputedStyle(
-          element,
+        const style =
+          window.getComputedStyle(
+            element,
+          )
+
+        return (
+          rect.width >
+            0 &&
+          rect.height >
+            0 &&
+          style.display !==
+            'none' &&
+          style.visibility !==
+            'hidden'
         )
-
-      return (
-        rect.width > 0 &&
-        rect.height > 0 &&
-        style.display !== 'none' &&
-        style.visibility !== 'hidden'
-      )
-    }) ?? null
+      },
+    ) ??
+    null
   )
 }
 
@@ -135,10 +175,44 @@ export default function SiteTour() {
       null,
     )
 
+  const dialogRef =
+    useRef<HTMLElement | null>(
+      null,
+    )
+
+  const previousFocusRef =
+    useRef<HTMLElement | null>(
+      null,
+    )
+
   const isAdmin =
     pathname.startsWith(
       '/admin',
     )
+
+  function restoreFocus() {
+    const previous =
+      previousFocusRef.current
+
+    previousFocusRef.current =
+      null
+
+    window.requestAnimationFrame(
+      () => {
+        previous?.focus()
+      },
+    )
+  }
+
+  function finish() {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      'true',
+    )
+
+    setActive(false)
+    restoreFocus()
+  }
 
   useEffect(() => {
     if (isAdmin) {
@@ -156,17 +230,20 @@ export default function SiteTour() {
     )
 
     const timer =
-      window.setTimeout(() => {
-        const complete =
-          window.localStorage.getItem(
-            STORAGE_KEY,
-          )
+      window.setTimeout(
+        () => {
+          const complete =
+            window.localStorage.getItem(
+              STORAGE_KEY,
+            )
 
-        if (!complete) {
-          setIndex(0)
-          setActive(true)
-        }
-      }, 700)
+          if (!complete) {
+            setIndex(0)
+            setActive(true)
+          }
+        },
+        700,
+      )
 
     return () => {
       window.clearTimeout(
@@ -178,22 +255,179 @@ export default function SiteTour() {
         restartTour,
       )
     }
-  }, [isAdmin])
+  }, [
+    isAdmin,
+  ])
 
   useEffect(() => {
-    if (!active || isAdmin) {
-      setSpotlight(null)
+    if (
+      !active ||
+      isAdmin
+    ) {
+      return
+    }
+
+    previousFocusRef.current =
+      document.activeElement instanceof
+        HTMLElement
+        ? document.activeElement
+        : null
+
+    const previousOverflow =
+      document.body.style.overflow
+
+    document.body.style.overflow =
+      'hidden'
+
+    const focusFrame =
+      window.requestAnimationFrame(
+        () => {
+          dialogRef.current?.focus()
+        },
+      )
+
+    function handleKeyDown(
+      event: KeyboardEvent,
+    ) {
+      if (
+        event.key ===
+        'Escape'
+      ) {
+        event.preventDefault()
+
+        window.localStorage.setItem(
+          STORAGE_KEY,
+          'true',
+        )
+
+        setActive(false)
+        restoreFocus()
+        return
+      }
+
+      if (
+        event.key !==
+        'Tab'
+      ) {
+        return
+      }
+
+      const dialog =
+        dialogRef.current
+
+      if (!dialog) {
+        return
+      }
+
+      const focusable =
+        Array.from(
+          dialog.querySelectorAll<HTMLElement>(
+            [
+              'button:not([disabled])',
+              'a[href]',
+              '[tabindex]:not([tabindex="-1"])',
+            ].join(','),
+          ),
+        ).filter(
+          (
+            item,
+          ) =>
+            !item.hasAttribute(
+              'disabled',
+            ),
+        )
+
+      if (
+        focusable.length ===
+        0
+      ) {
+        event.preventDefault()
+        dialog.focus()
+        return
+      }
+
+      const currentIndex =
+        focusable.indexOf(
+          document.activeElement as HTMLElement,
+        )
+
+      if (
+        event.shiftKey
+      ) {
+        if (
+          currentIndex <=
+          0
+        ) {
+          event.preventDefault()
+
+          focusable[
+            focusable.length -
+              1
+          ].focus()
+        }
+
+        return
+      }
+
+      if (
+        currentIndex ===
+          -1 ||
+        currentIndex ===
+          focusable.length -
+            1
+      ) {
+        event.preventDefault()
+        focusable[0].focus()
+      }
+    }
+
+    window.addEventListener(
+      'keydown',
+      handleKeyDown,
+    )
+
+    return () => {
+      window.cancelAnimationFrame(
+        focusFrame,
+      )
+
+      document.body.style.overflow =
+        previousOverflow
+
+      window.removeEventListener(
+        'keydown',
+        handleKeyDown,
+      )
+    }
+  }, [
+    active,
+    isAdmin,
+  ])
+
+  useEffect(() => {
+    if (
+      !active ||
+      isAdmin
+    ) {
+      setSpotlight(
+        null,
+      )
+
       return
     }
 
     function updateSpotlight() {
       const element =
         findVisibleElement(
-          STEPS[index].selector,
+          STEPS[index]
+            .selector,
         )
 
       if (!element) {
-        setSpotlight(null)
+        setSpotlight(
+          null,
+        )
+
         return
       }
 
@@ -201,10 +435,21 @@ export default function SiteTour() {
         element.getBoundingClientRect()
 
       setSpotlight({
-        top: rect.top - 7,
-        left: rect.left - 7,
-        width: rect.width + 14,
-        height: rect.height + 14,
+        top:
+          rect.top -
+          7,
+
+        left:
+          rect.left -
+          7,
+
+        width:
+          rect.width +
+          14,
+
+        height:
+          rect.height +
+          14,
       })
     }
 
@@ -233,43 +478,48 @@ export default function SiteTour() {
         true,
       )
     }
-  }, [active, index, isAdmin])
-
-  function finish() {
-    window.localStorage.setItem(
-      STORAGE_KEY,
-      'true',
-    )
-
-    setActive(false)
-  }
+  }, [
+    active,
+    index,
+    isAdmin,
+  ])
 
   function next() {
     if (
       index ===
-      STEPS.length - 1
+      STEPS.length -
+        1
     ) {
       finish()
       return
     }
 
     setIndex(
-      (current) =>
-        current + 1,
+      (
+        current,
+      ) =>
+        current +
+        1,
     )
   }
 
   function previous() {
     setIndex(
-      (current) =>
+      (
+        current,
+      ) =>
         Math.max(
           0,
-          current - 1,
+          current -
+            1,
         ),
     )
   }
 
-  if (!active || isAdmin) {
+  if (
+    !active ||
+    isAdmin
+  ) {
     return null
   }
 
@@ -283,10 +533,18 @@ export default function SiteTour() {
           aria-hidden="true"
           className="pointer-events-none fixed rounded-2xl border-2 border-isr-yellow transition-all duration-200"
           style={{
-            top: spotlight.top,
-            left: spotlight.left,
-            width: spotlight.width,
-            height: spotlight.height,
+            top:
+              spotlight.top,
+
+            left:
+              spotlight.left,
+
+            width:
+              spotlight.width,
+
+            height:
+              spotlight.height,
+
             boxShadow:
               '0 0 0 9999px rgba(0, 0, 0, 0.72)',
           }}
@@ -298,71 +556,106 @@ export default function SiteTour() {
         />
       )}
 
-      <div className="pointer-events-none absolute inset-0" />
-
       <section
+        ref={dialogRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
-        aria-label="ISR website tour"
-        className="fixed bottom-5 left-1/2 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 rounded-[1.5rem] bg-white p-5 shadow-2xl sm:bottom-8 sm:p-6"
+        aria-labelledby="isr-tour-title"
+        aria-describedby="isr-tour-description"
+        className="fixed bottom-4 left-1/2 max-h-[calc(100vh-2rem)] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 overflow-y-auto rounded-[1.5rem] bg-white p-5 shadow-2xl outline-none sm:bottom-8 sm:p-6"
       >
         <div className="flex items-start justify-between gap-5">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-isr-turquoise">
-              Website tour Â· {index + 1} of {STEPS.length}
+              Website tour {'\u00b7'} {index + 1} of {STEPS.length}
             </p>
 
-            <h2 className="mt-2 text-2xl font-bold text-isr-dark-red">
+            <h2
+              id="isr-tour-title"
+              className="mt-2 text-2xl font-bold text-isr-dark-red"
+            >
               {step.title}
             </h2>
           </div>
 
           <button
             type="button"
-            onClick={finish}
+            onClick={
+              finish
+            }
             className="rounded-full px-3 py-2 text-sm font-semibold text-gray-500 transition hover:bg-gray-100 hover:text-isr-dark-red"
           >
-            Skip
+            Skip tour
           </button>
         </div>
 
-        <p className="mt-3 text-sm leading-relaxed text-gray-700 sm:text-base">
+        <p
+          id="isr-tour-description"
+          className="mt-3 text-sm leading-relaxed text-gray-700 sm:text-base"
+        >
           {step.description}
         </p>
 
         <div className="mt-6 flex items-center justify-between gap-3">
           <button
             type="button"
-            onClick={previous}
-            disabled={index === 0}
+            onClick={
+              previous
+            }
+            disabled={
+              index ===
+              0
+            }
             className="rounded-full border border-isr-light-blue/40 px-4 py-2.5 text-sm font-bold text-isr-dark-red transition hover:bg-isr-cream disabled:cursor-not-allowed disabled:opacity-35"
           >
             Back
           </button>
 
-          <div className="flex gap-1.5">
-            {STEPS.map((_, stepIndex) => (
-              <span
-                key={stepIndex}
-                aria-hidden="true"
-                className={stepIndex === index ? 'h-2 w-6 rounded-full bg-isr-turquoise transition-all' : 'h-2 w-2 rounded-full bg-gray-200 transition-all'}
-              />
-            ))}
+          <div
+            className="flex gap-1.5"
+            aria-hidden="true"
+          >
+            {STEPS.map(
+              (
+                _,
+                stepIndex,
+              ) => (
+                <span
+                  key={
+                    stepIndex
+                  }
+                  className={
+                    stepIndex ===
+                    index
+                      ? 'h-2 w-6 rounded-full bg-isr-turquoise transition-all'
+                      : 'h-2 w-2 rounded-full bg-gray-200 transition-all'
+                  }
+                />
+              ),
+            )}
           </div>
 
           <button
             type="button"
-            onClick={next}
+            onClick={
+              next
+            }
             className="rounded-full bg-isr-dark-red px-5 py-2.5 text-sm font-bold text-white transition hover:bg-isr-turquoise"
           >
             {
               index ===
-              STEPS.length - 1
+              STEPS.length -
+                1
                 ? 'Finish'
                 : 'Next'
             }
           </button>
         </div>
+
+        <p className="sr-only">
+          Press Escape to close the website tour.
+        </p>
       </section>
     </div>
   )
