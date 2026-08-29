@@ -53,6 +53,12 @@ const NAV_LINKS = [
     label:
       'Prayer',
   },
+  {
+    href:
+      '/admin/content-health',
+    label:
+      'Content Health',
+  },
 ]
 
 export default function AdminProtectedLayout({

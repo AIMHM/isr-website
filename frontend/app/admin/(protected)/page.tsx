@@ -8,33 +8,51 @@ const activeTools = [
     href: '/admin/events',
   },
   {
+    title: 'Programs',
+    description:
+      'Maintain recurring ISR programs and schedules.',
+    href: '/admin/programs',
+  },
+  {
     title: 'ISR Updates',
     description:
-      'Publish operational notices and time-sensitive information.',
+      'Manage operational notices and time-sensitive public information.',
     href: '/admin/announcements',
+  },
+  {
+    title: 'Prayer & Jumu’ah',
+    description:
+      'Maintain managed prayer-space and Friday-prayer records.',
+    href: '/admin/prayer',
+  },
+  {
+    title: 'Content Health',
+    description:
+      'Surface missing ownership, review dates and information that may need verification.',
+    href: '/admin/content-health',
   },
 ]
 
 const nextSystems = [
   {
-    title: 'Programs persistence',
-    description:
-      'The recurring-program preview is now available; database editing arrives in Batch 2B.',
-  },
-  {
-    title: 'Prayer & Jumu’ah',
-    description:
-      'Verified prayer spaces, Friday prayer and operational changes.',
-  },
-  {
     title: 'Campuses',
     description:
-      'City, Bundoora and Brunswick Muslim student information.',
+      'Managed campus information for City, Bundoora and Brunswick.',
   },
   {
-    title: 'Content Health',
+    title: 'Community & public links',
     description:
-      'Review dates, source verification and stale-content warnings.',
+      'Editable membership, volunteer, community and public-link records.',
+  },
+  {
+    title: 'Organisation & governance',
+    description:
+      'Managed leadership, public documents and governance-register information.',
+  },
+  {
+    title: 'Users & permissions',
+    description:
+      'More granular administrative roles and editing permissions.',
   },
 ]
 
@@ -51,8 +69,8 @@ export default function AdminIndexPage() {
         </h1>
 
         <p className="mt-4 leading-relaxed text-gray-600">
-          Manage current ISR website content and monitor the
-          systems being expanded for Website 2.0.
+          Manage ISR’s current public information and
+          quickly identify content that requires review.
         </p>
       </div>
 
@@ -62,60 +80,56 @@ export default function AdminIndexPage() {
         </h2>
 
         <div className="mt-5 grid gap-4 md:grid-cols-2">
-          {activeTools.map((tool) => (
-            <Link
-              key={tool.href}
-              href={tool.href}
-              className="rounded-2xl border border-isr-light-blue/25 bg-white p-6 transition hover:border-isr-turquoise hover:shadow-sm"
-            >
-              <h3 className="text-lg font-bold text-isr-dark-red">
-                {tool.title}
-              </h3>
+          {activeTools.map(
+            (tool) => (
+              <Link
+                key={tool.href}
+                href={tool.href}
+                className="rounded-2xl border border-isr-light-blue/25 bg-white p-6 transition hover:border-isr-turquoise hover:shadow-sm"
+              >
+                <h3 className="text-lg font-bold text-isr-dark-red">
+                  {tool.title}
+                </h3>
 
-              <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                {tool.description}
-              </p>
+                <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                  {tool.description}
+                </p>
 
-              <span className="mt-5 inline-flex text-sm font-bold text-isr-turquoise">
-                Open →
-              </span>
-            </Link>
-          ))}
+                <span className="mt-5 inline-flex text-sm font-bold text-isr-turquoise">
+                  Open →
+                </span>
+              </Link>
+            ),
+          )}
         </div>
       </section>
 
       <section className="mt-10">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-gray-500">
-              Website 2.0
-            </p>
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-gray-500">
+          Website 2.0
+        </p>
 
-            <h2 className="mt-2 text-xl font-bold text-isr-dark-red">
-              Systems being prepared
-            </h2>
-          </div>
-
-          <span className="rounded-full bg-isr-yellow/40 px-3 py-1.5 text-xs font-bold text-isr-dark-red">
-            Foundation phase
-          </span>
-        </div>
+        <h2 className="mt-2 text-xl font-bold text-isr-dark-red">
+          Next management systems
+        </h2>
 
         <div className="mt-5 grid gap-4 md:grid-cols-2">
-          {nextSystems.map((tool) => (
-            <article
-              key={tool.title}
-              className="rounded-2xl border border-dashed border-isr-light-blue/35 bg-isr-cream/35 p-6"
-            >
-              <h3 className="font-bold text-isr-dark-red">
-                {tool.title}
-              </h3>
+          {nextSystems.map(
+            (tool) => (
+              <article
+                key={tool.title}
+                className="rounded-2xl border border-dashed border-isr-light-blue/35 bg-isr-cream/35 p-6"
+              >
+                <h3 className="font-bold text-isr-dark-red">
+                  {tool.title}
+                </h3>
 
-              <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                {tool.description}
-              </p>
-            </article>
-          ))}
+                <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                  {tool.description}
+                </p>
+              </article>
+            ),
+          )}
         </div>
       </section>
 
@@ -129,10 +143,10 @@ export default function AdminIndexPage() {
         </h2>
 
         <p className="mt-3 max-w-3xl text-sm leading-relaxed text-white/75">
-          Prayer, Jumu’ah, campus access, public links and
-          governance information will gain source verification
-          and review controls before they become fully editable
-          through admin.
+          Publication status, verification, content
+          ownership and review freshness are separate
+          controls. Important public information should
+          not rely on a single indicator of accuracy.
         </p>
       </section>
     </div>
