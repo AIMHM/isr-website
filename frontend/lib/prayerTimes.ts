@@ -36,6 +36,10 @@ export type PrayerTimesData = {
   }
   meta: {
     timezone: string
+    method?: {
+      id: number
+      name: string
+    }
   }
 }
 

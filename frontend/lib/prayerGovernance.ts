@@ -53,13 +53,13 @@ export const PRAYER_INFORMATION_GOVERNANCE:
         'verified',
 
       reviewedAt:
-        null,
+        '2026-08-30T00:00:00+10:00',
 
       reviewIntervalDays:
         90,
 
       sourceLabel:
-        'ISR operational prayer-space record',
+        'ISR operational confirmation — 30 August 2026',
     },
 
     'bundoora-east': {
@@ -70,13 +70,13 @@ export const PRAYER_INFORMATION_GOVERNANCE:
         'verified',
 
       reviewedAt:
-        null,
+        '2026-08-30T00:00:00+10:00',
 
       reviewIntervalDays:
         90,
 
       sourceLabel:
-        'ISR operational prayer-space record',
+        'ISR operational confirmation — 30 August 2026',
     },
 
     'bundoora-west': {
@@ -87,13 +87,13 @@ export const PRAYER_INFORMATION_GOVERNANCE:
         'verified',
 
       reviewedAt:
-        null,
+        '2026-08-30T00:00:00+10:00',
 
       reviewIntervalDays:
         90,
 
       sourceLabel:
-        'ISR operational prayer-space record',
+        'ISR operational confirmation — 30 August 2026',
     },
 
     brunswick: {
@@ -104,13 +104,13 @@ export const PRAYER_INFORMATION_GOVERNANCE:
         'verified',
 
       reviewedAt:
-        null,
+        '2026-08-30T00:00:00+10:00',
 
       reviewIntervalDays:
         90,
 
       sourceLabel:
-        'ISR operational prayer-space record',
+        'ISR operational confirmation — 30 August 2026',
     },
 
     'city-jumuah': {
@@ -121,13 +121,13 @@ export const PRAYER_INFORMATION_GOVERNANCE:
         'verified',
 
       reviewedAt:
-        null,
+        '2026-08-30T00:00:00+10:00',
 
       reviewIntervalDays:
         60,
 
       sourceLabel:
-        'ISR operational Jumu’ah record',
+        'ISR operational confirmation — 30 August 2026',
     },
 
     'bundoora-jumuah': {
@@ -138,13 +138,13 @@ export const PRAYER_INFORMATION_GOVERNANCE:
         'verified',
 
       reviewedAt:
-        null,
+        '2026-08-30T00:00:00+10:00',
 
       reviewIntervalDays:
         60,
 
       sourceLabel:
-        'ISR operational Jumu’ah record',
+        'ISR operational confirmation — 30 August 2026',
     },
   }
 

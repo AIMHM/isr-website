@@ -30,6 +30,10 @@ export const MOCK_PRAYER_TIMES = {
   },
   meta: {
     timezone: TIMEZONE,
+    method: {
+      id: 3,
+      name: 'Muslim World League',
+    },
   },
 }
 

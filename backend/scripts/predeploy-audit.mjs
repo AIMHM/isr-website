@@ -143,6 +143,7 @@ const expectedMigrations = [
   '20260816030000_publication_workflow',
   '20260816040000_notice_workflow',
   '20260821020000_prayer_persistence',
+  '20260830063000_seed_verified_prayer_content',
 ]
 
 for (
@@ -295,6 +296,41 @@ for (
   }
 }
 
+const confirmedPrayerMigration =
+  read(
+    'prisma/migrations/20260830063000_seed_verified_prayer_content/migration.sql',
+  )
+
+for (
+  const marker
+  of [
+    "'city'",
+    "'bundoora-east'",
+    "'bundoora-west'",
+    "'brunswick'",
+    "'city-jumuah'",
+    "'bundoora-jumuah'",
+    "'12:30 pm'",
+    "'1:30 pm'",
+    '202.04.01',
+    'Jumu’ah livestream',
+    "'published'",
+    "'verified'",
+    '30 August 2026',
+    'ON CONFLICT',
+  ]
+) {
+  if (
+    !confirmedPrayerMigration.includes(
+      marker,
+    )
+  ) {
+    fail(
+      `Confirmed prayer migration missing marker: ${marker}`,
+    )
+  }
+}
+
 const prayerController =
   read(
     'controllers/prayerTimesController.ts',
@@ -318,13 +354,8 @@ if (
     '3; // Muslim World League',
   )
 ) {
-  warn(
-    'Prayer calculation method differs from the currently documented MWL method 3',
-  )
-}
-else {
-  warn(
-    'Manual factual approval still required: prayer calculation method is MWL / AlAdhan method 3',
+  fail(
+    'Prayer calculation method must remain confirmed MWL / AlAdhan method 3',
   )
 }
 

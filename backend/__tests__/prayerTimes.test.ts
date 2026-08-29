@@ -217,6 +217,14 @@ test(
         ).toContain(
             '/timings/24-06-2026?',
         );
+
+        expect(
+            String(
+                fetchCall,
+            ),
+        ).toContain(
+            '&method=3',
+        );
     },
 );
 

@@ -93,7 +93,16 @@ export default function PrayerTimesTable() {
                 )}
               </div>
             )}
-            <p className="mt-1 text-xs text-gray-500">Melbourne · {data.meta.timezone}</p>
+            <p className="mt-1 text-xs text-gray-500">
+              Melbourne · {data.meta.timezone}
+            </p>
+
+            <p className="mt-1 text-xs text-gray-500">
+              Calculation method:{' '}
+              {data.meta.method?.name ??
+                'Muslim World League'}{' '}
+              (MWL)
+            </p>
           </>
         )}
       </div>
