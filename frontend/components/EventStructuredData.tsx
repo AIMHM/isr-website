@@ -1,5 +1,3 @@
-'use client'
-
 import {
   getEventStatus,
   type Event,
@@ -45,14 +43,9 @@ export default function EventStructuredData({
   event: Event
 }) {
   const baseUrl =
-    typeof window !==
-    'undefined'
-      ? window.location.origin
-      : (
-          process.env
-            .NEXT_PUBLIC_SITE_URL ??
-          'https://theisr.com.au'
-        )
+    process.env
+      .NEXT_PUBLIC_SITE_URL ??
+    'https://theisr.com.au'
 
   const locationName =
     [

@@ -2,7 +2,6 @@
 'use client'
 
 import EventUtilities from '@/components/EventUtilities'
-import EventStructuredData from '@/components/EventStructuredData'
 import {
   useEffect,
   useState,
@@ -22,14 +21,17 @@ import {
 
 export default function EventDetailExperience({
   id,
+  initialEvent,
 }: {
   id: number
+  initialEvent?: Event
 }) {
   const [
     event,
     setEvent,
   ] =
     useState<Event | null>(
+      initialEvent ??
       null,
     )
 
@@ -37,7 +39,10 @@ export default function EventDetailExperience({
     loading,
     setLoading,
   ] =
-    useState(true)
+    useState(
+      initialEvent ===
+        undefined,
+    )
 
   const [
     error,
@@ -46,6 +51,12 @@ export default function EventDetailExperience({
     useState(false)
 
   useEffect(() => {
+    if (
+      initialEvent
+    ) {
+      return
+    }
+
     let active = true
 
     fetchEventById(id)
@@ -68,7 +79,7 @@ export default function EventDetailExperience({
     return () => {
       active = false
     }
-  }, [id])
+  }, [id, initialEvent])
 
   if (loading) {
     return (
@@ -202,9 +213,6 @@ export default function EventDetailExperience({
 
   return (
     <main id="main-content">
-      <EventStructuredData
-        event={event}
-      />
       <section className="border-b border-isr-light-blue/20 bg-isr-cream/55 px-4 py-6">
         <div className="container-isr mx-auto max-w-6xl">
           <Link

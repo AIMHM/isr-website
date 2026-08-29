@@ -99,8 +99,8 @@ export default function Hero() {
                 ))}
               </ol>
 
-              <Link href="/start" className="isr-button-primary mt-6 w-full">
-                Start here
+              <Link href="/student-guide" className="isr-button-primary mt-6 w-full">
+                Open Student Guide
               </Link>
             </div>
           </div>

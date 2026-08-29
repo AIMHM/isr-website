@@ -55,6 +55,11 @@ export default function sitemap():
       priority: 0.82,
     },
     {
+      path: '/find',
+      frequency: 'monthly',
+      priority: 0.85,
+    },
+    {
       path: '/support',
       frequency: 'monthly',
       priority: 0.85,

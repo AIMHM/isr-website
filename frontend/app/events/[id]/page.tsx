@@ -1,11 +1,19 @@
+import {
+  cache,
+} from 'react'
 import type {
   Metadata,
 } from 'next'
+import {
+  notFound,
+} from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import EventDetailExperience from '@/components/EventDetailExperience'
+import EventStructuredData from '@/components/EventStructuredData'
 import {
   fetchEventById,
+  type Event,
 } from '@/lib/events'
 
 type EventPageProps = {
@@ -13,6 +21,11 @@ type EventPageProps = {
     id: string
   }>
 }
+
+const getEvent =
+  cache(
+    fetchEventById,
+  )
 
 function descriptionForMetadata(
   value: string,
@@ -77,7 +90,7 @@ export async function generateMetadata({
 
   try {
     const event =
-      await fetchEventById(
+      await getEvent(
         eventId,
       )
 
@@ -182,12 +195,56 @@ export default async function EventPage({
   const eventId =
     Number(id)
 
+  if (
+    !Number.isFinite(
+      eventId,
+    )
+  ) {
+    notFound()
+  }
+
+  let event:
+    Event |
+    null |
+    undefined
+
+  try {
+    event =
+      await getEvent(
+        eventId,
+      )
+  }
+  catch {
+    /*
+     * Leave the event undefined so the client can retry.
+     * A temporary API failure should not be treated as a 404.
+     */
+    event =
+      undefined
+  }
+
+  if (
+    event ===
+    null
+  ) {
+    notFound()
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-isr-cream via-white to-isr-yellow/20">
       <Navbar />
 
+      {event && (
+        <EventStructuredData
+          event={event}
+        />
+      )}
+
       <EventDetailExperience
         id={eventId}
+        initialEvent={
+          event
+        }
       />
 
       <Footer />

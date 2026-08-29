@@ -137,10 +137,10 @@ export default function GovernancePage() {
                 </p>
 
                 <Link
-                  href="/start"
+                  href="/student-guide"
                   className="mt-6 inline-flex font-bold text-isr-yellow"
                 >
-                  Start Here →
+                  Student Guide →
                 </Link>
               </article>
             </div>

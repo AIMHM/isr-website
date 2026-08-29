@@ -22,8 +22,8 @@ export default function NewStudentPreview() {
               description="Start with the essentials for Muslim student life at RMIT."
             />
 
-            <Link href="/start" className="isr-button-primary mt-7">
-              Start here
+            <Link href="/student-guide" className="isr-button-primary mt-7">
+              Open Student Guide
             </Link>
           </div>
 

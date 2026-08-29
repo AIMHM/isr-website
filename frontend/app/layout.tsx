@@ -34,6 +34,20 @@ export const metadata: Metadata = {
 
   applicationName: 'Islamic Society of RMIT',
 
+  manifest:
+    '/manifest.webmanifest',
+
+  appleWebApp: {
+    capable:
+      true,
+
+    title:
+      'ISR',
+
+    statusBarStyle:
+      'default',
+  },
+
   icons: {
     icon: '/images/isr_logo_dark.JPG',
   },

@@ -8,6 +8,7 @@
     "start": "next start -p ${PORT:-3000}",
     "lint": "eslint .",
     "isr:health": "node scripts/isr-dev/health.mjs",
+    "isr:public-qa": "node scripts/isr-dev/public-qa.mjs",
     "isr:github": "node scripts/isr-dev/verify-github.mjs"
   },
   "dependencies": {
