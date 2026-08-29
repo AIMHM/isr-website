@@ -45,6 +45,16 @@ export default function sitemap():
       priority: 0.85,
     },
     {
+      path: '/teams',
+      frequency: 'monthly',
+      priority: 0.82,
+    },
+    {
+      path: '/links',
+      frequency: 'monthly',
+      priority: 0.82,
+    },
+    {
       path: '/support',
       frequency: 'monthly',
       priority: 0.85,

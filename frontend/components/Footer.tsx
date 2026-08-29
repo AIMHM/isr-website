@@ -42,6 +42,14 @@ const organisationLinks = [
     label: 'Join ISR',
   },
   {
+    href: '/teams',
+    label: 'Our Teams',
+  },
+  {
+    href: '/links',
+    label: 'ISR Links',
+  },
+  {
     href: '/about',
     label: 'About ISR',
   },

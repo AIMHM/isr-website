@@ -1,48 +1,59 @@
-import JoinMembershipSpotlight from '@/components/JoinMembershipSpotlight'
 import type {
   Metadata,
 } from 'next'
+import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import {
   ISR_PUBLIC,
-  mailto,
 } from '@/lib/siteContent'
 
 export const metadata: Metadata = {
   title: 'Join ISR',
   description:
-    'Join the ISR community, become a free member, volunteer, join the team or support Muslim students at RMIT.',
+    'Attend, join, volunteer and become part of the Islamic Society of RMIT community.',
 }
 
-const pathways = [
+const journey = [
   {
     number: '01',
-    title: 'Join the community',
+    label: 'Attend',
+    title: 'Show up',
     description:
-      'Stay connected to announcements and Muslim student life through the main ISR WhatsApp Community.',
-    href: '#community',
+      'Come to an ISR event, weekly program or community activity.',
+    href: '/events',
   },
   {
     number: '02',
+    label: 'Join',
     title: 'Become a member',
     description:
-      'Formal ISR membership is free.',
+      'Formal ISR membership is free and gives you a direct connection to the Society.',
     href: '#membership',
   },
   {
     number: '03',
-    title: 'Volunteer',
+    label: 'Volunteer',
+    title: 'Help out',
     description:
-      'Help with events and community initiatives without taking on a permanent role.',
+      'Contribute at events and activities without taking on a permanent role.',
     href: '#volunteer',
   },
   {
     number: '04',
-    title: 'Join the team',
+    label: 'Team',
+    title: 'Serve consistently',
     description:
-      'Take recurring responsibility and help deliver ISR’s work throughout the year.',
+      'Join an ISR team and contribute regularly alongside other students.',
     href: '#team',
+  },
+  {
+    number: '05',
+    label: 'Lead',
+    title: 'Grow into responsibility',
+    description:
+      'Leadership grows from service, reliability and taking responsibility over time.',
+    href: '#lead',
   },
 ]
 
@@ -52,80 +63,79 @@ export default function JoinPage() {
       <Navbar />
 
       <main id="main-content">
-        <section className="isr-page-hero bg-isr-dark-red px-4 py-14 text-white sm:py-20">
+        <section className="bg-isr-dark-red px-4 py-14 text-white sm:py-20">
           <div className="container-isr mx-auto max-w-7xl">
-            <div className="max-w-4xl">
-              <p className="isr-eyebrow text-isr-yellow">
-                Join ISR
-              </p>
+            <p className="isr-eyebrow text-isr-yellow">
+              Join ISR
+            </p>
 
-              <h1 className="mt-4 text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
-                Start with community.
-                <span className="block text-isr-yellow">
-                  Grow into contribution.
-                </span>
-              </h1>
+            <h1 className="mt-4 max-w-5xl text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+              Come as you are.
+              <span className="block text-isr-yellow">
+                Grow into contribution.
+              </span>
+            </h1>
 
-              <p className="mt-5 max-w-3xl text-base leading-relaxed text-white/80 sm:text-xl">
-                You do not need a committee title to be
-                part of ISR. Join the community, become a
-                member, attend something and contribute
-                when you are ready.
-              </p>
+            <p className="mt-5 max-w-3xl text-base leading-relaxed text-white/80 sm:text-xl">
+              You do not need a title to belong here.
+              Attend something, meet people, become a
+              member and contribute when you are ready.
+            </p>
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <a
-                  href={ISR_PUBLIC.community.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 font-bold text-isr-dark-red transition hover:bg-isr-yellow"
-                >
-                  Join WhatsApp Community
-                </a>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <a
+                href={ISR_PUBLIC.community.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 font-bold text-isr-dark-red transition hover:bg-isr-yellow"
+              >
+                Join WhatsApp Community
+              </a>
 
-                <a
-                  href={ISR_PUBLIC.membership.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/20 px-6 py-3 font-bold text-white transition hover:bg-white/10"
-                >
-                  Free ISR membership
-                </a>
-              </div>
+              <a
+                href={ISR_PUBLIC.membership.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/25 px-6 py-3 font-bold text-white transition hover:bg-white/10"
+              >
+                Free ISR membership
+              </a>
             </div>
           </div>
         </section>
 
-        <section className="px-4 py-12 sm:py-16">
+        <section className="px-4 py-14 sm:py-20">
           <div className="container-isr mx-auto max-w-7xl">
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              {pathways.map(
-                (pathway) => (
-                  <a
-                    key={
-                      pathway.number
-                    }
-                    href={
-                      pathway.href
-                    }
-                    className="isr-choice-card isr-card isr-card-interactive p-5 sm:p-6"
+            <div className="max-w-3xl">
+              <p className="isr-eyebrow text-isr-turquoise">
+                Your ISR journey
+              </p>
+
+              <h2 className="mt-3 text-3xl font-bold text-isr-dark-red sm:text-4xl">
+                Attend. Join. Volunteer. Team. Lead.
+              </h2>
+            </div>
+
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              {journey.map(
+                (step) => (
+                  <Link
+                    key={step.number}
+                    href={step.href}
+                    className="isr-card isr-card-interactive p-5"
                   >
                     <span className="text-xs font-bold text-isr-turquoise">
-                      {
-                        pathway.number
-                      }
+                      {step.number} · {step.label}
                     </span>
 
-                    <h2 className="mt-4 text-xl font-bold text-isr-dark-red">
-                      {pathway.title}
-                    </h2>
+                    <h3 className="mt-4 text-xl font-bold text-isr-dark-red">
+                      {step.title}
+                    </h3>
 
                     <p className="mt-3 text-sm leading-relaxed text-gray-700">
-                      {
-                        pathway.description
-                      }
+                      {step.description}
                     </p>
-                  </a>
+                  </Link>
                 ),
               )}
             </div>
@@ -133,283 +143,198 @@ export default function JoinPage() {
         </section>
 
         <section
-          id="community"
-          className="scroll-mt-28 bg-white px-4 py-14 sm:py-20"
-        >
-          <div className="container-isr mx-auto max-w-7xl">
-            <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
-              <div>
-                <p className="isr-eyebrow text-isr-turquoise">
-                  Stay connected
-                </p>
-
-                <h2 className="mt-4 text-3xl font-bold text-isr-dark-red sm:text-4xl">
-                  Join the community
-                </h2>
-
-                <p className="mt-4 max-w-xl leading-relaxed text-gray-700">
-                  The main ISR WhatsApp Community is the
-                  easiest public starting point for staying
-                  connected.
-                </p>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-3">
-                <article className="rounded-[1.5rem] border border-isr-turquoise/30 bg-isr-turquoise/5 p-6">
-                  <span className="rounded-full bg-isr-turquoise/10 px-3 py-1 text-xs font-bold text-isr-turquoise">
-                    Available now
-                  </span>
-
-                  <h3 className="mt-5 text-xl font-bold text-isr-dark-red">
-                    Main ISR Community
-                  </h3>
-
-                  <p className="mt-3 text-sm leading-relaxed text-gray-700">
-                    The main Islamic Society of RMIT
-                    WhatsApp Community.
-                  </p>
-
-                  <a
-                    href={ISR_PUBLIC.community.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="isr-button-primary mt-6 text-sm"
-                  >
-                    Join community
-                  </a>
-                </article>
-
-                <article className="rounded-[1.5rem] border border-isr-light-blue/20 bg-isr-cream/45 p-6">
-                  <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-gray-600">
-                    Link coming soon
-                  </span>
-
-                  <h3 className="mt-5 text-xl font-bold text-isr-dark-red">
-                    Brothers Community
-                  </h3>
-
-                  <p className="mt-3 text-sm leading-relaxed text-gray-700">
-                    The direct brothers link will be added
-                    once confirmed.
-                  </p>
-                </article>
-
-                <article className="rounded-[1.5rem] border border-isr-light-blue/20 bg-isr-cream/45 p-6">
-                  <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-gray-600">
-                    Link coming soon
-                  </span>
-
-                  <h3 className="mt-5 text-xl font-bold text-isr-dark-red">
-                    Sisters Community
-                  </h3>
-
-                  <p className="mt-3 text-sm leading-relaxed text-gray-700">
-                    The direct sisters link will be added
-                    once confirmed.
-                  </p>
-                </article>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section
           id="membership"
-          className="scroll-mt-28 bg-isr-cream/50 px-4 py-14 sm:py-20"
+          className="scroll-mt-28 bg-isr-cream/55 px-4 py-14 sm:py-20"
         >
           <div className="container-isr mx-auto max-w-6xl">
-            <div className="rounded-[2rem] bg-isr-dark-red p-6 text-white sm:p-9">
-              <div className="grid gap-7 lg:grid-cols-[1fr_auto] lg:items-center">
-                <div>
-                  <p className="isr-eyebrow text-isr-yellow">
-                    Formal membership
-                  </p>
+            <div className="grid gap-6 lg:grid-cols-2">
+              <article className="rounded-[1.75rem] bg-isr-dark-red p-7 text-white sm:p-9">
+                <p className="isr-eyebrow text-isr-yellow">
+                  Membership
+                </p>
 
-                  <h2 className="mt-4 text-3xl font-bold">
-                    Membership is free
-                  </h2>
+                <h2 className="mt-3 text-3xl font-bold">
+                  Become an ISR member
+                </h2>
 
-                  <p className="mt-4 max-w-2xl leading-relaxed text-white/75">
-                    Becoming a formal member strengthens
-                    ISR’s Muslim student membership base and
-                    gives you a direct formal connection to
-                    the Society.
-                  </p>
-                </div>
+                <p className="mt-4 leading-relaxed text-white/75">
+                  Formal ISR membership is free. It is one
+                  of the simplest ways to strengthen the
+                  Muslim student community at RMIT.
+                </p>
 
                 <a
                   href={ISR_PUBLIC.membership.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 font-bold text-isr-dark-red transition hover:bg-isr-yellow"
+                  className="mt-7 inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 font-bold text-isr-dark-red transition hover:bg-isr-yellow"
                 >
                   Become a member
                 </a>
-              </div>
+              </article>
+
+              <article className="rounded-[1.75rem] border border-isr-light-blue/25 bg-white p-7 sm:p-9">
+                <p className="isr-eyebrow text-isr-turquoise">
+                  Community
+                </p>
+
+                <h2 className="mt-3 text-3xl font-bold text-isr-dark-red">
+                  Stay connected
+                </h2>
+
+                <p className="mt-4 leading-relaxed text-gray-700">
+                  Join the ISR WhatsApp Community for a
+                  simple way to stay connected with Muslim
+                  student life.
+                </p>
+
+                <a
+                  href={ISR_PUBLIC.community.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="isr-button-primary mt-7"
+                >
+                  Join the community
+                </a>
+              </article>
             </div>
           </div>
         </section>
 
-        <section className="bg-white px-4 py-14 sm:py-20">
-          <div className="container-isr mx-auto max-w-7xl">
+        <section className="px-4 py-14 sm:py-20">
+          <div className="container-isr mx-auto max-w-6xl">
             <div className="grid gap-5 lg:grid-cols-2">
               <article
                 id="volunteer"
-                className="scroll-mt-28 rounded-[1.75rem] border border-isr-light-blue/20 bg-isr-cream/35 p-6 sm:p-8"
+                className="scroll-mt-28 rounded-[1.75rem] border border-isr-light-blue/25 bg-isr-cream/35 p-7 sm:p-9"
               >
                 <p className="isr-eyebrow text-isr-turquoise">
                   Volunteer
                 </p>
 
-                <h2 className="mt-4 text-3xl font-bold text-isr-dark-red">
-                  Help when you can
+                <h2 className="mt-3 text-3xl font-bold text-isr-dark-red">
+                  Help make something happen
                 </h2>
 
                 <p className="mt-4 leading-relaxed text-gray-700">
-                  Volunteer at events, programs and
-                  community initiatives without taking on a
-                  permanent committee position.
+                  Help with even     Join students working across events,
+                  creative, finance and partnerships, data
+                  and insights, prayer support and other ISR
+                  work.
                 </p>
 
-                <a
-                  href={ISR_PUBLIC.volunteer.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="isr-button-primary mt-7"
-                >
-                  Volunteer with ISR
-                </a>
-              </article>
+                <div className="mt-7 flex flex-wrap gap-3">
+                  <Link
+                    href="/teams"
+                    className="isr-button-secondary"
+                  >
+                    Explore the teams
+                  </Link>
 
-              <article
-                id="team"
-                className="scroll-mt-28 rounded-[1.75rem] border border-isr-light-blue/20 bg-isr-cream/35 p-6 sm:p-8"
-              >
-                <p className="isr-eyebrow text-isr-turquoise">
-                  Join the team
-                </p>
-
-                <h2 className="mt-4 text-3xl font-bold text-isr-dark-red">
-                  Take recurring responsibility
-                </h2>
-
-                <p className="mt-4 leading-relaxed text-gray-700">
-                  Team roles are for students who want to
-                  contribute consistently throughout the
-                  year.
-                </p>
-
-                <a
-                  href={ISR_PUBLIC.team.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="isr-button-primary mt-7"
-                >
-                  Apply to join the team
-                </a>
+                  <a
+                    href={ISR_PUBLIC.team.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="isr-button-primary"
+                  >
+                    Apply to join
+                  </a>
+                </div>
               </article>
             </div>
           </div>
         </section>
 
         <section
-          id="donate"
-          className="bg-isr-cream/55 px-4 py-14 sm:py-20"
+          id="lead"
+          className="scroll-mt-28 bg-white px-4 py-14 sm:py-20"
         >
           <div className="container-isr mx-auto max-w-6xl">
-            <div className="grid gap-6 rounded-[2rem] border border-isr-yellow bg-isr-yellow/25 p-6 sm:p-8 lg:grid-cols-[1fr_0.7fr]">
-              <div>
-                <p className="isr-eyebrow text-isr-turquoise">
-                  Support ISR
-                </p>
+            <div className="rounded-[2rem] bg-isr-dark-red p-7 text-white sm:p-10">
+              <p className="isr-eyebrow text-isr-yellow">
+                Leadership
+              </p>
 
-                <h2 className="mt-4 text-3xl font-bold text-isr-dark-red">
-                  Support Muslim students at RMIT
-                </h2>
+              <h2 className="mt-3 max-w-3xl text-3xl font-bold sm:text-4xl">
+                Leadership starts with service
+              </h2>
 
-                <p className="mt-4 max-w-2xl leading-relaxed text-gray-700">
-                  Contributions support ISR programs,
-                  events and services for Muslim students.
-                </p>
+              <p className="mt-5 max-w-3xl leading-relaxed text-white/75">
+                ISR leadership is not the first step.
+                Consistent service, reliability, good
+                character and willingness to take
+                responsibility are what prepare people to
+                lead well.
+              </p>
 
+              <div className="mt-7 flex flex-wrap gap-3">
                 <a
-                  href={ISR_PUBLIC.donate.url}
+                  href={ISR_PUBLIC.team.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="isr-button-primary mt-7"
+                  className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 font-bold text-isr-dark-red transition hover:bg-isr-yellow"
                 >
-                  Donate online
+                  Start by joining a team
                 </a>
-              </div>
 
-              <div className="rounded-[1.5rem] bg-white/80 p-5 sm:p-6">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-gray-500">
-                  Direct bank transfer
-                </p>
-
-                <dl className="mt-5 space-y-4 text-sm">
-                  <div>
-                    <dt className="text-gray-500">
-                      Account name
-                    </dt>
-
-                    <dd className="mt-1 font-bold text-isr-dark-red">
-                      {
-                        ISR_PUBLIC.bank
-                          .accountName
-                      }
-                    </dd>
-                  </div>
-
-                  <div>
-                    <dt className="text-gray-500">
-                      BSB
-                    </dt>
-
-                    <dd className="mt-1 font-bold text-isr-dark-red">
-                      {
-                        ISR_PUBLIC.bank
-                          .bsb
-                      }
-                    </dd>
-                  </div>
-
-                  <div>
-                    <dt className="text-gray-500">
-                      Account number
-                    </dt>
-
-                    <dd className="mt-1 font-bold text-isr-dark-red">
-                      {
-                        ISR_PUBLIC.bank
-                          .accountNumber
-                      }
-                    </dd>
-                  </div>
-                </dl>
+                <Link
+                  href="/events"
+                  className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/25 px-6 py-3 font-bold text-white transition hover:bg-white/10"
+                >
+                  Attend something first
+                </Link>
               </div>
             </div>
+          </div>
+        </section>
 
-            <div className="mt-8 text-center">
-              <a
-                href={mailto(
-                  'ISR Leadership Pathways',
-                )}
-                className="isr-text-link"
+        <section className="bg-isr-cream/55 px-4 py-14 sm:py-20">
+          <div className="container-isr mx-auto max-w-6xl">
+            <div className="grid gap-5 md:grid-cols-3">
+              <Link
+                href="/events"
+                className="isr-card isr-card-interactive p-6"
               >
-                Ask about leadership opportunities →
+                <p className="isr-eyebrow text-isr-turquoise">
+                  Attend
+                </p>
+
+                <h2 className="mt-3 text-xl font-bold text-isr-dark-red">
+                  See what’s happening
+                </h2>
+              </Link>
+
+              <Link
+                href="/links"
+                className="isr-card isr-card-interactive p-6"
+              >
+                <p className="isr-eyebrow text-isr-turquoise">
+                  Quick links
+                </p>
+
+                <h2 className="mt-3 text-xl font-bold text-isr-dark-red">
+                  Everything ISR
+                </h2>
+              </Link>
+
+              <a
+                href={ISR_PUBLIC.donate.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="isr-card isr-card-interactive p-6"
+              >
+                <p className="isr-eyebrow text-isr-turquoise">
+                  Support
+                </p>
+
+                <h2 className="mt-3 text-xl font-bold text-isr-dark-red">
+                  Support ISR
+                </h2>
               </a>
             </div>
           </div>
         </section>
-
-        <section className="px-4 pb-16 sm:pb-20">
-          <div className="container-isr mx-auto max-w-6xl">
-            <JoinMembershipSpotlight />
-          </div>
-        </section>
-
-</main>
+      </main>
 
       <Footer />
     </div>

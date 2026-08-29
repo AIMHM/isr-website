@@ -199,12 +199,19 @@ export default function AboutPage() {
                   and student representation.
                 </p>
 
-                <div className="mt-7 grid gap-3 sm:grid-cols-2">
+                <div className="mt-7 grid gap-3 sm:grid-cols-3">
                   <Link
                     href="/join"
                     className="isr-button-primary"
                   >
                     Join ISR
+                  </Link>
+
+                  <Link
+                    href="/teams"
+                    className="isr-button-secondary"
+                  >
+                    Explore teams
                   </Link>
 
                   <Link

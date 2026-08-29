@@ -53,7 +53,7 @@ const STATIC_ITEMS:
       'New to RMIT or ISR? Start with the Muslim student essentials.',
 
     href:
-      '/start',
+      '/student-guide',
 
     category:
       'Page',
@@ -230,6 +230,38 @@ const STATIC_ITEMS:
 
     href:
       '/campuses',
+
+    category:
+      'Page',
+  },
+  {
+    id:
+      'teams',
+
+    title:
+      'ISR Teams',
+
+    description:
+      'Explore the student teams that help bring ISR to life.',
+
+    href:
+      '/teams',
+
+    category:
+      'Page',
+  },
+  {
+    id:
+      'links',
+
+    title:
+      'ISR Links',
+
+    description:
+      'Membership, community, volunteering, social channels and useful ISR links.',
+
+    href:
+      '/links',
 
     category:
       'Page',
@@ -532,7 +564,7 @@ export default function FindExperience() {
         const terms =
           value
             .split(
-              /s+/,
+              /\s+/,
             )
             .filter(
               Boolean,
@@ -659,7 +691,7 @@ export default function FindExperience() {
           </p>
 
           <Link
-            href="/start"
+            href="/student-guide"
             className="font-bold text-isr-turquoise hover:text-isr-dark-red"
           >
             Not sure where to start? →
@@ -713,7 +745,7 @@ export default function FindExperience() {
                   group.category
                     .toLowerCase()
                     .replace(
-                      /s+/g,
+                      /\s+/g,
                       '-',
                     )
                 }
@@ -725,7 +757,7 @@ export default function FindExperience() {
                       group.category
                         .toLowerCase()
                         .replace(
-                          /s+/g,
+                          /\s+/g,
                           '-',
                         )
                     }

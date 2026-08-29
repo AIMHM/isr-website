@@ -12,32 +12,28 @@ import {
 
 const links = [
   {
-    href: '/student-guide',
-    label: 'Student Guide',
-  },
-  {
     href: '/pray',
     label: 'Pray at RMIT',
-  },
-  {
-    href: '/campuses',
-    label: 'Campuses',
   },
   {
     href: '/events',
     label: 'What’s On',
   },
   {
+    href: '/campuses',
+    label: 'Campuses',
+  },
+  {
+    href: '/student-guide',
+    label: 'Student Guide',
+  },
+  {
     href: '/support',
-    label: 'Student Support',
+    label: 'Support',
   },
   {
     href: '/about',
     label: 'About ISR',
-  },
-  {
-    href: '/contact',
-    label: 'Contact',
   },
 ]
 
