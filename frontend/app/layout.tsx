@@ -1,7 +1,7 @@
 import GlobalQuickAccess from '@/components/GlobalQuickAccess'
 import SiteTour from '@/components/SiteTour'
 import PublicStructuredData from '@/components/PublicStructuredData'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 import './d2-polish.css'
@@ -58,6 +58,17 @@ export const metadata: Metadata = {
     index: publicDeployment,
     follow: publicDeployment,
   },
+}
+
+export const viewport: Viewport = {
+  width:
+    'device-width',
+
+  initialScale:
+    1,
+
+  themeColor:
+    '#5B0B05',
 }
 
 export default function RootLayout({

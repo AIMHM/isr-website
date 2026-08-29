@@ -20,10 +20,10 @@ const RECOVERY_LINKS = [
       'See upcoming Islamic Society of RMIT events.',
   },
   {
-    href: '/start',
-    title: 'Start Here',
+    href: '/student-guide',
+    title: 'Student Guide',
     description:
-      'Find the most useful ISR pathways in one place.',
+      'New to RMIT or ISR? Start with the Muslim student essentials.',
   },
 ]
 

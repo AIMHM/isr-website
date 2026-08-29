@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useRef,
   useState,
 } from 'react'
 import Image from 'next/image'
@@ -53,6 +54,15 @@ export default function Navbar() {
   const pathname =
     usePathname()
 
+  const menuButtonRef =
+    useRef<HTMLButtonElement | null>(
+      null,
+    )
+
+  const mobileMenuRef =
+    useRef<HTMLDivElement | null>(
+      null,
+    )
   const [
     menuOpen,
     setMenuOpen,
@@ -76,6 +86,8 @@ export default function Navbar() {
         'Escape'
       ) {
         setMenuOpen(false)
+
+        menuButtonRef.current?.focus()
       }
     }
 
@@ -105,6 +117,33 @@ export default function Navbar() {
     return () => {
       document.body.style.overflow =
         ''
+    }
+  }, [menuOpen])
+
+  useEffect(() => {
+    if (!menuOpen) {
+      return
+    }
+
+    const frame =
+      window.requestAnimationFrame(
+        () => {
+          const firstMobileLink =
+            mobileMenuRef.current
+              ?.querySelector<
+                HTMLAnchorElement
+              >(
+                'a',
+              )
+
+          firstMobileLink?.focus()
+        },
+      )
+
+    return () => {
+      window.cancelAnimationFrame(
+        frame,
+      )
     }
   }, [menuOpen])
 
@@ -209,6 +248,7 @@ export default function Navbar() {
                 : 'Open navigation menu'
             }
             aria-expanded={menuOpen}
+            ref={menuButtonRef}
             aria-controls="mobile-navigation"
             onClick={() =>
               setMenuOpen(
@@ -262,6 +302,7 @@ export default function Navbar() {
           />
 
           <div
+            ref={mobileMenuRef}
             id="mobile-navigation"
             className="max-h-[calc(100vh-69px)] overflow-y-auto border-t border-isr-light-blue/20 bg-white px-4 pb-6 pt-3 shadow-lg xl:hidden"
           >
@@ -300,17 +341,31 @@ export default function Navbar() {
                 )}
               </div>
 
-              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <Link
+                  href="/find"
+                  className="rounded-xl border border-isr-light-blue/30 px-4 py-3 text-center text-sm font-bold text-isr-dark-red"
+                >
+                  Search ISR
+                </Link>
+
+                <Link
+                  href="/faq"
+                  className="rounded-xl border border-isr-light-blue/30 px-4 py-3 text-center text-sm font-bold text-isr-dark-red"
+                >
+                  FAQ
+                </Link>
+
                 <Link
                   href="/updates"
-                  className="rounded-xl border border-isr-light-blue/30 px-4 py-3 text-center font-bold text-isr-dark-red"
+                  className="rounded-xl border border-isr-light-blue/30 px-4 py-3 text-center text-sm font-bold text-isr-dark-red"
                 >
                   ISR Updates
                 </Link>
 
                 <Link
                   href="/join"
-                  className="rounded-xl bg-isr-dark-red px-5 py-3 text-center font-bold text-white"
+                  className="rounded-xl bg-isr-dark-red px-5 py-3 text-center text-sm font-bold text-white"
                 >
                   Join ISR
                 </Link>

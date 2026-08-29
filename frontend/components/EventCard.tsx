@@ -103,7 +103,7 @@ export default function EventCard({
         </p>
 
         {!compact && (
-          <p className="mt-4 flex-1 text-sm leading-relaxed text-gray-700">
+          <p className="mt-4 line-clamp-4 flex-1 text-sm leading-relaxed text-gray-700">
             {
               event.description
             }
@@ -139,7 +139,7 @@ export default function EventCard({
 
           <Link
             href={`/events/${event.id}`}
-            className="font-bold text-isr-turquoise transition hover:text-isr-dark-red"
+            className="inline-flex min-h-11 items-center font-bold text-isr-turquoise transition hover:text-isr-dark-red"
           >
             View details →
           </Link>

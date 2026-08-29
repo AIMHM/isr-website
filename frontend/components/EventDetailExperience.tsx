@@ -2,6 +2,7 @@
 'use client'
 
 import EventUtilities from '@/components/EventUtilities'
+import EventStructuredData from '@/components/EventStructuredData'
 import {
   useEffect,
   useState,
@@ -201,6 +202,9 @@ export default function EventDetailExperience({
 
   return (
     <main id="main-content">
+      <EventStructuredData
+        event={event}
+      />
       <section className="border-b border-isr-light-blue/20 bg-isr-cream/55 px-4 py-6">
         <div className="container-isr mx-auto max-w-6xl">
           <Link
@@ -215,7 +219,7 @@ export default function EventDetailExperience({
       <section className="px-4 py-10 sm:py-14 lg:py-16">
         <div className="container-isr mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:gap-12 lg:items-start">
           <aside className="lg:sticky lg:top-28">
-            <div className="overflow-hidden rounded-[1.75rem] bg-isr-cream shadow-sm">
+            <div className="mx-auto max-w-sm overflow-hidden rounded-[1.75rem] bg-isr-cream shadow-sm lg:max-w-none">
               {event.imageUrl ? (
                 <img
                   src={event.imageUrl}
@@ -294,6 +298,11 @@ export default function EventDetailExperience({
                 </p>
               </div>
             )}
+
+            {/* Mobile registration action */}
+            <div className="mt-6 lg:hidden">
+              {registrationBlock}
+            </div>
 
             <section
               aria-labelledby="event-details-heading"
@@ -379,21 +388,34 @@ export default function EventDetailExperience({
               </section>
             )}
 
-            <div className="mt-8 lg:hidden">
-              {registrationBlock}
-            </div>
 
             <div className="mt-9 border-t border-isr-light-blue/20 pt-7">
               <p className="text-sm leading-relaxed text-gray-600">
                 Questions about this event?
               </p>
 
-              <Link
-                href="/contact"
-                className="isr-text-link mt-3"
-              >
-                Contact ISR →
-              </Link>
+              <div className="mt-3 flex flex-wrap gap-x-5 gap-y-3">
+                <Link
+                  href="/contact"
+                  className="isr-text-link"
+                >
+                  Contact ISR →
+                </Link>
+
+                {event.campus && (
+                  <Link
+                    href={
+                      '/events?campus=' +
+                      encodeURIComponent(
+                        event.campus,
+                      )
+                    }
+                    className="isr-text-link"
+                  >
+                    More events at this campus →
+                  </Link>
+                )}
+              </div>
             </div>
           </article>
         </div>

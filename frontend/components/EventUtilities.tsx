@@ -165,6 +165,26 @@ export default function EventUtilities({
     return `${window.location.origin}/events/${event.id}`
   }
 
+  function directionsUrl() {
+    const eventLocation =
+      location(
+        event,
+      )
+
+    if (
+      !eventLocation
+    ) {
+      return null
+    }
+
+    return (
+      'https://www.google.com/maps/search/?api=1&query=' +
+      encodeURIComponent(
+        eventLocation,
+      )
+    )
+  }
+
   function notify(
     message: string,
   ) {
@@ -419,7 +439,7 @@ export default function EventUtilities({
         the official ISR event page.
       </p>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {calendarAllowed && (
           <button
             type="button"
@@ -464,6 +484,20 @@ export default function EventUtilities({
         >
           Share event
         </button>
+
+        {directionsUrl() && (
+          <a
+            href={
+              directionsUrl() ??
+              undefined
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+            className="isr-event-tool-button"
+          >
+            Get directions
+          </a>
+        )}
       </div>
 
       {calendarAllowed &&
