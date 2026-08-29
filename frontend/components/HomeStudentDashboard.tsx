@@ -307,11 +307,11 @@ export default function HomeStudentDashboard() {
               </Link>
 
               <Link
-                href="/start"
+                href="/student-guide"
                 className="isr-dashboard-top-action"
               >
                 <span>
-                  Start here
+                  Student Guide
                 </span>
 
                 <span

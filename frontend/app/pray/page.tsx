@@ -40,6 +40,13 @@ const prayerEssentials = [
       'Use the Melbourne daily timetable when planning your prayers.',
     href: '#daily-prayer-times',
   },
+  {
+    number: '04',
+    title: 'Check ISR Updates',
+    text:
+      'Temporary room, access or Jumu’ah changes are published through ISR Updates.',
+    href: '/updates',
+  },
 ]
 
 export default function PrayPage() {
@@ -175,7 +182,7 @@ export default function PrayPage() {
 
         <section className="bg-isr-cream/50 px-4 py-14 sm:py-20">
           <div className="container-isr mx-auto max-w-7xl">
-            <div className="grid gap-4 lg:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {prayerEssentials.map(
                 (item) => (
                   <a

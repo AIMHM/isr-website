@@ -7,13 +7,14 @@ import {
 } from 'react'
 import Link from 'next/link'
 import HomeWhatsOn from '@/components/HomeWhatsOn'
+import HomeCampusPreference from '@/components/HomeCampusPreference'
+import HomeJumuahSnapshot from '@/components/HomeJumuahSnapshot'
 import {
   fetchAnnouncements,
   type Announcement,
 } from '@/lib/announcements'
 import {
   ISR_PUBLIC,
-  JUMUAH_SERVICES,
 } from '@/lib/siteContent'
 
 const studentActions = [
@@ -200,10 +201,10 @@ export default function HomeExperience() {
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link
-                href="/start"
+                href="/student-guide"
                 className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 font-bold text-isr-dark-red transition hover:bg-isr-yellow"
               >
-                New to RMIT? Start here
+                New to RMIT? Student Guide
               </Link>
 
               <Link
@@ -251,33 +252,7 @@ export default function HomeExperience() {
                 Full details
               </Link>
             </div>
-
-            <div className="mt-6 space-y-3">
-              {JUMUAH_SERVICES.map(
-                (service) => (
-                  <div
-                    key={service.id}
-                    className="rounded-2xl border border-white/10 bg-white/[0.08] p-4 sm:p-5"
-                  >
-                    <div className="flex items-start justify-between gap-5">
-                      <div>
-                        <p className="font-bold">
-                          {service.campus}
-                        </p>
-
-                        <p className="mt-1 text-sm leading-relaxed text-white/60">
-                          {service.venue}
-                        </p>
-                      </div>
-
-                      <p className="shrink-0 text-right font-bold text-isr-yellow">
-                        {service.time}
-                      </p>
-                    </div>
-                  </div>
-                ),
-              )}
-            </div>
+            <HomeJumuahSnapshot />
 
             <Link
               href="/pray#jumuah"
@@ -314,6 +289,8 @@ export default function HomeExperience() {
           </div>
         </div>
       </section>
+
+      <HomeCampusPreference />
 
       {importantUpdate && (
         <section className="px-4 pt-10 sm:pt-14">
@@ -422,10 +399,10 @@ export default function HomeExperience() {
               </p>
 
               <Link
-                href="/start"
+                href="/student-guide"
                 className="mt-7 inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 font-bold text-isr-dark-red transition hover:bg-isr-yellow"
               >
-                Start Here
+                Open Student Guide
               </Link>
             </div>
 

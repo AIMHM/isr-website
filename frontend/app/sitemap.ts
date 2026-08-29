@@ -60,6 +60,11 @@ export default function sitemap():
       priority: 0.85,
     },
     {
+      path: '/faq',
+      frequency: 'monthly',
+      priority: 0.8,
+    },
+    {
       path: '/about',
       frequency: 'monthly',
       priority: 0.75,

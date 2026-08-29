@@ -31,6 +31,10 @@ const studentLinks = [
     label: 'Student Support',
   },
   {
+    href: '/faq',
+    label: 'FAQ',
+  },
+  {
     href: '/updates',
     label: 'ISR Updates',
   },

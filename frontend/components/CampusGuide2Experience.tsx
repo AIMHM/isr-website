@@ -399,6 +399,27 @@ export default function CampusGuide2Experience() {
                 campusKey={campus.key}
                 campusLabel={campus.label}
               />
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  href={
+                    '/events?campus=' +
+                    encodeURIComponent(
+                      campus.label,
+                    )
+                  }
+                  className="isr-button-primary"
+                >
+                  See all {campus.label} activities
+                </Link>
+
+                <Link
+                  href="/pray"
+                  className="isr-button-secondary"
+                >
+                  Prayer information
+                </Link>
+              </div>
             </section>
           ),
         )}

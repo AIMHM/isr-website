@@ -339,6 +339,23 @@ export default function WhatsOnExperience() {
     useState(false)
 
   useEffect(() => {
+    const requestedCampus =
+      new URLSearchParams(
+        window.location.search,
+      ).get(
+        'campus',
+      )
+
+    if (
+      requestedCampus
+    ) {
+      setCampus(
+        requestedCampus,
+      )
+    }
+  }, [])
+
+  useEffect(() => {
     let active = true
 
     Promise.allSettled([

@@ -188,6 +188,22 @@ const STATIC_ITEMS:
   },
   {
     id:
+      'faq',
+
+    title:
+      'ISR FAQ',
+
+    description:
+      'Quick answers about prayer, Jumu’ah, membership, events, community, volunteering and support.',
+
+    href:
+      '/faq',
+
+    category:
+      'Page',
+  },
+  {
+    id:
       'about',
 
     title:
