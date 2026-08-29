@@ -115,6 +115,79 @@ function searchableProgram(
     .toLowerCase()
 }
 
+function audienceMatches(
+  value:
+    string | null | undefined,
+  filter: string,
+): boolean {
+  if (
+    filter === 'all'
+  ) {
+    return true
+  }
+
+  const normalized =
+    (
+      value ?? ''
+    ).toLowerCase()
+
+  const openToEveryone =
+    normalized.includes(
+      'everyone',
+    ) ||
+    normalized.includes(
+      'all',
+    )
+
+  if (
+    filter === 'everyone'
+  ) {
+    return openToEveryone
+  }
+
+  if (
+    filter === 'brothers'
+  ) {
+    return (
+      openToEveryone ||
+      normalized.includes(
+        'brother',
+      )
+    )
+  }
+
+  if (
+    filter === 'sisters'
+  ) {
+    return (
+      openToEveryone ||
+      normalized.includes(
+        'sister',
+      )
+    )
+  }
+
+  return true
+}
+
+function categoryMatches(
+  value:
+    string | null | undefined,
+  filter: string,
+): boolean {
+  if (
+    filter === 'all'
+  ) {
+    return true
+  }
+
+  return (
+    value ?? ''
+  )
+    .toLowerCase() ===
+    filter.toLowerCase()
+}
+
 function WeekEventRow({
   event,
 }: {
@@ -315,6 +388,18 @@ export default function WhatsOnExperience() {
     useState('all')
 
   const [
+    audience,
+    setAudience,
+  ] =
+    useState('all')
+
+  const [
+    category,
+    setCategory,
+  ] =
+    useState('all')
+
+  const [
     events,
     setEvents,
   ] =
@@ -339,11 +424,24 @@ export default function WhatsOnExperience() {
     useState(false)
 
   useEffect(() => {
-    const requestedCampus =
+    const params =
       new URLSearchParams(
         window.location.search,
-      ).get(
+      )
+
+    const requestedCampus =
+      params.get(
         'campus',
+      )
+
+    const requestedAudience =
+      params.get(
+        'audience',
+      )
+
+    const requestedCategory =
+      params.get(
+        'category',
       )
 
     if (
@@ -351,6 +449,37 @@ export default function WhatsOnExperience() {
     ) {
       setCampus(
         requestedCampus,
+      )
+    } else {
+      const savedCampus =
+        window.localStorage.getItem(
+          'isr-preferred-campus-v1',
+        )
+
+      if (
+        savedCampus === 'City' ||
+        savedCampus === 'Bundoora' ||
+        savedCampus === 'Brunswick'
+      ) {
+        setCampus(
+          savedCampus,
+        )
+      }
+    }
+
+    if (
+      requestedAudience
+    ) {
+      setAudience(
+        requestedAudience,
+      )
+    }
+
+    if (
+      requestedCategory
+    ) {
+      setCategory(
+        requestedCategory,
       )
     }
   }, [])
@@ -428,6 +557,10 @@ export default function WhatsOnExperience() {
       () =>
         Array.from(
           new Set([
+            'City',
+            'Bundoora',
+            'Brunswick',
+
             ...events
               .map(
                 (event) =>
@@ -452,6 +585,40 @@ export default function WhatsOnExperience() {
       ],
     )
 
+  const categoryOptions =
+    useMemo(
+      () =>
+        Array.from(
+          new Set(
+            [
+              ...events.map(
+                (
+                  event,
+                ) =>
+                  event.category,
+              ),
+
+              ...programs.map(
+                (
+                  program,
+                ) =>
+                  program.category,
+              ),
+            ].filter(
+              (
+                value,
+              ): value is string =>
+                Boolean(
+                  value,
+                ),
+            ),
+          ),
+        ).sort(),
+      [
+        events,
+        programs,
+      ],
+    )
   const visiblePrograms =
     useMemo(
       () =>
@@ -473,6 +640,14 @@ export default function WhatsOnExperience() {
 
             return (
               campusMatch &&
+              audienceMatches(
+                program.audience,
+                audience,
+              ) &&
+              categoryMatches(
+                program.category,
+                category,
+              ) &&
               searchMatch &&
               program.status ===
                 'active'
@@ -482,6 +657,8 @@ export default function WhatsOnExperience() {
       [
         programs,
         campus,
+        audience,
+        category,
         normalizedSearch,
       ],
     )
@@ -514,6 +691,14 @@ export default function WhatsOnExperience() {
               status !==
                 'completed' &&
               campusMatch &&
+              audienceMatches(
+                event.audience,
+                audience,
+              ) &&
+              categoryMatches(
+                event.category,
+                category,
+              ) &&
               searchMatch
             )
           },
@@ -521,6 +706,8 @@ export default function WhatsOnExperience() {
       [
         events,
         campus,
+        audience,
+        category,
         normalizedSearch,
       ],
     )
@@ -550,6 +737,14 @@ export default function WhatsOnExperience() {
               ) ===
                 'completed' &&
               campusMatch &&
+              audienceMatches(
+                event.audience,
+                audience,
+              ) &&
+              categoryMatches(
+                event.category,
+                category,
+              ) &&
               searchMatch
             )
           },
@@ -557,6 +752,8 @@ export default function WhatsOnExperience() {
       [
         events,
         campus,
+        audience,
+        category,
         normalizedSearch,
       ],
     )
@@ -679,6 +876,16 @@ export default function WhatsOnExperience() {
 
                 return (
                   campusMatch &&
+                  audienceMatches(
+                    item.event
+                      .audience,
+                    audience,
+                  ) &&
+                  categoryMatches(
+                    item.event
+                      .category,
+                    category,
+                  ) &&
                   searchMatch
                 )
               }
@@ -704,6 +911,14 @@ export default function WhatsOnExperience() {
 
               return (
                 campusMatch &&
+                audienceMatches(
+                  program.audience,
+                  audience,
+                ) &&
+                categoryMatches(
+                  program.category,
+                  category,
+                ) &&
                 searchMatch
               )
             },
@@ -721,6 +936,8 @@ export default function WhatsOnExperience() {
         events,
         programs,
         campus,
+        audience,
+        category,
         normalizedSearch,
       ],
     )
@@ -730,6 +947,10 @@ export default function WhatsOnExperience() {
       normalizedSearch,
     ) ||
     campus !==
+      'all' ||
+    audience !==
+      'all' ||
+    category !==
       'all'
 
   return (
@@ -809,7 +1030,7 @@ export default function WhatsOnExperience() {
       <section className="bg-isr-cream/45 px-4 py-10 sm:py-14">
         <div className="container-isr mx-auto max-w-7xl">
           <div className="rounded-3xl border border-isr-light-blue/20 bg-white p-4 shadow-sm sm:p-5">
-            <div className="grid gap-3 md:grid-cols-[1fr_260px_auto]">
+            <div className="grid gap-3 lg:grid-cols-[1fr_180px_180px_220px_auto]">
               <div>
                 <label
                   htmlFor="whats-on-search"
@@ -833,6 +1054,89 @@ export default function WhatsOnExperience() {
                   placeholder="Search halaqa, workshop, venue, audience..."
                   className="min-h-12 w-full rounded-xl border border-isr-light-blue/30 bg-white px-4 text-sm outline-none transition focus:border-isr-turquoise"
                 />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="whats-on-audience"
+                  className="sr-only"
+                >
+                  Filter by audience
+                </label>
+
+                <select
+                  id="whats-on-audience"
+                  value={audience}
+                  onChange={(
+                    event,
+                  ) =>
+                    setAudience(
+                      event.target
+                        .value,
+                    )
+                  }
+                  className="min-h-12 w-full rounded-xl border border-isr-light-blue/30 bg-white px-4 text-sm font-semibold text-isr-dark-red outline-none transition focus:border-isr-turquoise"
+                >
+                  <option value="all">
+                    All audiences
+                  </option>
+
+                  <option value="everyone">
+                    Open to everyone
+                  </option>
+
+                  <option value="brothers">
+                    Brothers
+                  </option>
+
+                  <option value="sisters">
+                    Sisters
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="whats-on-category"
+                  className="sr-only"
+                >
+                  Filter by category
+                </label>
+
+                <select
+                  id="whats-on-category"
+                  value={category}
+                  onChange={(
+                    event,
+                  ) =>
+                    setCategory(
+                      event.target
+                        .value,
+                    )
+                  }
+                  className="min-h-12 w-full rounded-xl border border-isr-light-blue/30 bg-white px-4 text-sm font-semibold text-isr-dark-red outline-none transition focus:border-isr-turquoise"
+                >
+                  <option value="all">
+                    All categories
+                  </option>
+
+                  {categoryOptions.map(
+                    (
+                      item,
+                    ) => (
+                      <option
+                        key={
+                          item
+                        }
+                        value={
+                          item
+                        }
+                      >
+                        {item}
+                      </option>
+                    ),
+                  )}
+                </select>
               </div>
 
               <div>
@@ -885,6 +1189,14 @@ export default function WhatsOnExperience() {
                   onClick={() => {
                     setSearch('')
                     setCampus(
+                      'all',
+                    )
+
+                    setAudience(
+                      'all',
+                    )
+
+                    setCategory(
                       'all',
                     )
                   }}

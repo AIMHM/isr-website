@@ -1,4 +1,5 @@
 import HomeStudentDashboard from '@/components/HomeStudentDashboard'
+import HomeDiscoverISR from '@/components/HomeDiscoverISR'
 import type {
   Metadata,
 } from 'next'
@@ -21,6 +22,7 @@ export default function HomePage() {
       <main id="main-content">
         <HomeExperience />
         <HomeStudentDashboard />
+        <HomeDiscoverISR />
       </main>
 
       <Footer />

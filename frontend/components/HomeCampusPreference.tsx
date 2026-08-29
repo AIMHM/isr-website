@@ -74,6 +74,15 @@ export default function HomeCampusPreference() {
     )
 
     setSelected(campus)
+
+    window.dispatchEvent(
+      new CustomEvent(
+        'isr:campus:change',
+        {
+          detail: campus,
+        },
+      ),
+    )
   }
 
   function clear() {
@@ -82,6 +91,15 @@ export default function HomeCampusPreference() {
     )
 
     setSelected(null)
+
+    window.dispatchEvent(
+      new CustomEvent(
+        'isr:campus:change',
+        {
+          detail: null,
+        },
+      ),
+    )
   }
 
   return (

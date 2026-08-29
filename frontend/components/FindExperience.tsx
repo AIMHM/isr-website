@@ -311,6 +311,14 @@ function normalize(
     )
 }
 
+const QUICK_SEARCHES = [
+  'Jumu’ah',
+  'City prayer',
+  'Bundoora',
+  'Sisters',
+  'Membership',
+  'Volunteer',
+] as const
 export default function FindExperience() {
   const [
     query,
@@ -341,6 +349,23 @@ export default function FindExperience() {
     setLoading,
   ] =
     useState(true)
+
+  useEffect(() => {
+    const requestedQuery =
+      new URLSearchParams(
+        window.location.search,
+      ).get(
+        'q',
+      )
+
+    if (
+      requestedQuery
+    ) {
+      setQuery(
+        requestedQuery,
+      )
+    }
+  }, [])
 
   useEffect(() => {
     let active = true
@@ -690,6 +715,33 @@ export default function FindExperience() {
               Clear
             </button>
           )}
+        </div>
+
+        <div className="mt-4">
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-gray-500">
+            Popular searches
+          </p>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            {QUICK_SEARCHES.map(
+              (
+                item,
+              ) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() =>
+                    setQuery(
+                      item,
+                    )
+                  }
+                  className="rounded-full border border-isr-light-blue/30 bg-white px-3.5 py-2 text-xs font-bold text-isr-dark-red transition hover:border-isr-turquoise hover:text-isr-turquoise"
+                >
+                  {item}
+                </button>
+              ),
+            )}
+          </div>
         </div>
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-gray-600">

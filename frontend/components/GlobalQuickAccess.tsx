@@ -19,7 +19,7 @@ const QUICK_LINKS = [
       'Search ISR',
 
     description:
-      'Find prayer spaces, events, updates and student services.',
+      'Find prayer, events, campuses, support and student information.',
   },
   {
     href:
@@ -36,20 +36,30 @@ const QUICK_LINKS = [
       '/events',
 
     label:
-      'Events',
+      'What’s On',
 
     description:
-      'See upcoming Islamic Society of RMIT events.',
+      'Events, weekly programs and current activities.',
   },
   {
     href:
-      '/updates',
+      '/campuses',
 
     label:
-      'ISR Updates',
+      'Campus Guide',
 
     description:
-      'Check current operational notices.',
+      'City, Bundoora and Brunswick student information.',
+  },
+  {
+    href:
+      '/student-guide',
+
+    label:
+      'Student Guide',
+
+    description:
+      'New to RMIT? Start with the Muslim student essentials.',
   },
   {
     href:
@@ -59,7 +69,17 @@ const QUICK_LINKS = [
       'Student Support',
 
     description:
-      'Contact ISR about a concern or support need.',
+      'Find the closest information or support pathway.',
+  },
+  {
+    href:
+      '/faq',
+
+    label:
+      'FAQ',
+
+    description:
+      'Quick answers to common ISR and Muslim student questions.',
   },
   {
     href:
@@ -69,7 +89,7 @@ const QUICK_LINKS = [
       'Join ISR',
 
     description:
-      'Membership, volunteering and team pathways.',
+      'Membership, community, volunteering and team pathways.',
   },
 ]
 

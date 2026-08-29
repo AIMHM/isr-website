@@ -31,47 +31,86 @@ type LoadState =
   'ready' |
   'partial'
 
+function campusMatches(
+  event: Event,
+  campus: string,
+): boolean {
+  return (
+    event.campus ?? ''
+  )
+    .toLowerCase()
+    .includes(
+      campus.toLowerCase(),
+    )
+}
+
 function findNextEvent(
   events: Event[],
+  preferredCampus:
+    string | null,
 ): Event | null {
   const now =
     Date.now()
 
-  return [...events]
-    .filter(
-      (
-        event,
-      ) => {
-        const status =
-          getEventStatus(
-            event,
-          )
+  const candidates =
+    [...events]
+      .filter(
+        (
+          event,
+        ) => {
+          const status =
+            getEventStatus(
+              event,
+            )
 
-        return (
+          return (
+            new Date(
+              event.date,
+            ).getTime() >=
+              now &&
+            status !==
+              'cancelled' &&
+            status !==
+              'completed'
+          )
+        },
+      )
+      .sort(
+        (
+          first,
+          second,
+        ) =>
           new Date(
-            event.date,
-          ).getTime() >=
-            now &&
-          status !==
-            'cancelled' &&
-          status !==
-            'completed'
-        )
-      },
-    )
-    .sort(
-      (
-        first,
-        second,
-      ) =>
-        new Date(
-          first.date,
-        ).getTime() -
-        new Date(
-          second.date,
-        ).getTime(),
-    )[0] ??
+            first.date,
+          ).getTime() -
+          new Date(
+            second.date,
+          ).getTime(),
+      )
+
+  if (
+    preferredCampus
+  ) {
+    const campusEvent =
+      candidates.find(
+        (
+          event,
+        ) =>
+          campusMatches(
+            event,
+            preferredCampus,
+          ),
+      )
+
+    if (campusEvent) {
+      return campusEvent
+    }
+  }
+
+  return (
+    candidates[0] ??
     null
+  )
 }
 
 function pickUpdate(
@@ -119,6 +158,14 @@ export default function HomeStudentDashboard() {
   ] =
     useState<Event[]>(
       [],
+    )
+
+  const [
+    preferredCampus,
+    setPreferredCampus,
+  ] =
+    useState<string | null>(
+      null,
     )
 
   const [
@@ -226,14 +273,60 @@ export default function HomeStudentDashboard() {
     [],
   )
 
+  useEffect(() => {
+    const storageKey =
+      'isr-preferred-campus-v1'
+
+    const saved =
+      window.localStorage.getItem(
+        storageKey,
+      )
+
+    if (
+      saved === 'City' ||
+      saved === 'Bundoora' ||
+      saved === 'Brunswick'
+    ) {
+      setPreferredCampus(
+        saved,
+      )
+    }
+
+    const handleCampusChange: EventListener =
+      (event) => {
+      const campusEvent =
+        event as
+          CustomEvent<
+            string | null
+          >
+
+      setPreferredCampus(
+        campusEvent.detail,
+      )
+    }
+
+    window.addEventListener(
+      'isr:campus:change',
+      handleCampusChange,
+    )
+
+    return () => {
+      window.removeEventListener(
+        'isr:campus:change',
+        handleCampusChange,
+      )
+    }
+  }, [])
   const nextEvent =
     useMemo(
       () =>
         findNextEvent(
           events,
+          preferredCampus,
         ),
       [
         events,
+        preferredCampus,
       ],
     )
 
@@ -406,7 +499,10 @@ export default function HomeStudentDashboard() {
               <article className="isr-dashboard-card">
                 <div className="flex items-center justify-between gap-3">
                   <p className="isr-dashboard-label">
-                    Next event
+                    {preferredCampus
+                      ? preferredCampus +
+                        ' next event'
+                      : 'Next event'}
                   </p>
 
                   <span
