@@ -9,8 +9,9 @@
   "scripts": {
     "dev": "nodemon --exec tsx index.ts",
     "build": "prisma generate && esbuild index.ts --bundle --platform=node --format=esm --outdir=dist --packages=external",
-    "start": "node server.js",
+    "start": "node dist/index.js",
     "test": "jest",
+    "audit:predeploy": "node scripts/predeploy-audit.mjs",
     "seed": "tsx prisma/seed.ts"
   },
   "prisma": {

@@ -2,6 +2,7 @@ import { test, expect, jest, afterEach } from '@jest/globals';
 import { Request, Response } from 'express';
 
 const mockFindMany = jest.fn<(args?: any) => Promise<any>>();
+const mockFindFirst = jest.fn<(args: any) => Promise<any>>();
 const mockFindUnique = jest.fn<(args: any) => Promise<any>>();
 const mockCreate = jest.fn<(args: any) => Promise<any>>();
 const mockUpdate = jest.fn<(args: any) => Promise<any>>();
@@ -11,6 +12,7 @@ jest.mock('../lib/prisma', () => ({
     prisma: {
         announcement: {
             findMany: mockFindMany,
+            findFirst: mockFindFirst,
             findUnique: mockFindUnique,
             create: mockCreate,
             update: mockUpdate,
@@ -63,7 +65,27 @@ test('getAnnouncements returns pinned-first list', async () => {
     expect(status).toHaveBeenCalledWith(200);
     expect(json).toHaveBeenCalledWith({ data: announcements });
     expect(mockFindMany).toHaveBeenCalledWith({
-        orderBy: [{ pinned: 'desc' }, { createdAt: 'desc' }],
+        where: {
+            publicationStatus: 'published',
+            OR: [
+                {
+                    expiresAt: null,
+                },
+                {
+                    expiresAt: {
+                        gt: expect.any(Date),
+                    },
+                },
+            ],
+        },
+        orderBy: [
+            {
+                pinned: 'desc',
+            },
+            {
+                createdAt: 'desc',
+            },
+        ],
     });
 });
 
@@ -83,7 +105,7 @@ test('getAnnouncements returns 500 on db error', async () => {
 
 test('getAnnouncementById returns the announcement', async () => {
     const announcement = { id: 1, title: 'Hello' };
-    mockFindUnique.mockResolvedValue(announcement);
+    mockFindFirst.mockResolvedValue(announcement);
 
     const req = { params: { id: '1' } } as unknown as Request;
     const { res, json, status } = mockRes();
@@ -95,7 +117,7 @@ test('getAnnouncementById returns the announcement', async () => {
 });
 
 test('getAnnouncementById returns 404 when not found', async () => {
-    mockFindUnique.mockResolvedValue(null);
+    mockFindFirst.mockResolvedValue(null);
 
     const req = { params: { id: '99' } } as unknown as Request;
     const { res, json, status } = mockRes();
@@ -114,7 +136,7 @@ test('getAnnouncementById returns 400 for non-integer id', async () => {
 
     expect(status).toHaveBeenCalledWith(400);
     expect(json).toHaveBeenCalledWith({ error: 'Invalid announcement id' });
-    expect(mockFindUnique).not.toHaveBeenCalled();
+    expect(mockFindFirst).not.toHaveBeenCalled();
 });
 
 // --- createAnnouncement ---

@@ -1,11 +1,19 @@
-import { getPrayerTimesByDate } from '../controllers/prayerTimesController';
-import { Request, Response } from 'express';
-import { test, expect, jest, afterEach } from '@jest/globals';
+import {
+    getPrayerTimesByDate,
+    getTodayPrayerTimes,
+    todayDDMMYYYY,
+} from '../controllers/prayerTimesController';
+import {
+    Request,
+    Response,
+} from 'express';
+import {
+    test,
+    expect,
+    jest,
+    afterEach,
+} from '@jest/globals';
 
-// A representative Aladhan timingsByCity payload. Includes the timing keys the
-// controller is supposed to strip (Imsak/Midnight/Firstthird/Lastthird) plus the
-// extra date/meta fields the real API returns, so the test exercises filtering
-// without depending on the live network.
 const aladhanResponse = {
     data: {
         timings: {
@@ -19,72 +27,242 @@ const aladhanResponse = {
             Imsak: '05:52',
             Midnight: '00:22',
             Firstthird: '21:18',
-            Lastthird: '03:25'
+            Lastthird: '03:25',
         },
         date: {
             readable: '23 Jun 2026',
             timestamp: '1782162000',
-            hijri: { date: '08-01-1448', day: '8', month: { number: 1, en: 'Muḥarram' }, year: '1448' },
-            gregorian: { date: '23-06-2026', month: { number: 6, en: 'June' }, year: '2026' }
+            hijri: {
+                date: '08-01-1448',
+                day: '8',
+                month: {
+                    number: 1,
+                    en: 'Muḥarram',
+                },
+                year: '1448',
+            },
+            gregorian: {
+                date: '23-06-2026',
+                month: {
+                    number: 6,
+                    en: 'June',
+                },
+                year: '2026',
+            },
         },
         meta: {
             timezone: 'Australia/Melbourne',
-            method: { id: 3, name: 'Muslim World League' }
-        }
-    }
+            method: {
+                id: 3,
+                name: 'Muslim World League',
+            },
+        },
+    },
 };
 
 afterEach(() => {
     jest.restoreAllMocks();
+    jest.useRealTimers();
 });
 
-test('returns filtered prayer times for a valid date', async () => {
-    const req = { params: { date: '23-06-2026' } } as unknown as Request;
-    const res = { json: jest.fn(), status: jest.fn() } as unknown as Response;
+test(
+    'returns filtered prayer times for a valid date',
+    async () => {
+        const req = {
+            params: {
+                date: '23-06-2026',
+            },
+        } as unknown as Request;
 
-    global.fetch = jest.fn(async () => ({
-        ok: true,
-        json: async () => aladhanResponse
-    })) as unknown as typeof fetch;
+        const res = {
+            json: jest.fn(),
+            status: jest.fn(),
+        } as unknown as Response;
 
-    const data = await getPrayerTimesByDate(req, res);
+        global.fetch =
+            jest.fn(
+                async () => ({
+                    ok: true,
+                    json: async () =>
+                        aladhanResponse,
+                }),
+            ) as unknown as typeof fetch;
 
-    const expectedTimings = {
-        Fajr: '06:02',
-        Sunrise: '07:36',
-        Dhuhr: '12:22',
-        Asr: '14:51',
-        Sunset: '17:09',
-        Maghrib: '17:09',
-        Isha: '18:38'
-    };
+        const data =
+            await getPrayerTimesByDate(
+                req,
+                res,
+            );
 
-    expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-            data: expect.objectContaining({ timings: expectedTimings })
-        })
-    );
+        const expectedTimings = {
+            Fajr: '06:02',
+            Sunrise: '07:36',
+            Dhuhr: '12:22',
+            Asr: '14:51',
+            Sunset: '17:09',
+            Maghrib: '17:09',
+            Isha: '18:38',
+        };
 
-    const jsonArg = (res.json as any).mock.calls[0][0];
-    expect(jsonArg.data.timings).not.toHaveProperty('Imsak');
-    expect(jsonArg.data.timings).not.toHaveProperty('Midnight');
-    expect(jsonArg.data.timings).not.toHaveProperty('Firstthird');
-    expect(jsonArg.data.timings).not.toHaveProperty('Lastthird');
+        expect(
+            res.json,
+        ).toHaveBeenCalledWith(
+            expect.objectContaining({
+                data:
+                    expect.objectContaining({
+                        timings:
+                            expectedTimings,
+                    }),
+            }),
+        );
 
-    expect(data).toEqual(expect.objectContaining({ timings: expectedTimings }));
-});
+        const jsonArg =
+            (res.json as any)
+                .mock.calls[0][0];
 
-test('rejects an invalid date format with 400', async () => {
-    const req = { params: { date: '2026-06-23' } } as unknown as Request;
-    const json = jest.fn();
-    const status = jest.fn(() => ({ json })) as any;
-    const res = { json, status } as unknown as Response;
+        expect(
+            jsonArg.data.timings,
+        ).not.toHaveProperty(
+            'Imsak',
+        );
 
-    const fetchSpy = jest.fn();
-    global.fetch = fetchSpy as unknown as typeof fetch;
+        expect(
+            jsonArg.data.timings,
+        ).not.toHaveProperty(
+            'Midnight',
+        );
 
-    await getPrayerTimesByDate(req, res);
+        expect(
+            jsonArg.data.timings,
+        ).not.toHaveProperty(
+            'Firstthird',
+        );
 
-    expect(status).toHaveBeenCalledWith(400);
-    expect(fetchSpy).not.toHaveBeenCalled();
-});
+        expect(
+            jsonArg.data.timings,
+        ).not.toHaveProperty(
+            'Lastthird',
+        );
+
+        expect(
+            data,
+        ).toEqual(
+            expect.objectContaining({
+                timings:
+                    expectedTimings,
+            }),
+        );
+    },
+);
+
+test(
+    'uses the Melbourne calendar date rather than server UTC date',
+    async () => {
+        /*
+         * 23 June 15:30 UTC =
+         * 24 June 01:30 in Melbourne.
+         */
+        const now =
+            new Date(
+                '2026-06-23T15:30:00.000Z',
+            );
+
+        expect(
+            todayDDMMYYYY(
+                now,
+            ),
+        ).toBe(
+            '24-06-2026',
+        );
+
+        jest.useFakeTimers();
+        jest.setSystemTime(
+            now,
+        );
+
+        const req =
+            {} as Request;
+
+        const res = {
+            json:
+                jest.fn(),
+
+            status:
+                jest.fn(),
+        } as unknown as Response;
+
+        global.fetch =
+            jest.fn(
+                async () => ({
+                    ok: true,
+                    json: async () =>
+                        aladhanResponse,
+                }),
+            ) as unknown as typeof fetch;
+
+        await getTodayPrayerTimes(
+            req,
+            res,
+        );
+
+        const fetchCall =
+            (
+                global.fetch as any
+            ).mock.calls[0][0];
+
+        expect(
+            String(
+                fetchCall,
+            ),
+        ).toContain(
+            '/timings/24-06-2026?',
+        );
+    },
+);
+
+test(
+    'rejects an invalid date format with 400',
+    async () => {
+        const req = {
+            params: {
+                date: '2026-06-23',
+            },
+        } as unknown as Request;
+
+        const json =
+            jest.fn();
+
+        const status =
+            jest.fn(
+                () => ({
+                    json,
+                }),
+            ) as any;
+
+        const res = {
+            json,
+            status,
+        } as unknown as Response;
+
+        const fetchSpy =
+            jest.fn();
+
+        global.fetch =
+            fetchSpy as unknown as typeof fetch;
+
+        await getPrayerTimesByDate(
+            req,
+            res,
+        );
+
+        expect(
+            status,
+        ).toHaveBeenCalledWith(
+            400,
+        );
+
+        expect(
+            fetchSpy,
+        ).not.toHaveBeenCalled();
+    },
+);

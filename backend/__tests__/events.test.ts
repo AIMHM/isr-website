@@ -2,6 +2,7 @@ import { test, expect, jest, afterEach } from '@jest/globals';
 import { Request, Response } from 'express';
 
 const mockFindMany = jest.fn<(args?: any) => Promise<any>>();
+const mockFindFirst = jest.fn<(args: any) => Promise<any>>();
 const mockFindUnique = jest.fn<(args: any) => Promise<any>>();
 const mockCreate = jest.fn<(args: any) => Promise<any>>();
 const mockDelete = jest.fn<(args: any) => Promise<any>>();
@@ -10,6 +11,7 @@ jest.mock('../lib/prisma', () => ({
     prisma: {
         event: {
             findMany: mockFindMany,
+            findFirst: mockFindFirst,
             findUnique: mockFindUnique,
             create: mockCreate,
             delete: mockDelete,
@@ -57,7 +59,7 @@ test('getEvents returns the list of events', async () => {
 });
 
 test('getEventById returns 404 when the event does not exist', async () => {
-    mockFindUnique.mockResolvedValue(null);
+    mockFindFirst.mockResolvedValue(null);
 
     const req = { params: { id: '99' } } as unknown as Request;
     const { res, json, status } = mockRes();
@@ -81,7 +83,16 @@ test('createEvent returns 400 when a required field is missing', async () => {
     expect(mockCreate).not.toHaveBeenCalled();
 });
 
-test('createEvent returns 400 when the image file is missing', async () => {
+test('createEvent succeeds without an image and stores null', async () => {
+    const created = {
+        id: 1,
+        name: 'Eid Dinner',
+        imageUrl: null,
+        ticketUrl: 'https://t',
+    };
+
+    mockCreate.mockResolvedValue(created);
+
     const req = {
         body: {
             name: 'Eid Dinner',
@@ -90,15 +101,39 @@ test('createEvent returns 400 when the image file is missing', async () => {
             ticketUrl: 'https://t',
         },
     } as unknown as Request;
-    const { res, json, status } = mockRes();
+
+    const {
+        res,
+        json,
+        status,
+    } = mockRes();
 
     await createEvent(req, res);
 
-    expect(status).toHaveBeenCalledWith(400);
-    expect(json).toHaveBeenCalledWith({ error: 'An image file is required' });
-    expect(mockCreate).not.toHaveBeenCalled();
-});
+    expect(
+        mockUploadEventImage,
+    ).not.toHaveBeenCalled();
 
+    expect(
+        mockCreate,
+    ).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+            imageUrl: null,
+            ticketUrl: 'https://t',
+            publicationStatus: 'draft',
+        }),
+    });
+
+    expect(
+        status,
+    ).toHaveBeenCalledWith(201);
+
+    expect(
+        json,
+    ).toHaveBeenCalledWith({
+        data: created,
+    });
+});
 test('createEvent uploads the image and creates the event', async () => {
     mockUploadEventImage.mockResolvedValue('https://cdn/img.jpg');
     const created = { id: 1, name: 'Eid Dinner', imageUrl: 'https://cdn/img.jpg' };
