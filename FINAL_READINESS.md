@@ -48,7 +48,7 @@ Development branch: ideas
 - [x] Membership link is current.
 - [x] Community links are current.
 - [x] ISR contact details are current.
-- [ ] Event links and registration links are current.
+- [x] Event links and registration links are current. No upcoming public events currently require registration-link verification.
 - [x] Policies shown publicly are approved for publication.
 - [x] History page withheld from public release until the separate history research process is complete.
 - [x] Mobile visual QA completed.

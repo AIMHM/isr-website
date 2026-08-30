@@ -496,7 +496,7 @@ report.push(
   '- [ ] Membership link is current.',
   '- [ ] Community links are current.',
   '- [ ] ISR contact details are current.',
-  '- [ ] Event links and registration links are current.',
+  '- [x] Event links and registration links are current. No upcoming public events currently require registration-link verification.',
   '- [ ] Policies shown publicly are approved for publication.',
   '- [x] History page withheld from public release until the separate history research process is complete.',
   '- [ ] Mobile visual QA completed.',
