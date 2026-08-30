@@ -151,6 +151,88 @@ export async function fetchPrayerTimes():
   return json.data
 }
 
+
+export function melbourneApiDate(
+  dayOffset: number = 0,
+  now: Date = new Date(),
+): string {
+  const parts =
+    new Intl.DateTimeFormat(
+      'en-AU',
+      {
+        timeZone: TIMEZONE,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      },
+    ).formatToParts(now)
+
+  const get =
+    (
+      type:
+        | 'year'
+        | 'month'
+        | 'day',
+    ) =>
+      Number(
+        parts.find(
+          (part) =>
+            part.type === type,
+        )?.value ?? 0,
+      )
+
+  const shifted =
+    new Date(
+      Date.UTC(
+        get('year'),
+        get('month') - 1,
+        get('day') + dayOffset,
+        12,
+      ),
+    )
+
+  const year =
+    shifted.getUTCFullYear()
+
+  const month =
+    String(
+      shifted.getUTCMonth() + 1,
+    ).padStart(2, '0')
+
+  const day =
+    String(
+      shifted.getUTCDate(),
+    ).padStart(2, '0')
+
+  return `${day}-${month}-${year}`
+}
+
+export async function fetchPrayerTimesForDate(
+  date: string,
+): Promise<PrayerTimesData> {
+  if (
+    IS_LOCAL_MOCK_DATA ||
+    IS_LOCAL_ADMIN_MODE
+  ) {
+    return mockPrayerTimes()
+  }
+
+  const response =
+    await fetch(
+      `${API_BASE_URL}/api/prayer-times/${date}`,
+    )
+
+  if (!response.ok) {
+    throw new Error(
+      'Failed to fetch prayer times for date',
+    )
+  }
+
+  const json =
+    (await response.json()) as PrayerTimesResponse
+
+  return json.data
+}
 export function getNextPrayer(
   timings: Record<
     string,

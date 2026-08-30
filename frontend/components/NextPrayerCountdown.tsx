@@ -7,7 +7,9 @@ import {
 } from 'react'
 import {
   fetchPrayerTimes,
+  fetchPrayerTimesForDate,
   getNextPrayer,
+  melbourneApiDate,
   type DailyPrayer,
   type PrayerTimesData,
 } from '@/lib/prayerTimes'
@@ -67,17 +69,16 @@ function melbourneSeconds() {
   const get =
     (
       type:
-        'hour' |
-        'minute' |
-        'second',
+        | 'hour'
+        | 'minute'
+        | 'second',
     ) =>
       Number(
         parts.find(
           (part) =>
             part.type ===
             type,
-        )?.value ??
-          '0',
+        )?.value ?? '0',
       )
 
   let hour =
@@ -85,22 +86,58 @@ function melbourneSeconds() {
       'hour',
     )
 
-  if (
-    hour ===
-    24
-  ) {
+  if (hour === 24) {
     hour = 0
   }
 
   return (
     hour * 3600 +
-    get(
-      'minute',
-    ) *
-      60 +
-    get(
-      'second',
+    get('minute') * 60 +
+    get('second')
+  )
+}
+
+function currentMelbourneMinutes() {
+  return Math.floor(
+    melbourneSeconds() /
+      60,
+  )
+}
+
+function prayerMinutes(
+  value: string,
+): number | null {
+  const parsed =
+    parsePrayerTime(
+      value,
     )
+
+  if (!parsed) {
+    return null
+  }
+
+  return (
+    parsed.hour * 60 +
+    parsed.minute
+  )
+}
+
+function isAfterIsha(
+  timings:
+    Record<string, string>,
+): boolean {
+  const isha =
+    prayerMinutes(
+      timings.Isha,
+    )
+
+  if (isha === null) {
+    return false
+  }
+
+  return (
+    currentMelbourneMinutes() >=
+    isha
   )
 }
 
@@ -120,15 +157,10 @@ function secondsUntil(
     melbourneSeconds()
 
   let target =
-    parsed.hour *
-      3600 +
-    parsed.minute *
-      60
+    parsed.hour * 3600 +
+    parsed.minute * 60
 
-  if (
-    target <=
-    now
-  ) {
+  if (target <= now) {
     target +=
       24 * 3600
   }
@@ -165,15 +197,11 @@ function formatCountdown(
     return `${hours}h ${minutes}m`
   }
 
-  if (
-    hours > 0
-  ) {
+  if (hours > 0) {
     return `${hours}h`
   }
 
-  if (
-    minutes <= 1
-  ) {
+  if (minutes <= 1) {
     return 'less than a minute'
   }
 
@@ -193,14 +221,12 @@ function displayTime(
   }
 
   const suffix =
-    parsed.hour >=
-    12
+    parsed.hour >= 12
       ? 'pm'
       : 'am'
 
   const hour =
-    parsed.hour %
-      12 ||
+    parsed.hour % 12 ||
     12
 
   return `${hour}:${String(
@@ -245,6 +271,14 @@ export default function NextPrayerCountdown() {
     )
 
   const [
+    tomorrowFajr,
+    setTomorrowFajr,
+  ] =
+    useState<string | null>(
+      null,
+    )
+
+  const [
     loading,
     setLoading,
   ] =
@@ -284,6 +318,41 @@ export default function NextPrayerCountdown() {
         setFailed(
           false,
         )
+
+        if (
+          isAfterIsha(
+            result.timings,
+          )
+        ) {
+          try {
+            const tomorrow =
+              await fetchPrayerTimesForDate(
+                melbourneApiDate(
+                  1,
+                ),
+              )
+
+            if (active) {
+              setTomorrowFajr(
+                tomorrow.timings
+                  .Fajr ??
+                  null,
+              )
+            }
+          }
+          catch {
+            if (active) {
+              setTomorrowFajr(
+                null,
+              )
+            }
+          }
+        }
+        else {
+          setTomorrowFajr(
+            null,
+          )
+        }
       }
       catch {
         if (active) {
@@ -308,7 +377,7 @@ export default function NextPrayerCountdown() {
         () => {
           void load()
         },
-        60 * 60 * 1000,
+        15 * 60 * 1000,
       )
 
     return () => {
@@ -352,12 +421,32 @@ export default function NextPrayerCountdown() {
       ],
     )
 
+  const afterIsha =
+    useMemo(
+      () =>
+        data
+          ? isAfterIsha(
+              data.timings,
+            )
+          : false,
+      [
+        data,
+        tick,
+      ],
+    )
+
   const time =
     next &&
     data
-      ? data.timings[
-          next
-        ]
+      ? (
+          afterIsha &&
+          next === 'Fajr' &&
+          tomorrowFajr
+            ? tomorrowFajr
+            : data.timings[
+                next
+              ]
+        )
       : null
 
   const remaining =
