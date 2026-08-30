@@ -182,7 +182,6 @@ await checkRoutes(
     '/join',
     '/support',
     '/about',
-    '/about/history',
     '/contact',
     '/admin/login',
     '/admin/events',

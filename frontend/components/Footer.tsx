@@ -57,10 +57,7 @@ const organisationLinks = [
     href: '/about',
     label: 'About ISR',
   },
-  {
-    href: '/about/history',
-    label: 'Our History',
-  },
+
   {
     href: '/contact',
     label: 'Contact ISR',

@@ -11,16 +11,7 @@ const destinations = [
     href:
       '/teams',
   },
-  {
-    eyebrow:
-      'Heritage',
-    title:
-      'Explore ISR history',
-    description:
-      'Discover the documented story of Muslim student life and the Islamic Society at RMIT.',
-    href:
-      '/about/history',
-  },
+
   {
     eyebrow:
       'Quick access',

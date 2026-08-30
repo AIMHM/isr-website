@@ -218,22 +218,7 @@ const STATIC_ITEMS:
     category:
       'Page',
   },
-  {
-    id:
-      'history',
 
-    title:
-      'ISR History',
-
-    description:
-      'The current historical record and research gateway.',
-
-    href:
-      '/about/history',
-
-    category:
-      'Page',
-  },
   {
     id:
       'campuses',

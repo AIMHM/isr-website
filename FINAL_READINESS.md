@@ -36,7 +36,6 @@ Development branch: ideas
 - [x] /join
 - [x] /support
 - [x] /about
-- [x] /about/history
 - [x] /contact
 - [x] /governance
 - [x] /privacy
@@ -51,7 +50,7 @@ Development branch: ideas
 - [x] ISR contact details are current.
 - [ ] Event links and registration links are current.
 - [x] Policies shown publicly are approved for publication.
-- [ ] History claims have completed the separate history research process.
+- [x] History page withheld from public release until the separate history research process is complete.
 - [x] Mobile visual QA completed.
 - [x] Keyboard QA completed.
 - [x] Production build completed.

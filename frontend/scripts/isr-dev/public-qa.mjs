@@ -502,7 +502,6 @@ const metadataRoutes = [
   '/teams',
   '/faq',
   '/about',
-  '/about/history',
   '/contact',
 ]
 

@@ -128,14 +128,7 @@ const STATIC_ITEMS: SearchItem[] = [
     href: '/about',
     category: 'Page',
   },
-  {
-    id: 'history',
-    title: 'ISR History',
-    description:
-      'The current historical record and research gateway.',
-    href: '/about/history',
-    category: 'Page',
-  },
+
   {
     id: 'campuses',
     title: 'Campus Guide',

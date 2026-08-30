@@ -11,7 +11,7 @@ import {
 export const metadata: Metadata = {
   title: 'About ISR',
   description:
-    'Learn about the Islamic Society of RMIT, what it does, who it serves and its history.',
+    'Learn about the Islamic Society of RMIT, what it does and who it serves.',
 }
 
 const areas = [
@@ -156,33 +156,21 @@ export default function AboutPage() {
                 </p>
 
                 <h2 className="mt-3 text-3xl font-bold">
-                  A community built over decades
+                  History archive in progress
                 </h2>
 
                 <p className="mt-5 leading-relaxed text-white/80">
-                  Muslim student life at RMIT has a
-                  documented history extending back
-                  decades. The record includes early prayer
-                  facilities, the RMIT Islamic Society,
-                  prayer-space advocacy, Islamic education,
-                  community events, inter-university work
-                  and the transition from RMITIS to ISR.
+                  ISR is currently completing a separate
+                  evidence-based research project into the
+                  history of Muslim student life at RMIT.
                 </p>
 
                 <p className="mt-4 text-sm leading-relaxed text-white/60">
-                  The historical archive is continuing to
-                  grow as additional primary records and
-                  former committee material are recovered.
+                  The public history archive will be released
+                  once that research has been completed and the
+                  historical record is ready for publication.
                 </p>
-
-                <Link
-                  href="/about/history"
-                  className="mt-7 inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 font-bold text-isr-dark-red transition hover:bg-isr-yellow"
-                >
-                  Explore our history
-                </Link>
               </article>
-
               <article className="rounded-[1.75rem] border border-isr-light-blue/20 bg-isr-cream/60 p-6 sm:p-9">
                 <p className="text-sm font-bold uppercase tracking-[0.18em] text-isr-turquoise">
                   ISR today

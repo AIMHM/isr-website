@@ -270,6 +270,29 @@ if (
 }
 
 /* -------------------------------------------------------
+   Start compatibility redirect
+   ------------------------------------------------------- */
+
+const startRedirect =
+  requireFile(
+    'app/start/page.tsx',
+  )
+
+if (
+  /redirect\(\s*['"]\/student-guide['"]\s*\)/.test(
+    startRedirect,
+  )
+) {
+  pass(
+    '/start redirects to /student-guide',
+  )
+} else {
+  fail(
+    '/start does not clearly redirect to /student-guide',
+  )
+}
+
+/* -------------------------------------------------------
    Robots
    ------------------------------------------------------- */
 
@@ -446,7 +469,6 @@ if (
 
 const metadataPages = [
   'app/page.tsx',
-  'app/start/page.tsx',
   'app/pray/page.tsx',
   'app/events/page.tsx',
   'app/events/[id]/page.tsx',
@@ -454,7 +476,6 @@ const metadataPages = [
   'app/join/page.tsx',
   'app/support/page.tsx',
   'app/about/page.tsx',
-  'app/about/history/page.tsx',
   'app/contact/page.tsx',
   'app/governance/page.tsx',
   'app/privacy/page.tsx',

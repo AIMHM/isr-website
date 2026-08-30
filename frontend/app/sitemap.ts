@@ -79,11 +79,7 @@ const pages = [
     frequency: 'monthly',
     priority: 0.75,
   },
-  {
-    path: '/about/history',
-    frequency: 'monthly',
-    priority: 0.72,
-  },
+
   {
     path: '/contact',
     frequency: 'monthly',
