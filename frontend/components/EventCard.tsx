@@ -1,8 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from 'next/link'
-import type {
-  Event,
+import {
+  getEventRegistrationLabel,
+  getEventRegistrationMode,
+  type Event,
 } from '@/lib/events'
 import {
   EVENT_STATUS_CLASSES,
@@ -19,40 +21,43 @@ export default function EventCard({
   event: Event
   compact?: boolean
 }) {
-  const status =
-    eventStatus(event)
+  const status = eventStatus(event)
+  const date = formatEventDay(event.date)
+  const registrationMode = getEventRegistrationMode(event)
 
-  const date =
-    formatEventDay(
-      event.date,
-    )
+  const context = [
+    event.campus,
+    event.audience,
+  ].filter(Boolean)
 
   return (
-    <article className="isr-card group flex h-full flex-col overflow-hidden">
-      <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-isr-cream to-isr-light-blue/35">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-isr-light-blue/20 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md">
+      <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-isr-cream to-isr-light-blue/30">
         {event.imageUrl ? (
           <img
-            src={
-              event.imageUrl
-            }
-            alt={`${event.name} poster`}
+            src={event.imageUrl}
+            alt={`${event.name} event poster`}
             loading="lazy"
-            className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.015]"
           />
         ) : (
           <div className="flex h-full items-center justify-center px-8 text-center">
-            <p className="text-lg font-bold text-isr-dark-red/45">
-              Islamic Society of RMIT
-            </p>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-isr-turquoise">
+                ISR event
+              </p>
+              <p className="mt-3 text-2xl font-bold leading-tight text-isr-dark-red/55">
+                {event.name}
+              </p>
+            </div>
           </div>
         )}
 
-        <div className="absolute left-4 top-4 rounded-xl bg-white px-3 py-2 text-center shadow-sm">
-          <span className="block text-lg font-bold leading-none text-isr-dark-red">
+        <div className="absolute left-4 top-4 min-w-14 rounded-xl bg-white/95 px-3 py-2 text-center shadow-sm backdrop-blur-sm">
+          <span className="block text-xl font-bold leading-none text-isr-dark-red">
             {date.day}
           </span>
-
-          <span className="mt-1 block text-[10px] font-bold tracking-wide text-isr-turquoise">
+          <span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.14em] text-isr-turquoise">
             {date.month}
           </span>
         </div>
@@ -60,89 +65,73 @@ export default function EventCard({
         <span
           className={`absolute right-4 top-4 rounded-full px-3 py-1.5 text-xs font-bold shadow-sm ${EVENT_STATUS_CLASSES[status]}`}
         >
-          {
-            EVENT_STATUS_LABELS[
-              status
-            ]
-          }
+          {EVENT_STATUS_LABELS[status]}
         </span>
       </div>
 
       <div className="flex flex-1 flex-col p-5 sm:p-6">
-        <div className="flex flex-wrap gap-2 text-xs font-semibold text-gray-500">
-          {event.campus && (
-            <span className="rounded-full bg-isr-cream px-3 py-1">
-              {
-                event.campus
-              }
-            </span>
-          )}
-
-          {event.audience && (
-            <span className="rounded-full bg-isr-cream px-3 py-1">
-              {
-                event.audience
-              }
-            </span>
-          )}
-        </div>
+        {event.category && (
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-isr-turquoise">
+            {event.category}
+          </p>
+        )}
 
         <Link
           href={`/events/${event.id}`}
-          className="mt-4 text-xl font-bold leading-snug text-isr-dark-red transition hover:text-isr-turquoise"
+          className="mt-2 text-2xl font-bold leading-tight text-isr-dark-red transition hover:text-isr-turquoise"
         >
           {event.name}
         </Link>
 
-        <p className="mt-3 text-sm font-semibold text-isr-turquoise">
-          {
-            formatEventDate(
-              event.date,
-            )
-          }
+        <p className="mt-3 text-sm font-bold text-isr-turquoise">
+          {formatEventDate(event.date)}
         </p>
 
+        {context.length > 0 && (
+          <p className="mt-2 text-sm font-medium text-gray-600">
+            {context.join(' · ')}
+          </p>
+        )}
+
         {!compact && (
-          <p className="mt-4 line-clamp-4 flex-1 text-sm leading-relaxed text-gray-700">
-            {
-              event.description
-            }
+          <p className="mt-4 line-clamp-3 flex-1 text-sm leading-relaxed text-gray-700">
+            {event.description}
           </p>
         )}
 
         {event.statusNote && (
-          <p className="mt-4 rounded-xl bg-isr-yellow/30 p-3 text-sm font-medium text-isr-dark-red">
-            {
-              event.statusNote
-            }
+          <p className="mt-4 border-l-4 border-isr-yellow bg-isr-yellow/20 px-4 py-3 text-sm font-medium leading-relaxed text-isr-dark-red">
+            {event.statusNote}
           </p>
         )}
 
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-isr-light-blue/20 pt-4">
-          <div className="text-sm text-gray-600">
-            {event.venue && (
-              <span>
-                {
-                  event.venue
-                }
-              </span>
-            )}
+        <div className="mt-5 border-t border-isr-light-blue/20 pt-4">
+          <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 text-sm">
+            <div className="min-w-0 text-gray-600">
+              {event.venue && (
+                <p className="line-clamp-2">{event.venue}</p>
+              )}
 
-            {event.price && (
-              <span className="ml-2 font-semibold text-isr-dark-red">
-                • {
-                  event.price
-                }
-              </span>
-            )}
+              {event.price && (
+                <p className="mt-1 font-bold text-isr-dark-red">
+                  {event.price}
+                </p>
+              )}
+            </div>
+
+            <Link
+              href={`/events/${event.id}`}
+              className="inline-flex min-h-11 shrink-0 items-center font-bold text-isr-turquoise transition hover:text-isr-dark-red"
+            >
+              View event →
+            </Link>
           </div>
 
-          <Link
-            href={`/events/${event.id}`}
-            className="inline-flex min-h-11 items-center font-bold text-isr-turquoise transition hover:text-isr-dark-red"
-          >
-            View details →
-          </Link>
+          {registrationMode !== 'unknown' && status !== 'completed' && (
+            <p className="mt-3 text-xs font-semibold text-gray-500">
+              {getEventRegistrationLabel(event)}
+            </p>
+          )}
         </div>
       </div>
     </article>
