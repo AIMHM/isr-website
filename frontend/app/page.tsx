@@ -1,5 +1,6 @@
-import HomeStudentDashboard from '@/components/HomeStudentDashboard'
+import HomeCampusPreference from '@/components/HomeCampusPreference'
 import HomeDiscoverISR from '@/components/HomeDiscoverISR'
+import HomeWhatsOn from '@/components/HomeWhatsOn'
 import type {
   Metadata,
 } from 'next'
@@ -21,7 +22,8 @@ export default function HomePage() {
 
       <main id="main-content">
         <HomeExperience />
-        <HomeStudentDashboard />
+        <HomeCampusPreference />
+        <HomeWhatsOn />
         <HomeDiscoverISR />
       </main>
 
