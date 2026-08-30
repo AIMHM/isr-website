@@ -1,11 +1,9 @@
-import PrayerPageGuidance from '@/components/PrayerPageGuidance'
 import PrayerIssueReporter from '@/components/PrayerIssueReporter'
 import PrayerQuickNav from '@/components/PrayerQuickNav'
 import NextPrayerCountdown from '@/components/NextPrayerCountdown'
 import type {
   Metadata,
 } from 'next'
-import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import ManagedPrayerSpaceDirectory from '@/components/ManagedPrayerSpaceDirectory'
@@ -18,193 +16,75 @@ export const metadata: Metadata = {
     'Prayer rooms, Jumu’ah arrangements and daily prayer times across RMIT campuses.',
 }
 
-const prayerEssentials = [
-  {
-    number: '01',
-    title: 'Find your prayer room',
-    text:
-      'City, Bundoora East, Bundoora West and Brunswick prayer spaces are listed below.',
-    href: '#campus-prayer-spaces',
-  },
-  {
-    number: '02',
-    title: 'Check Jumu’ah',
-    text:
-      'Friday prayer arrangements differ by campus and season.',
-    href: '#jumuah',
-  },
-  {
-    number: '03',
-    title: 'Check prayer times',
-    text:
-      'Use the Melbourne daily timetable when planning your prayers.',
-    href: '#daily-prayer-times',
-  },
-  {
-    number: '04',
-    title: 'Check ISR Updates',
-    text:
-      'Temporary room, access or Jumu’ah changes are published through ISR Updates.',
-    href: '/updates',
-  },
-]
-
 export default function PrayPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-isr-cream via-white to-isr-yellow/15">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
       <main id="main-content">
-        <section className="isr-hero-grid relative overflow-hidden bg-isr-dark-red px-4 py-14 text-white sm:py-20">
+        <section className="relative overflow-hidden bg-isr-dark-red px-4 py-14 text-white sm:py-20 lg:py-24">
           <div
             aria-hidden="true"
-            className="isr-hero-glow -right-20 -top-24 h-80 w-80 bg-isr-turquoise"
+            className="absolute -right-28 -top-28 h-96 w-96 rounded-full bg-isr-turquoise/25 blur-3xl"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute -bottom-40 -left-24 h-96 w-96 rounded-full bg-isr-yellow/12 blur-3xl"
           />
 
-          <div className="container-isr relative mx-auto max-w-7xl">
-            <div className="grid gap-9 lg:grid-cols-[1fr_0.85fr] lg:items-end">
-              <header className="max-w-4xl">
-                <p className="isr-eyebrow text-isr-yellow">
-                  Worship on campus
-                </p>
+          <div className="container-isr relative mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16">
+            <header className="max-w-4xl">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-isr-yellow sm:text-sm">
+                Worship on campus
+              </p>
 
-                <h1 className="mt-4 text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
-                  Pray at RMIT
-                </h1>
+              <h1 className="mt-4 text-4xl font-bold leading-[1.04] tracking-[-0.03em] sm:text-5xl lg:text-6xl">
+                Pray at RMIT
+              </h1>
 
-                <p className="mt-5 max-w-3xl text-base leading-relaxed text-white/80 sm:text-xl">
-                  Find your musallah, check Jumu’ah and
-                  plan your daily prayers without searching
-                  through multiple pages or messages.
-                </p>
-              </header>
+              <p className="mt-5 max-w-3xl text-lg leading-relaxed text-white/78 sm:text-xl">
+                Find the right musallah, see the next prayer,
+                check Jumu’ah and get the room details you need
+                before you walk across campus.
+              </p>
 
-              <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <a
-                  href="#jumuah"
-                  className="rounded-xl bg-white px-4 py-3 text-center text-sm font-bold text-isr-dark-red transition hover:bg-isr-yellow"
+                  href="#campus-prayer-spaces"
+                  className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 font-bold text-isr-dark-red transition hover:bg-isr-yellow"
                 >
-                  Jumu’ah
+                  Find a prayer room
                 </a>
 
                 <a
-                  href="#campus-prayer-spaces"
-                  className="rounded-xl border border-white/20 px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-white/10"
+                  href="#jumuah"
+                  className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/25 px-6 py-3 font-bold text-white transition hover:bg-white/10"
                 >
-                  Prayer rooms
+                  Jumu’ah details
                 </a>
 
                 <a
                   href="#daily-prayer-times"
-                  className="rounded-xl border border-white/20 px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-white/10"
+                  className="inline-flex min-h-12 items-center justify-center px-3 py-3 font-bold text-isr-yellow transition hover:text-white"
                 >
-                  Daily timetable
+                  Today’s timetable →
                 </a>
               </div>
+
+              <p className="mt-7 max-w-2xl text-sm leading-relaxed text-white/55">
+                Prayer times are Melbourne calculation times, not congregational iqamah times.
+              </p>
+            </header>
+
+            <div>
+              <NextPrayerCountdown />
             </div>
           </div>
         </section>
 
-        <section className="border-b border-isr-light-blue/15 bg-white px-4">
-          <div className="isr-fade-edge container-isr mx-auto max-w-7xl">
-            <nav
-              aria-label="Prayer page sections"
-              className="isr-prayer-nav flex gap-2 overflow-x-auto py-4 pr-8"
-            >
-              <a
-                href="#jumuah"
-                className="isr-campus-pill bg-isr-dark-red text-white"
-              >
-                Friday prayer
-              </a>
-
-              <a
-                href="#campus-prayer-spaces"
-                className="isr-campus-pill bg-isr-cream text-isr-dark-red"
-              >
-                Campus prayer rooms
-              </a>
-
-              <a
-                href="#daily-prayer-times"
-                className="isr-campus-pill bg-isr-cream text-isr-dark-red"
-              >
-                Daily prayer times
-              </a>
-
-              <Link
-                href="/contact"
-                className="isr-campus-pill bg-isr-cream text-isr-dark-red"
-              >
-                Report an issue
-              </Link>
-            </nav>
-          </div>
-        </section>
-
-        <section
-          id="jumuah"
-          className="scroll-mt-28 px-4 py-14 sm:py-20"
-        >
+        <section className="border-b border-isr-light-blue/15 bg-isr-cream/45 px-4 py-8 sm:py-10">
           <div className="container-isr mx-auto max-w-7xl">
-            <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr]">
-              <div>
-                <p className="isr-eyebrow text-isr-turquoise">
-                  Friday prayer
-                </p>
-
-                <h2 className="mt-4 text-3xl font-bold leading-tight text-isr-dark-red sm:text-4xl">
-                  Jumu’ah at RMIT
-                </h2>
-
-                <p className="mt-4 max-w-xl leading-relaxed text-gray-700">
-                  Friday prayer arrangements are different
-                  across campuses. Check the location and
-                  time before travelling.
-                </p>
-
-                <div className="mt-6 rounded-2xl border border-isr-yellow bg-isr-yellow/30 p-5">
-                  <p className="font-bold text-isr-dark-red">
-                    Brunswick
-                  </p>
-
-                  <p className="mt-2 text-sm leading-relaxed text-gray-700">
-                    There is currently no ISR Jumu’ah service
-                    at the Brunswick campus.
-                  </p>
-                </div>
-              </div>
-
-              <ManagedJumuahServices />
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-isr-cream/50 px-4 py-14 sm:py-20">
-          <div className="container-isr mx-auto max-w-7xl">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              {prayerEssentials.map(
-                (item) => (
-                  <a
-                    key={item.number}
-                    href={item.href}
-                    className="isr-card isr-card-interactive bg-white p-5 sm:p-6"
-                  >
-                    <span className="text-xs font-bold text-isr-turquoise">
-                      {item.number}
-                    </span>
-
-                    <h3 className="mt-3 text-xl font-bold text-isr-dark-red">
-                      {item.title}
-                    </h3>
-
-                    <p className="mt-3 text-sm leading-relaxed text-gray-700">
-                      {item.text}
-                    </p>
-                  </a>
-                ),
-              )}
-            </div>
+            <PrayerQuickNav />
           </div>
         </section>
 
@@ -213,27 +93,52 @@ export default function PrayPage() {
           className="scroll-mt-28 px-4 py-14 sm:py-20"
         >
           <div className="container-isr mx-auto max-w-7xl">
-            <div className="mb-9 max-w-3xl">
-              <p className="isr-eyebrow text-isr-turquoise">
-                Campus directory
-              </p>
+            <div className="mb-9 grid gap-5 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-isr-turquoise">
+                  Prayer spaces
+                </p>
 
-              <h2 className="mt-4 text-3xl font-bold text-isr-dark-red sm:text-4xl">
-                Find your prayer room
-              </h2>
+                <h2 className="mt-3 text-3xl font-bold tracking-tight text-isr-dark-red sm:text-4xl">
+                  Find the room for your campus
+                </h2>
+              </div>
 
-              <p className="mt-4 leading-relaxed text-gray-700">
-                Prayer spaces are listed by campus with
-                separate brothers’ and sisters’ rooms where
-                applicable.
+              <p className="max-w-2xl leading-relaxed text-gray-700 lg:justify-self-end">
+                City, Bundoora East, Bundoora West and Brunswick each have their own prayer-space details. Building, room, access hours, brothers’ and sisters’ locations and wudu information are kept together below.
               </p>
             </div>
 
-            <PrayerQuickNav />
+            <ManagedPrayerSpaceDirectory />
+          </div>
+        </section>
 
-              <div className="mt-7">
-                <ManagedPrayerSpaceDirectory />
+        <section
+          id="jumuah"
+          className="scroll-mt-28 bg-isr-cream/55 px-4 py-14 sm:py-20"
+        >
+          <div className="container-isr mx-auto max-w-7xl">
+            <div className="grid gap-8 lg:grid-cols-[0.62fr_1.38fr] lg:items-start">
+              <div className="lg:sticky lg:top-28">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-isr-turquoise">
+                  Friday prayer
+                </p>
+
+                <h2 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-isr-dark-red sm:text-4xl">
+                  Jumu’ah at RMIT
+                </h2>
+
+                <p className="mt-4 max-w-xl leading-relaxed text-gray-700">
+                  City and Bundoora have different Friday arrangements. Bundoora also changes with Victorian daylight saving, so use the current time shown here rather than an old flyer or screenshot.
+                </p>
+
+                <p className="mt-5 text-sm leading-relaxed text-gray-500">
+                  Brunswick currently has no ISR Jumu’ah service. Temporary changes are published through ISR Updates.
+                </p>
               </div>
+
+              <ManagedJumuahServices />
+            </div>
           </div>
         </section>
 
@@ -242,79 +147,36 @@ export default function PrayPage() {
           className="scroll-mt-28 bg-isr-dark-red px-4 py-14 sm:py-20"
         >
           <div className="container-isr mx-auto max-w-7xl">
-            <div className="grid gap-8 lg:grid-cols-[0.65fr_1.35fr] lg:items-start">
-              <div className="text-white">
-                <p className="isr-eyebrow text-isr-yellow">
-                  Daily prayers
+            <div className="grid gap-9 lg:grid-cols-[0.62fr_1.38fr] lg:items-start">
+              <div className="text-white lg:sticky lg:top-28">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-isr-yellow">
+                  Today
                 </p>
 
-                <h2 className="mt-4 text-3xl font-bold sm:text-4xl">
+                <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
                   Melbourne prayer timetable
                 </h2>
 
                 <p className="mt-4 max-w-xl leading-relaxed text-white/70">
-                  Use today’s prayer times when planning
-                  your day on campus. Campus prayer-room
-                  access information remains in the directory above.
+                  Use the daily timetable to plan around classes, then use the campus directory above to find the room you intend to pray in.
                 </p>
 
-                <p className="mt-5 text-sm leading-relaxed text-white/55">
-                  Prayer times and room access are different
-                  pieces of information. Always check the
-                  campus directory for the room you intend
-                  to use.
-                </p>
-              </div>
-
-              <div className="isr-prayer-tool-stack">
-          <PrayerPageGuidance />
-
-                <NextPrayerCountdown />
-
-                <PrayerTimesTable />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="px-4 py-14 sm:py-20">
-          <div className="container-isr mx-auto max-w-5xl">
-            <div className="rounded-[1.75rem] border border-isr-yellow bg-isr-yellow/30 p-6 sm:p-8">
-              <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-isr-turquoise">
-                    Something wrong?
-                  </p>
-
-                  <h2 className="mt-3 text-2xl font-bold text-isr-dark-red">
-                    Report a prayer-space or Jumu’ah issue
-                  </h2>
-
-                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-gray-700">
-                    Tell ISR if a room is inaccessible,
-                    information appears incorrect, or you
-                    encounter another prayer-space issue.
-                  </p>
+                <div className="mt-6 border-l-2 border-isr-yellow/70 pl-4 text-sm leading-relaxed text-white/55">
+                  ISR displays Muslim World League calculation times for Melbourne. These are prayer-time references and do not represent iqamah times.
                 </div>
-
-                <Link
-                  href="/contact"
-                  className="isr-button-primary"
-                >
-                  Contact ISR
-                </Link>
               </div>
+
+              <PrayerTimesTable />
             </div>
           </div>
         </section>
 
-        <section className="bg-isr-cream px-4 pb-16 sm:pb-20">
+        <section className="bg-isr-cream/60 px-4 py-14 sm:py-20">
           <div className="container-isr mx-auto max-w-6xl">
             <PrayerIssueReporter />
           </div>
         </section>
-
-</main>
+      </main>
 
       <Footer />
     </div>
