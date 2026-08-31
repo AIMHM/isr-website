@@ -1,15 +1,16 @@
+import SupportTriage from '@/components/SupportTriage'
+import SupportBoundary from '@/components/SupportBoundary'
 import type {
   Metadata,
 } from 'next'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import StudentSupportDirectory from '@/components/StudentSupportDirectory'
-import SupportBoundary from '@/components/SupportBoundary'
 
 export const metadata: Metadata = {
   title: 'Student Support',
   description:
-    'Find the right support pathway for Muslim students at RMIT, including religious accommodation, discrimination, prayer-space concerns and personal support.',
+    'Raise Muslim student concerns and request support from the Islamic Society of RMIT.',
 }
 
 export default function SupportPage() {
@@ -26,11 +27,13 @@ export default function SupportPage() {
               </p>
 
               <h1 className="mt-4 text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
-                Tell us what is affecting your experience.
+                Something affecting you as a Muslim student?
               </h1>
 
               <p className="mt-5 max-w-3xl text-base leading-relaxed text-white/80 sm:text-xl">
-                Start with the closest pathway below. You do not need to know which ISR team or person handles the issue before reaching out.
+                Start with the closest pathway. Routine information
+                is available immediately, while personal concerns
+                can go directly to ISR for a human response.
               </p>
             </div>
           </div>
@@ -57,15 +60,21 @@ export default function SupportPage() {
           </div>
         </section>
 
+        <section className="px-4 py-14 sm:py-20">
+          <div className="container-isr mx-auto max-w-7xl">
+            <SupportBoundary />
+          </div>
+        </section>
+
         <section className="bg-isr-cream/45 px-4 py-14 sm:py-20">
           <div className="container-isr mx-auto max-w-7xl">
             <StudentSupportDirectory />
           </div>
         </section>
 
-        <section className="px-4 py-14 sm:py-20">
-          <div className="container-isr mx-auto max-w-7xl">
-            <SupportBoundary />
+        <section className="px-4 pb-16 sm:pb-20">
+          <div className="container-isr mx-auto max-w-6xl">
+            <SupportTriage />
           </div>
         </section>
       </main>
