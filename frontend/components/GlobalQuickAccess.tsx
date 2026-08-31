@@ -57,6 +57,33 @@ export default function GlobalQuickAccess() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const panelRef = useRef<HTMLDivElement | null>(null)
+  const previousFocusRef = useRef<HTMLElement | null>(null)
+
+  function openPanel() {
+    previousFocusRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null
+    setOpen(true)
+  }
+
+  function closePanel() {
+    setOpen(false)
+    const previous = previousFocusRef.current
+    previousFocusRef.current = null
+
+    window.requestAnimationFrame(() => {
+      previous?.focus()
+    })
+  }
+
+  function togglePanel() {
+    if (open) {
+      closePanel()
+    } else {
+      openPanel()
+    }
+  }
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -71,12 +98,18 @@ export default function GlobalQuickAccess() {
         event.key.toLowerCase() === 'k'
       ) {
         event.preventDefault()
-        setOpen((current) => !current)
+
+        if (open) {
+          closePanel()
+        } else {
+          openPanel()
+        }
         return
       }
 
-      if (event.key === 'Escape') {
-        setOpen(false)
+      if (event.key === 'Escape' && open) {
+        event.preventDefault()
+        closePanel()
         return
       }
 
@@ -94,9 +127,48 @@ export default function GlobalQuickAccess() {
   }, [open])
 
   useEffect(() => {
-    if (open && panelRef.current) {
-      const firstLink = panelRef.current.querySelector<HTMLAnchorElement>('a')
-      firstLink?.focus()
+    if (!open || !panelRef.current) return
+
+    const panel = panelRef.current
+    const firstLink = panel.querySelector<HTMLAnchorElement>('a')
+    firstLink?.focus()
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    function trapFocus(event: KeyboardEvent) {
+      if (event.key !== 'Tab') return
+
+      const focusable = Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          [
+            'a[href]',
+            'button:not([disabled])',
+            '[tabindex]:not([tabindex="-1"])',
+          ].join(','),
+        ),
+      ).filter((item) => !item.hasAttribute('disabled'))
+
+      if (focusable.length === 0) return
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      const active = document.activeElement
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
+    window.addEventListener('keydown', trapFocus)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', trapFocus)
     }
   }, [open])
 
@@ -110,7 +182,7 @@ export default function GlobalQuickAccess() {
         type="button"
         aria-expanded={open}
         aria-controls="isr-global-quick-access"
-        onClick={() => setOpen((current) => !current)}
+        onClick={togglePanel}
         className="isr-global-quick-button"
       >
         <span aria-hidden="true" className="text-lg">⌕</span>
@@ -125,7 +197,7 @@ export default function GlobalQuickAccess() {
           <button
             type="button"
             aria-label="Close quick access"
-            onClick={() => setOpen(false)}
+            onClick={closePanel}
             className="isr-global-quick-backdrop"
           />
 
@@ -153,7 +225,7 @@ export default function GlobalQuickAccess() {
 
               <button
                 type="button"
-                onClick={() => setOpen(false)}
+                onClick={closePanel}
                 className="isr-global-quick-close"
                 aria-label="Close quick access"
               >
