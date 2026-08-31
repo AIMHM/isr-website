@@ -1,0 +1,46 @@
+name: ISR Lockfile Refresh
+
+on:
+  push:
+    branches:
+      - ideas
+    paths:
+      - '.github/workflows/lock-refresh.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ideas
+        uses: actions/checkout@v6
+        with:
+          ref: ideas
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Refresh frontend lockfile
+        working-directory: frontend
+        run: npm install --package-lock-only --ignore-scripts
+
+      - name: Verify generated lockfile
+        run: git diff --check -- frontend/package-lock.json
+
+      - name: Commit refreshed lockfile
+        shell: bash
+        run: |
+          if git diff --quiet -- frontend/package-lock.json; then
+            echo "Lockfile is already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add frontend/package-lock.json
+          git commit -m "Refresh frontend override lockfile"
+          git push origin HEAD:ideas
