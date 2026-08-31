@@ -46,99 +46,171 @@ const CAMPUSES: {
     key: 'city',
     label: 'City',
     description:
-      'Prayer spaces, Friday prayer and ISR activity around RMIT City.',
+      'Prayer, Jumu’ah and Muslim student essentials for RMIT City campus.',
   },
   {
     key: 'bundoora',
     label: 'Bundoora',
     description:
-      'Prayer spaces across Bundoora East and West, Friday prayer and campus activity.',
+      'Bundoora East and West prayer information, Jumu’ah and campus links.',
   },
   {
     key: 'brunswick',
     label: 'Brunswick',
     description:
-      'Prayer information and the ISR activity relevant to students at Brunswick.',
+      'Brunswick prayer information and quick access to ISR services.',
   },
 ]
 
 function campusKey(
   value: string,
 ): CampusKey {
-  const normalized = value.toLowerCase()
+  const normalized =
+    value.toLowerCase()
 
-  if (normalized.includes('bundoora')) {
+  if (
+    normalized.includes(
+      'bundoora',
+    )
+  ) {
     return 'bundoora'
   }
 
-  if (normalized.includes('brunswick')) {
+  if (
+    normalized.includes(
+      'brunswick',
+    )
+  ) {
     return 'brunswick'
   }
 
   return 'city'
 }
 
-const FALLBACK_SPACES: CampusSpace[] = PRAYER_SPACES.map(
-  (space) => ({
-    key: space.id,
-    campus: space.campus,
-    name: space.name,
-    building: space.building,
-    room: space.room,
-    accessHours: space.accessHours,
-    href: `/pray#${space.id}`,
-  }),
-)
+const FALLBACK_SPACES:
+  CampusSpace[] =
+    PRAYER_SPACES.map(
+      (space) => ({
+        key: space.id,
+        campus:
+          space.campus,
+        name:
+          space.name,
+        building:
+          space.building,
+        room:
+          space.room,
+        accessHours:
+          space.accessHours,
+        href:
+          `/pray#${space.id}`,
+      }),
+    )
 
-const FALLBACK_JUMUAH: CampusJumuah[] = JUMUAH_SERVICES.map(
-  (service) => ({
-    key: service.id,
-    campus: service.campus,
-    venue: service.venue,
-    schedule: service.time,
-  }),
-)
+const FALLBACK_JUMUAH:
+  CampusJumuah[] =
+    JUMUAH_SERVICES.map(
+      (service) => ({
+        key:
+          service.id,
+        campus:
+          service.campus,
+        venue:
+          service.venue,
+        schedule:
+          service.time,
+      }),
+    )
 
 export default function CampusGuide2Experience() {
-  const [spaces, setSpaces] = useState<CampusSpace[]>(FALLBACK_SPACES)
-  const [jumuah, setJumuah] = useState<CampusJumuah[]>(FALLBACK_JUMUAH)
+  const [
+    spaces,
+    setSpaces,
+  ] =
+    useState<
+      CampusSpace[]
+    >(
+      FALLBACK_SPACES,
+    )
+
+  const [
+    jumuah,
+    setJumuah,
+  ] =
+    useState<
+      CampusJumuah[]
+    >(
+      FALLBACK_JUMUAH,
+    )
+
+  const [
+    managed,
+    setManaged,
+  ] =
+    useState(false)
 
   useEffect(() => {
-    let active = true
+    let active =
+      true
 
     fetchPrayerRecords()
-      .then((data) => {
-        if (!active) {
-          return
-        }
+      .then(
+        (data) => {
+          if (!active) {
+            return
+          }
 
-        if (data.prayerSpaces.length > 0) {
-          setSpaces(
-            data.prayerSpaces.map((space) => ({
-              key: space.slug,
-              campus: space.campus,
-              name: space.name,
-              building: space.building,
-              room: space.room,
-              accessHours: space.accessHours,
-              href: `/pray#${space.slug}`,
-            })),
-          )
-        }
+          if (
+            data.prayerSpaces
+              .length > 0
+          ) {
+            setSpaces(
+              data.prayerSpaces.map(
+                (space) => ({
+                  key:
+                    space.slug,
+                  campus:
+                    space.campus,
+                  name:
+                    space.name,
+                  building:
+                    space.building,
+                  room:
+                    space.room,
+                  accessHours:
+                    space.accessHours,
+                  href:
+                    `/pray#${space.slug}`,
+                }),
+              ),
+            )
 
-        if (data.jumuahServices.length > 0) {
-          setJumuah(
-            data.jumuahServices.map((service) => ({
-              key: service.slug,
-              campus: service.campus,
-              venue: service.venue,
-              schedule: service.timeRule,
-            })),
-          )
-        }
-      })
+            setManaged(true)
+          }
+
+          if (
+            data.jumuahServices
+              .length > 0
+          ) {
+            setJumuah(
+              data.jumuahServices.map(
+                (service) => ({
+                  key:
+                    service.slug,
+                  campus:
+                    service.campus,
+                  venue:
+                    service.venue,
+                  schedule:
+                    service.timeRule,
+                }),
+              ),
+            )
+          }
+        },
+      )
       .catch(() => {
-        // Static verified ISR prayer records remain the safe fallback.
+        // Static ISR prayer records remain the safe fallback.
       })
 
     return () => {
@@ -146,273 +218,268 @@ export default function CampusGuide2Experience() {
     }
   }, [])
 
-  const campusData = useMemo(
-    () =>
-      CAMPUSES.map((campus) => ({
-        ...campus,
-        spaces: spaces.filter(
-          (space) => campusKey(space.campus) === campus.key,
+  const campusData =
+    useMemo(
+      () =>
+        CAMPUSES.map(
+          (campus) => ({
+            ...campus,
+            spaces:
+              spaces.filter(
+                (space) =>
+                  campusKey(
+                    space.campus,
+                  ) ===
+                  campus.key,
+              ),
+            jumuah:
+              jumuah.filter(
+                (service) =>
+                  campusKey(
+                    service.campus,
+                  ) ===
+                  campus.key,
+              ),
+          }),
         ),
-        jumuah: jumuah.filter(
-          (service) => campusKey(service.campus) === campus.key,
-        ),
-      })),
-    [spaces, jumuah],
-  )
+      [
+        spaces,
+        jumuah,
+      ],
+    )
 
   return (
     <div>
       <nav
-        aria-label="Choose your RMIT campus"
-        className="grid gap-3 sm:grid-cols-3"
+        aria-label="Campus shortcuts"
+        className="flex flex-wrap gap-2"
       >
-        {CAMPUSES.map((campus) => (
-          <a
-            key={campus.key}
-            href={`#${campus.key}`}
-            className="group border-t-4 border-isr-turquoise bg-isr-cream/60 px-5 py-5 transition hover:bg-isr-cream"
-          >
-            <span className="block text-lg font-bold text-isr-dark-red">
+        {CAMPUSES.map(
+          (campus) => (
+            <a
+              key={campus.key}
+              href={`#${campus.key}`}
+              className="isr-campus-pill bg-isr-cream text-isr-dark-red transition hover:bg-isr-turquoise hover:text-white"
+            >
               {campus.label}
-            </span>
-            <span className="mt-1 block text-sm leading-relaxed text-gray-600">
-              Prayer · Jumu&apos;ah · What&apos;s on
-            </span>
-            <span className="mt-3 inline-flex min-h-8 items-center text-sm font-bold text-isr-turquoise transition group-hover:text-isr-dark-red">
-              Open campus guide ↓
-            </span>
-          </a>
-        ))}
+            </a>
+          ),
+        )}
       </nav>
 
-      <div className="mt-12 space-y-14 sm:mt-16 sm:space-y-20">
-        {campusData.map((campus) => (
-          <section
-            key={campus.key}
-            id={campus.key}
-            className="scroll-mt-28"
-          >
-            <div className="border-b border-isr-light-blue/25 pb-6">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-isr-turquoise">
-                RMIT campus
-              </p>
-
-              <div className="mt-3 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+      <div className="mt-8 grid gap-6">
+        {campusData.map(
+          (campus) => (
+            <section
+              key={campus.key}
+              id={campus.key}
+              className="scroll-mt-28 rounded-[2rem] border border-isr-light-blue/20 bg-white p-6 shadow-sm sm:p-8"
+            >
+              <div className="grid gap-7 lg:grid-cols-[0.72fr_1.28fr]">
                 <div>
-                  <h2 className="text-4xl font-bold tracking-tight text-isr-dark-red sm:text-5xl">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-isr-turquoise">
+                    RMIT campus
+                  </p>
+
+                  <h2 className="mt-3 text-3xl font-bold text-isr-dark-red">
                     {campus.label}
                   </h2>
 
-                  <p className="mt-3 max-w-2xl text-base leading-relaxed text-gray-700">
+                  <p className="mt-4 leading-relaxed text-gray-700">
                     {campus.description}
                   </p>
-                </div>
 
-                <div className="flex flex-wrap gap-3">
-                  <Link
-                    href="/pray"
-                    className="isr-button-secondary"
-                  >
-                    Prayer times
-                  </Link>
+                  <div className="mt-6 grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl bg-isr-cream p-4">
+                      <p className="text-2xl font-bold text-isr-dark-red">
+                        {campus.spaces.length}
+                      </p>
 
-                  <Link
-                    href={
-                      '/events?campus=' +
-                      encodeURIComponent(campus.label)
-                    }
-                    className="isr-button-primary"
-                  >
-                    What&apos;s on here
-                  </Link>
-                </div>
-              </div>
-            </div>
+                      <p className="mt-1 text-xs font-bold uppercase tracking-wide text-gray-500">
+                        Prayer locations
+                      </p>
+                    </div>
 
-            <div className="mt-7 grid gap-8 lg:grid-cols-[1.18fr_0.82fr]">
-              <div>
-                <div className="flex items-end justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-isr-turquoise">
-                      Pray on campus
-                    </p>
-                    <h3 className="mt-2 text-2xl font-bold text-isr-dark-red">
-                      Prayer spaces
-                    </h3>
+                    <div className="rounded-2xl bg-isr-cream p-4">
+                      <p className="text-sm font-bold text-isr-dark-red">
+                        {campus.jumuah.length > 0
+                          ? 'Available'
+                          : 'Not listed'}
+                      </p>
+
+                      <p className="mt-2 text-xs font-bold uppercase tracking-wide text-gray-500">
+                        ISR Jumu’ah
+                      </p>
+                    </div>
                   </div>
 
-                  <Link
-                    href="/pray#spaces"
-                    className="hidden text-sm font-bold text-isr-turquoise transition hover:text-isr-dark-red sm:inline-flex"
-                  >
-                    All prayer details →
-                  </Link>
+                  {managed && (
+                    <p className="mt-4 text-xs font-semibold text-emerald-700">
+                      Using published ISR-managed prayer records.
+                    </p>
+                  )}
                 </div>
 
-                {campus.spaces.length > 0 ? (
-                  <div className="mt-5 divide-y divide-isr-light-blue/20 border-y border-isr-light-blue/20">
-                    {campus.spaces.map((space) => (
+                <div className="space-y-4">
+                  {campus.spaces.map(
+                    (space) => (
                       <article
                         key={space.key}
-                        className="grid gap-3 py-5 sm:grid-cols-[1fr_auto] sm:items-center"
+                        className="rounded-2xl border border-isr-light-blue/20 bg-isr-cream/35 p-5"
                       >
-                        <div>
-                          <h4 className="text-lg font-bold text-isr-dark-red">
-                            {space.name}
-                          </h4>
+                        <h3 className="text-lg font-bold text-isr-dark-red">
+                          {space.name}
+                        </h3>
 
-                          <p className="mt-1 text-sm font-semibold text-gray-700">
-                            {space.building}
-                          </p>
+                        <p className="mt-2 text-sm font-semibold text-gray-700">
+                          {space.building}
+                        </p>
 
-                          <p className="mt-1 text-sm leading-relaxed text-gray-600">
-                            {space.room}
-                          </p>
+                        <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                          {space.room}
+                        </p>
 
-                          <p className="mt-2 text-xs leading-relaxed text-gray-500">
-                            Access: {space.accessHours}
-                          </p>
-                        </div>
+                        <p className="mt-2 text-xs leading-relaxed text-gray-500">
+                          Published access: {space.accessHours}
+                        </p>
 
                         <Link
                           href={space.href}
-                          className="inline-flex min-h-11 items-center font-bold text-isr-turquoise transition hover:text-isr-dark-red"
+                          className="mt-4 inline-flex text-sm font-bold text-isr-dark-red underline underline-offset-4"
                         >
-                          Open details →
+                          Open prayer details
                         </Link>
                       </article>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="mt-5 border-l-4 border-isr-yellow bg-isr-yellow/20 px-5 py-4">
-                    <p className="font-bold text-isr-dark-red">
-                      No ISR prayer-space record is currently listed for this campus.
-                    </p>
-                  </div>
-                )}
-              </div>
+                    ),
+                  )}
 
-              <aside>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-isr-turquoise">
-                  Friday
-                </p>
-                <h3 className="mt-2 text-2xl font-bold text-isr-dark-red">
-                  Jumu&apos;ah
-                </h3>
-
-                {campus.jumuah.length > 0 ? (
-                  <div className="mt-5 space-y-3">
-                    {campus.jumuah.map((service) => (
+                  {campus.jumuah.map(
+                    (service) => (
                       <article
                         key={service.key}
-                        className="bg-isr-dark-red p-5 text-white"
+                        className="rounded-2xl bg-isr-dark-red p-5 text-white"
                       >
-                        <p className="text-xs font-bold uppercase tracking-[0.16em] text-isr-yellow">
-                          ISR Jumu&apos;ah
+                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-isr-yellow">
+                          Friday prayer
                         </p>
 
-                        <p className="mt-3 text-lg font-bold leading-relaxed">
+                        <p className="mt-3 font-bold">
                           {service.venue}
                         </p>
 
-                        <p className="mt-2 text-sm leading-relaxed text-white/75">
+                        <p className="mt-2 text-sm leading-relaxed text-white/70">
                           {service.schedule}
                         </p>
 
                         <Link
                           href="/pray#jumuah"
-                          className="mt-4 inline-flex min-h-11 items-center text-sm font-bold text-isr-yellow transition hover:text-white"
+                          className="mt-4 inline-flex text-sm font-bold text-isr-yellow underline underline-offset-4"
                         >
-                          Check Friday details →
+                          Check Jumu’ah details
                         </Link>
                       </article>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="mt-5 border-l-4 border-isr-yellow bg-isr-yellow/20 px-5 py-4">
-                    <p className="font-bold text-isr-dark-red">
-                      No ISR Jumu&apos;ah service is currently listed for {campus.label}.
-                    </p>
+                    ),
+                  )}
 
-                    <p className="mt-2 text-sm leading-relaxed text-gray-700">
-                      Check the Prayer page and ISR Updates before making Friday prayer plans.
-                    </p>
+                  {campus.jumuah.length === 0 && (
+                    <div className="rounded-2xl border border-isr-yellow bg-isr-yellow/20 p-5">
+                      <p className="font-bold text-isr-dark-red">
+                        No ISR Jumu’ah service is currently listed for this campus.
+                      </p>
 
-                    <Link
-                      href="/pray#jumuah"
-                      className="mt-3 inline-flex min-h-11 items-center text-sm font-bold text-isr-turquoise transition hover:text-isr-dark-red"
-                    >
-                      View Jumu&apos;ah information →
-                    </Link>
-                  </div>
-                )}
-              </aside>
-            </div>
+                      <p className="mt-2 text-sm leading-relaxed text-gray-700">
+                        Check the Prayer page and ISR Updates before making Friday prayer plans.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
 
-            <div className="mt-10">
               <CampusActivityFeed
                 campusKey={campus.key}
                 campusLabel={campus.label}
               />
-            </div>
 
-            <div className="mt-7 flex flex-wrap gap-x-5 gap-y-3 border-t border-isr-light-blue/20 pt-6 text-sm">
-              <Link
-                href="/student-guide"
-                className="isr-text-link"
-              >
-                New student guide →
-              </Link>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  href={
+                    '/events?campus=' +
+                    encodeURIComponent(
+                      campus.label,
+                    )
+                  }
+                  className="isr-button-primary"
+                >
+                  See all {campus.label} activities
+                </Link>
 
-              <Link
-                href="/support"
-                className="isr-text-link"
-              >
-                Student support →
-              </Link>
-
-              <Link
-                href="/updates"
-                className="isr-text-link"
-              >
-                ISR updates →
-              </Link>
-            </div>
-          </section>
-        ))}
+                <Link
+                  href="/pray"
+                  className="isr-button-secondary"
+                >
+                  Prayer information
+                </Link>
+              </div>
+            </section>
+          ),
+        )}
       </div>
 
-      <section className="mt-16 border-t border-isr-light-blue/20 pt-10 sm:mt-20">
-        <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-isr-turquoise">
-              Need something else?
-            </p>
+      <section className="mt-10 rounded-[2rem] bg-isr-dark-red p-6 text-white sm:p-8">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-isr-yellow">
+          Around your campus
+        </p>
 
-            <h2 className="mt-3 text-2xl font-bold text-isr-dark-red sm:text-3xl">
-              Continue from campus into the wider ISR community
-            </h2>
+        <h2 className="mt-3 text-2xl font-bold sm:text-3xl">
+          More than prayer spaces
+        </h2>
 
-            <p className="mt-3 max-w-2xl leading-relaxed text-gray-700">
-              Find student support, regular activities, the new-student guide or ways to get involved.
-            </p>
-          </div>
+        <p className="mt-3 max-w-3xl leading-relaxed text-white/70">
+          Move from your campus guide into ISR activities, student support and operational updates.
+        </p>
 
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/student-guide"
-              className="isr-button-secondary"
-            >
-              New to RMIT
-            </Link>
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <Link
+            href="/pray"
+            className="rounded-xl bg-white px-4 py-4 text-center text-sm font-bold text-isr-dark-red transition hover:bg-isr-yellow"
+          >
+            Pray at RMIT
+          </Link>
 
-            <Link
-              href="/join"
-              className="isr-button-primary"
-            >
-              Join ISR
-            </Link>
-          </div>
+          <Link
+            href="/events"
+            className="rounded-xl border border-white/20 px-4 py-4 text-center text-sm font-bold text-white transition hover:bg-white/10"
+          >
+            What’s On
+          </Link>
+
+          <Link
+            href="/support"
+            className="rounded-xl border border-white/20 px-4 py-4 text-center text-sm font-bold text-white transition hover:bg-white/10"
+          >
+            Student Support
+          </Link>
+
+          <Link
+            href="/updates"
+            className="rounded-xl border border-white/20 px-4 py-4 text-center text-sm font-bold text-white transition hover:bg-white/10"
+          >
+            ISR Updates
+          </Link>
+
+          <Link
+            href="/student-guide"
+            className="rounded-xl border border-white/20 px-4 py-4 text-center text-sm font-bold text-white transition hover:bg-white/10"
+          >
+            Student Guide
+          </Link>
+
+          <Link
+            href="/join"
+            className="rounded-xl border border-white/20 px-4 py-4 text-center text-sm font-bold text-white transition hover:bg-white/10"
+          >
+            Join ISR
+          </Link>
         </div>
       </section>
     </div>
