@@ -1,0 +1,98 @@
+name: ISR Website CI
+
+on:
+  push:
+    branches:
+      - ideas
+  pull_request:
+    branches:
+      - ideas
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: isr-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend quality
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      NEXT_PUBLIC_SITE_URL: https://theisr.com.au
+      NEXT_PUBLIC_API_URL: http://127.0.0.1:4000
+      NEXT_PUBLIC_LOCAL_ADMIN_MODE: 'false'
+      NEXT_PUBLIC_USE_MOCK_DATA: 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Public website QA
+        run: npm run isr:public-qa
+
+      - name: Production build
+        run: npm run build
+
+  backend:
+    name: Backend quality
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/isr_ci
+      SUPABASE_URL: https://example.invalid
+      SUPABASE_ANON_KEY: ci-placeholder
+      SUPABASE_PUBLISHABLE_KEY: ci-placeholder
+      SUPABASE_SECRET_KEY: ci-placeholder
+      CORS_ALLOWED_ORIGINS: https://theisr.com.au
+      WEATHER_API_KEY: ci-placeholder
+      RESEND_API_KEY: ci-placeholder
+      RESEND_FROM_ADDRESS: ci@example.invalid
+      NODE_ENV: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate Prisma schema
+        run: npx prisma validate
+
+      - name: Run tests
+        run: npm test -- --runInBand
+
+      - name: Run predeploy audit
+        run: npm run audit:predeploy
+
+      - name: Build backend
+        run: npm run build
