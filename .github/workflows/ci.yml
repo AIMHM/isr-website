@@ -20,6 +20,7 @@ jobs:
   frontend:
     name: Frontend quality
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: frontend
@@ -59,6 +60,23 @@ jobs:
 
       - name: Production build
         run: npm run build
+
+      - name: Install Chromium for browser QA
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser journeys and accessibility QA
+        run: npm run test:e2e
+
+      - name: Upload browser QA report on failure
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/
+          if-no-files-found: ignore
+          retention-days: 14
 
   backend:
     name: Backend quality
