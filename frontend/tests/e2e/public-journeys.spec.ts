@@ -28,6 +28,14 @@ const ACCESSIBILITY_ROUTES = [
   '/find',
 ] as const
 
+const TOUR_STORAGE_KEY = 'isr-public-tour-v1-complete'
+
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript((storageKey) => {
+    window.localStorage.setItem(storageKey, 'true')
+  }, TOUR_STORAGE_KEY)
+})
+
 test.describe('public ISR routes', () => {
   for (const route of PUBLIC_ROUTES) {
     test(`${route} renders a usable public page`, async ({ page }) => {
@@ -65,8 +73,8 @@ test.describe('student task journeys', () => {
 
     await expect(search).toBeVisible()
     await expect(
-      page.getByRole('heading', {
-        name: 'Or go straight to what you need',
+      page.getByRole('button', {
+        name: 'Jumu’ah',
       }),
     ).toBeVisible()
 
@@ -121,7 +129,14 @@ test.describe('student task journeys', () => {
 
     await expect(dialog).toBeVisible()
     await expect(
-      dialog.getByText('Student essentials'),
+      dialog.getByRole('link', {
+        name: 'Pray at RMIT',
+      }),
+    ).toBeVisible()
+    await expect(
+      dialog.getByRole('link', {
+        name: 'Search ISR',
+      }),
     ).toBeVisible()
 
     expect(
@@ -132,6 +147,37 @@ test.describe('student task journeys', () => {
 
     await expect(dialog).toBeHidden()
     await expect(menuButton).toBeFocused()
+  })
+
+  test('first-time visitors can dismiss the original website tour', async ({ page }) => {
+    await page.goto('/')
+
+    await page.evaluate((storageKey) => {
+      window.localStorage.removeItem(storageKey)
+    }, TOUR_STORAGE_KEY)
+
+    await page.reload()
+
+    const tour = page.getByRole('dialog', {
+      name: 'Welcome to ISR',
+    })
+
+    await expect(tour).toBeVisible()
+    await expect(
+      tour.getByText('Website tour · 1 of 8'),
+    ).toBeVisible()
+
+    await tour.getByRole('button', {
+      name: 'Skip tour',
+    }).click()
+
+    await expect(tour).toBeHidden()
+
+    expect(
+      await page.evaluate((storageKey) =>
+        window.localStorage.getItem(storageKey),
+      TOUR_STORAGE_KEY),
+    ).toBe('true')
   })
 })
 
