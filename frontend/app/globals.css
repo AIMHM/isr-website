@@ -239,15 +239,17 @@
  * using a darker ink variant where the colour carries readable text. The ink
  * shade remains visually close to the brand colour and clears WCAG AA against
  * the white/cream surfaces used across the public site.
+ *
+ * These declarations intentionally sit after Tailwind's generated utilities
+ * and use !important so Tailwind v4 cannot re-promote the brighter surface
+ * token when the class is used specifically for text.
  */
-@layer utilities {
-  .text-isr-turquoise {
-    color: #39766D;
-  }
+.text-isr-turquoise {
+  color: #39766D !important;
+}
 
-  .text-gray-500 {
-    color: #5F6674;
-  }
+.text-gray-500 {
+  color: #5F6674 !important;
 }
 
 /* Global keyboard focus visibility */
