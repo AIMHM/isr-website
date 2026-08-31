@@ -51,96 +51,96 @@ function isActive(
 }
 
 export default function Navbar() {
-  const pathname =
-    usePathname()
+  const pathname = usePathname()
 
-  const menuButtonRef =
-    useRef<HTMLButtonElement | null>(
-      null,
-    )
-
-  const mobileMenuRef =
-    useRef<HTMLDivElement | null>(
-      null,
-    )
-
-  const [
-    menuOpen,
-    setMenuOpen,
-  ] =
-    useState(false)
+  const menuButtonRef = useRef<HTMLButtonElement | null>(null)
+  const mobileMenuRef = useRef<HTMLDivElement | null>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     setMenuOpen(false)
   }, [pathname])
 
   useEffect(() => {
-    if (!menuOpen) {
-      return
-    }
+    if (!menuOpen) return
 
-    function onKeyDown(
-      event: KeyboardEvent,
-    ) {
-      if (
-        event.key ===
-        'Escape'
-      ) {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        event.preventDefault()
         setMenuOpen(false)
         menuButtonRef.current?.focus()
+        return
+      }
+
+      if (event.key !== 'Tab') return
+
+      const panel = mobileMenuRef.current
+      if (!panel) return
+
+      const focusable = Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          [
+            'a[href]',
+            'button:not([disabled])',
+            '[tabindex]:not([tabindex="-1"])',
+          ].join(','),
+        ),
+      ).filter((item) => !item.hasAttribute('disabled'))
+
+      if (focusable.length === 0) {
+        event.preventDefault()
+        panel.focus()
+        return
+      }
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      const active = document.activeElement
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault()
+        last.focus()
+        return
+      }
+
+      if (!event.shiftKey && active === last) {
+        event.preventDefault()
+        first.focus()
       }
     }
 
-    window.addEventListener(
-      'keydown',
-      onKeyDown,
-    )
-
-    return () =>
-      window.removeEventListener(
-        'keydown',
-        onKeyDown,
-      )
-  }, [menuOpen])
-
-  useEffect(() => {
-    if (!menuOpen) {
-      document.body.style.overflow =
-        ''
-      return
-    }
-
-    document.body.style.overflow =
-      'hidden'
+    window.addEventListener('keydown', onKeyDown)
 
     return () => {
-      document.body.style.overflow =
-        ''
+      window.removeEventListener('keydown', onKeyDown)
     }
   }, [menuOpen])
 
   useEffect(() => {
     if (!menuOpen) {
+      document.body.style.overflow = ''
       return
     }
 
-    const frame =
-      window.requestAnimationFrame(
-        () => {
-          const firstMobileLink =
-            mobileMenuRef.current
-              ?.querySelector<HTMLAnchorElement>(
-                'a',
-              )
-
-          firstMobileLink?.focus()
-        },
-      )
+    document.body.style.overflow = 'hidden'
 
     return () => {
-      window.cancelAnimationFrame(
-        frame,
-      )
+      document.body.style.overflow = ''
+    }
+  }, [menuOpen])
+
+  useEffect(() => {
+    if (!menuOpen) return
+
+    const frame = window.requestAnimationFrame(() => {
+      const firstMobileLink =
+        mobileMenuRef.current?.querySelector<HTMLAnchorElement>('a')
+
+      firstMobileLink?.focus()
+    })
+
+    return () => {
+      window.cancelAnimationFrame(frame)
     }
   }, [menuOpen])
 
@@ -176,34 +176,24 @@ export default function Navbar() {
           aria-label="Primary navigation"
           className="hidden items-center gap-1 xl:flex"
         >
-          {links.map(
-            (link) => {
-              const active =
-                isActive(
-                  pathname,
-                  link.href,
-                )
+          {links.map((link) => {
+            const active = isActive(pathname, link.href)
 
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  aria-current={
-                    active
-                      ? 'page'
-                      : undefined
-                  }
-                  className={`rounded-full px-3 py-2 text-sm font-semibold transition ${
-                    active
-                      ? 'bg-isr-turquoise/10 text-isr-dark-red'
-                      : 'text-gray-600 hover:bg-isr-cream hover:text-isr-dark-red'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              )
-            },
-          )}
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={active ? 'page' : undefined}
+                className={`rounded-full px-3 py-2 text-sm font-semibold transition ${
+                  active
+                    ? 'bg-isr-turquoise/10 text-isr-dark-red'
+                    : 'text-gray-600 hover:bg-isr-cream hover:text-isr-dark-red'
+                }`}
+              >
+                {link.label}
+              </Link>
+            )
+          })}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -211,18 +201,10 @@ export default function Navbar() {
             href="/find"
             aria-label="Search ISR"
             aria-current={
-              isActive(
-                pathname,
-                '/find',
-              )
-                ? 'page'
-                : undefined
+              isActive(pathname, '/find') ? 'page' : undefined
             }
             className={`inline-flex h-11 min-w-11 items-center justify-center gap-2 rounded-full border px-3 text-sm font-bold transition sm:px-4 ${
-              isActive(
-                pathname,
-                '/find',
-              )
+              isActive(pathname, '/find')
                 ? 'border-isr-turquoise bg-isr-turquoise/10 text-isr-dark-red'
                 : 'border-isr-light-blue/35 text-isr-dark-red hover:border-isr-turquoise hover:text-isr-turquoise'
             }`}
@@ -239,26 +221,16 @@ export default function Navbar() {
               <path d="m20 20-3.5-3.5" />
             </svg>
 
-            <span className="hidden sm:inline">
-              Search
-            </span>
+            <span className="hidden sm:inline">Search</span>
           </Link>
 
           <Link
             href="/join"
             aria-current={
-              isActive(
-                pathname,
-                '/join',
-              )
-                ? 'page'
-                : undefined
+              isActive(pathname, '/join') ? 'page' : undefined
             }
             className={`hidden min-h-11 items-center rounded-full px-5 py-2.5 text-sm font-bold transition sm:inline-flex ${
-              isActive(
-                pathname,
-                '/join',
-              )
+              isActive(pathname, '/join')
                 ? 'bg-isr-turquoise text-white'
                 : 'bg-isr-dark-red text-white hover:bg-isr-turquoise'
             }`}
@@ -276,12 +248,7 @@ export default function Navbar() {
             aria-expanded={menuOpen}
             ref={menuButtonRef}
             aria-controls="mobile-navigation"
-            onClick={() =>
-              setMenuOpen(
-                (open) =>
-                  !open,
-              )
-            }
+            onClick={() => setMenuOpen((open) => !open)}
             className="flex h-11 w-11 items-center justify-center rounded-full border border-isr-light-blue/40 text-isr-dark-red transition hover:bg-isr-cream xl:hidden"
           >
             <span
@@ -290,25 +257,19 @@ export default function Navbar() {
             >
               <span
                 className={`absolute left-0 top-1 block h-0.5 w-5 bg-current transition ${
-                  menuOpen
-                    ? 'translate-y-1.5 rotate-45'
-                    : ''
+                  menuOpen ? 'translate-y-1.5 rotate-45' : ''
                 }`}
               />
 
               <span
                 className={`absolute left-0 top-2.5 block h-0.5 w-5 bg-current transition ${
-                  menuOpen
-                    ? 'opacity-0'
-                    : ''
+                  menuOpen ? 'opacity-0' : ''
                 }`}
               />
 
               <span
                 className={`absolute left-0 top-4 block h-0.5 w-5 bg-current transition ${
-                  menuOpen
-                    ? '-translate-y-1.5 -rotate-45'
-                    : ''
+                  menuOpen ? '-translate-y-1.5 -rotate-45' : ''
                 }`}
               />
             </span>
@@ -321,15 +282,17 @@ export default function Navbar() {
           <button
             type="button"
             aria-label="Close navigation menu"
-            onClick={() =>
-              setMenuOpen(false)
-            }
+            onClick={() => setMenuOpen(false)}
             className="fixed inset-0 top-[69px] z-[-1] bg-black/20 xl:hidden"
           />
 
           <div
             ref={mobileMenuRef}
             id="mobile-navigation"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site navigation"
+            tabIndex={-1}
             className="max-h-[calc(100vh-69px)] overflow-y-auto border-t border-isr-light-blue/20 bg-white px-4 pb-6 pt-3 shadow-lg xl:hidden"
           >
             <nav
@@ -341,34 +304,24 @@ export default function Navbar() {
               </p>
 
               <div className="grid gap-1 sm:grid-cols-2">
-                {links.map(
-                  (link) => {
-                    const active =
-                      isActive(
-                        pathname,
-                        link.href,
-                      )
+                {links.map((link) => {
+                  const active = isActive(pathname, link.href)
 
-                    return (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        aria-current={
-                          active
-                            ? 'page'
-                            : undefined
-                        }
-                        className={`min-h-12 rounded-xl px-4 py-3 text-base font-semibold sm:text-sm ${
-                          active
-                            ? 'bg-isr-turquoise/10 text-isr-dark-red'
-                            : 'text-gray-700 hover:bg-isr-cream'
-                        }`}
-                      >
-                        {link.label}
-                      </Link>
-                    )
-                  },
-                )}
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      aria-current={active ? 'page' : undefined}
+                      className={`min-h-12 rounded-xl px-4 py-3 text-base font-semibold sm:text-sm ${
+                        active
+                          ? 'bg-isr-turquoise/10 text-isr-dark-red'
+                          : 'text-gray-700 hover:bg-isr-cream'
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  )
+                })}
               </div>
 
               <div className="mt-4 border-t border-isr-light-blue/20 pt-4">
