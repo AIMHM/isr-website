@@ -65,7 +65,7 @@
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
+    --card-foreground: oklch(0.145 0 0);
     --popover: oklch(0.205 0 0);
     --popover-foreground: oklch(0.985 0 0);
     --primary: oklch(0.922 0 0);
@@ -225,12 +225,28 @@
     gap: 0.35rem;
     font-size: 0.875rem;
     font-weight: 700;
-    color: #509589;
+    color: #39766D;
     transition: color 180ms ease;
   }
 
   .isr-text-link:hover {
     color: #5B0B05;
+  }
+}
+
+/*
+ * Keep the original ISR turquoise for surfaces, borders and decoration while
+ * using a darker ink variant where the colour carries readable text. The ink
+ * shade remains visually close to the brand colour and clears WCAG AA against
+ * the white/cream surfaces used across the public site.
+ */
+@layer utilities {
+  .text-isr-turquoise {
+    color: #39766D;
+  }
+
+  .text-gray-500 {
+    color: #5F6674;
   }
 }
 
