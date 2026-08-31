@@ -243,7 +243,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 border-t border-white/15 pt-7">
-          <div className="flex flex-col gap-3 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 text-xs text-white/70 sm:flex-row sm:items-center sm:justify-between">
             <p>
               © {currentYear} Islamic Society of RMIT
             </p>
