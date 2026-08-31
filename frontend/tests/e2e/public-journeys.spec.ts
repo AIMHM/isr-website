@@ -37,6 +37,12 @@ test.beforeEach(async ({ page }, testInfo) => {
 test.describe('public ISR routes', () => {
   for (const route of PUBLIC_ROUTES) {
     test(`${route} renders a usable public page`, async ({ page }) => {
+      const pageErrors: string[] = []
+
+      page.on('pageerror', (error) => {
+        pageErrors.push(error.message)
+      })
+
       const response = await page.goto(route)
 
       expect(response).not.toBeNull()
@@ -59,6 +65,11 @@ test.describe('public ISR routes', () => {
         hasHorizontalOverflow,
         `${route} should not introduce page-level horizontal scrolling`,
       ).toBe(false)
+
+      expect(
+        pageErrors,
+        `${route} should not throw uncaught browser errors`,
+      ).toEqual([])
     })
   }
 })
