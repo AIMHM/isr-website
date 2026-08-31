@@ -22,15 +22,15 @@ const links = [
   },
   {
     href: '/campuses',
-    label: 'Campuses',
+    label: 'Campus Guide',
   },
   {
     href: '/student-guide',
-    label: 'Student Guide',
+    label: 'New Students',
   },
   {
     href: '/support',
-    label: 'Support',
+    label: 'Student Support',
   },
   {
     href: '/about',
@@ -63,6 +63,7 @@ export default function Navbar() {
     useRef<HTMLDivElement | null>(
       null,
     )
+
   const [
     menuOpen,
     setMenuOpen,
@@ -86,7 +87,6 @@ export default function Navbar() {
         'Escape'
       ) {
         setMenuOpen(false)
-
         menuButtonRef.current?.focus()
       }
     }
@@ -107,7 +107,6 @@ export default function Navbar() {
     if (!menuOpen) {
       document.body.style.overflow =
         ''
-
       return
     }
 
@@ -130,9 +129,7 @@ export default function Navbar() {
         () => {
           const firstMobileLink =
             mobileMenuRef.current
-              ?.querySelector<
-                HTMLAnchorElement
-              >(
+              ?.querySelector<HTMLAnchorElement>(
                 'a',
               )
 
@@ -149,7 +146,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-isr-light-blue/20 bg-white/95 backdrop-blur-md">
-      <div className="container-isr mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
+      <div className="container-isr mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
         <Link
           href="/"
           aria-label="Islamic Society of RMIT home"
@@ -213,9 +210,38 @@ export default function Navbar() {
           <Link
             href="/find"
             aria-label="Search ISR"
-            className="hidden min-h-11 items-center justify-center rounded-full border border-isr-light-blue/35 px-4 text-sm font-bold text-isr-dark-red transition hover:border-isr-turquoise hover:text-isr-turquoise sm:inline-flex"
+            aria-current={
+              isActive(
+                pathname,
+                '/find',
+              )
+                ? 'page'
+                : undefined
+            }
+            className={`inline-flex h-11 min-w-11 items-center justify-center gap-2 rounded-full border px-3 text-sm font-bold transition sm:px-4 ${
+              isActive(
+                pathname,
+                '/find',
+              )
+                ? 'border-isr-turquoise bg-isr-turquoise/10 text-isr-dark-red'
+                : 'border-isr-light-blue/35 text-isr-dark-red hover:border-isr-turquoise hover:text-isr-turquoise'
+            }`}
           >
-            Search
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="h-4 w-4"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+
+            <span className="hidden sm:inline">
+              Search
+            </span>
           </Link>
 
           <Link
@@ -228,7 +254,7 @@ export default function Navbar() {
                 ? 'page'
                 : undefined
             }
-            className={`hidden rounded-full px-5 py-2.5 text-sm font-bold transition sm:inline-flex ${
+            className={`hidden min-h-11 items-center rounded-full px-5 py-2.5 text-sm font-bold transition sm:inline-flex ${
               isActive(
                 pathname,
                 '/join',
@@ -310,6 +336,10 @@ export default function Navbar() {
               aria-label="Mobile navigation"
               className="container-isr mx-auto max-w-7xl"
             >
+              <p className="px-4 pb-2 pt-1 text-xs font-bold uppercase tracking-[0.16em] text-gray-500">
+                Student essentials
+              </p>
+
               <div className="grid gap-1 sm:grid-cols-2">
                 {links.map(
                   (link) => {
@@ -328,7 +358,7 @@ export default function Navbar() {
                             ? 'page'
                             : undefined
                         }
-                        className={`rounded-xl px-4 py-3 text-base font-semibold sm:text-sm ${
+                        className={`min-h-12 rounded-xl px-4 py-3 text-base font-semibold sm:text-sm ${
                           active
                             ? 'bg-isr-turquoise/10 text-isr-dark-red'
                             : 'text-gray-700 hover:bg-isr-cream'
@@ -341,34 +371,40 @@ export default function Navbar() {
                 )}
               </div>
 
-              <div className="mt-4 grid grid-cols-2 gap-2">
-                <Link
-                  href="/find"
-                  className="rounded-xl border border-isr-light-blue/30 px-4 py-3 text-center text-sm font-bold text-isr-dark-red"
-                >
-                  Search ISR
-                </Link>
+              <div className="mt-4 border-t border-isr-light-blue/20 pt-4">
+                <p className="px-1 pb-3 text-xs font-bold uppercase tracking-[0.16em] text-gray-500">
+                  More from ISR
+                </p>
 
-                <Link
-                  href="/faq"
-                  className="rounded-xl border border-isr-light-blue/30 px-4 py-3 text-center text-sm font-bold text-isr-dark-red"
-                >
-                  FAQ
-                </Link>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    href="/faq"
+                    className="min-h-12 rounded-xl border border-isr-light-blue/30 px-4 py-3 text-center text-sm font-bold text-isr-dark-red"
+                  >
+                    FAQ
+                  </Link>
 
-                <Link
-                  href="/updates"
-                  className="rounded-xl border border-isr-light-blue/30 px-4 py-3 text-center text-sm font-bold text-isr-dark-red"
-                >
-                  ISR Updates
-                </Link>
+                  <Link
+                    href="/updates"
+                    className="min-h-12 rounded-xl border border-isr-light-blue/30 px-4 py-3 text-center text-sm font-bold text-isr-dark-red"
+                  >
+                    ISR Updates
+                  </Link>
 
-                <Link
-                  href="/join"
-                  className="rounded-xl bg-isr-dark-red px-5 py-3 text-center text-sm font-bold text-white"
-                >
-                  Join ISR
-                </Link>
+                  <Link
+                    href="/contact"
+                    className="min-h-12 rounded-xl border border-isr-light-blue/30 px-4 py-3 text-center text-sm font-bold text-isr-dark-red"
+                  >
+                    Contact ISR
+                  </Link>
+
+                  <Link
+                    href="/join"
+                    className="min-h-12 rounded-xl bg-isr-dark-red px-5 py-3 text-center text-sm font-bold text-white"
+                  >
+                    Join ISR
+                  </Link>
+                </div>
               </div>
             </nav>
           </div>
