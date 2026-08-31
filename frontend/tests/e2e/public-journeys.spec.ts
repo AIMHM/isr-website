@@ -51,7 +51,7 @@ test.describe('public ISR routes', () => {
       await expect(page.locator('#main-content')).toBeVisible()
       await expect(page.locator('h1').first()).toBeVisible()
       await expect(
-        page.getByRole('link', {
+        page.getByRole('banner').getByRole('link', {
           name: 'Islamic Society of RMIT home',
         }),
       ).toBeVisible()
@@ -73,7 +73,9 @@ test.describe('student task journeys', () => {
   test('search finds Jumu’ah without requiring site knowledge', async ({ page }) => {
     await page.goto('/find')
 
-    const search = page.getByLabel('Search ISR')
+    const search = page.getByRole('searchbox', {
+      name: 'Search ISR',
+    })
 
     await expect(search).toBeVisible()
     await expect(
