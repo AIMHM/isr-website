@@ -30,7 +30,11 @@ const ACCESSIBILITY_ROUTES = [
 
 const TOUR_STORAGE_KEY = 'isr-public-tour-v1-complete'
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page }, testInfo) => {
+  if (testInfo.title.includes('first-time visitors')) {
+    return
+  }
+
   await page.addInitScript((storageKey) => {
     window.localStorage.setItem(storageKey, 'true')
   }, TOUR_STORAGE_KEY)
@@ -151,12 +155,6 @@ test.describe('student task journeys', () => {
 
   test('first-time visitors can dismiss the original website tour', async ({ page }) => {
     await page.goto('/')
-
-    await page.evaluate((storageKey) => {
-      window.localStorage.removeItem(storageKey)
-    }, TOUR_STORAGE_KEY)
-
-    await page.reload()
 
     const tour = page.getByRole('dialog', {
       name: 'Welcome to ISR',
