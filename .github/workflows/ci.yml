@@ -30,10 +30,10 @@ jobs:
       NEXT_PUBLIC_USE_MOCK_DATA: 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -73,10 +73,10 @@ jobs:
       NODE_ENV: test
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -87,6 +87,9 @@ jobs:
 
       - name: Validate Prisma schema
         run: npx prisma validate
+
+      - name: Generate Prisma client
+        run: npx prisma generate
 
       - name: Run tests
         run: npm test -- --runInBand
