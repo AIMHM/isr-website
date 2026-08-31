@@ -20,13 +20,7 @@ const PUBLIC_ROUTES = [
   '/contact',
 ] as const
 
-const ACCESSIBILITY_ROUTES = [
-  '/',
-  '/pray',
-  '/events',
-  '/support',
-  '/find',
-] as const
+const ACCESSIBILITY_ROUTES = PUBLIC_ROUTES
 
 const TOUR_STORAGE_KEY = 'isr-public-tour-v1-complete'
 
@@ -90,6 +84,68 @@ test.describe('student task journeys', () => {
       page.getByRole('link', {
         name: /Jumu’ah at RMIT/i,
       }),
+    ).toBeVisible()
+  })
+
+  test('Bundoora students can reach a prayer-space detail from the campus guide', async ({ page }) => {
+    await page.goto('/campuses#bundoora')
+
+    const bundoora = page.locator('#bundoora')
+
+    await expect(bundoora).toBeVisible()
+    await expect(
+      bundoora.getByRole('heading', {
+        name: 'Bundoora',
+      }),
+    ).toBeVisible()
+
+    const prayerDetails = bundoora.getByRole('link', {
+      name: 'Open prayer details',
+    }).first()
+
+    await expect(prayerDetails).toBeVisible()
+    await expect(prayerDetails).toHaveAttribute('href', /^\/pray#/)
+  })
+
+  test('Friday prayer information is directly reachable', async ({ page }) => {
+    await page.goto('/pray#jumuah')
+
+    const jumuah = page.locator('#jumuah')
+
+    await expect(jumuah).toBeVisible()
+    await expect(jumuah).toContainText(/City/i)
+    await expect(jumuah).toContainText(/Bundoora/i)
+  })
+
+  test('new students are given a direct route into the campus guide', async ({ page }) => {
+    await page.goto('/student-guide')
+
+    await expect(
+      page.getByRole('heading', {
+        level: 1,
+        name: 'Navigate Muslim student life at RMIT',
+      }),
+    ).toBeVisible()
+
+    const campusGuide = page.getByRole('link', {
+      name: /Open campus guide/i,
+    })
+
+    await expect(campusGuide).toBeVisible()
+    await expect(campusGuide).toHaveAttribute('href', '/campuses')
+  })
+
+  test('students can reach the current activity experience', async ({ page }) => {
+    await page.goto('/events')
+
+    await expect(page.locator('#main-content')).toBeVisible()
+    await expect(
+      page.locator('h1').first(),
+    ).toBeVisible()
+    await expect(
+      page.getByRole('link', {
+        name: /Join ISR/i,
+      }).first(),
     ).toBeVisible()
   })
 
