@@ -95,27 +95,27 @@ export default function JumuahServices() {
                       {service.venue}
                     </dd>
                   </div>
+                </dl>
 
-                  <div className="grid gap-4 border-t border-isr-light-blue/20 pt-4 sm:grid-cols-2">
-                    <div>
-                      <dt className="text-xs font-bold uppercase tracking-wide text-gray-500">
-                        Brothers
-                      </dt>
+                <dl className="mt-4 grid gap-4 border-t border-isr-light-blue/20 pt-4 sm:grid-cols-2">
+                  <div>
+                    <dt className="text-xs font-bold uppercase tracking-wide text-gray-500">
+                      Brothers
+                    </dt>
 
-                      <dd className="mt-1 text-sm leading-relaxed text-gray-700">
-                        {service.brothers}
-                      </dd>
-                    </div>
+                    <dd className="mt-1 text-sm leading-relaxed text-gray-700">
+                      {service.brothers}
+                    </dd>
+                  </div>
 
-                    <div>
-                      <dt className="text-xs font-bold uppercase tracking-wide text-gray-500">
-                        Sisters
-                      </dt>
+                  <div>
+                    <dt className="text-xs font-bold uppercase tracking-wide text-gray-500">
+                      Sisters
+                    </dt>
 
-                      <dd className="mt-1 text-sm leading-relaxed text-gray-700">
-                        {service.sisters}
-                      </dd>
-                    </div>
+                    <dd className="mt-1 text-sm leading-relaxed text-gray-700">
+                      {service.sisters}
+                    </dd>
                   </div>
                 </dl>
 
