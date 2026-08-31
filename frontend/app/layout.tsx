@@ -62,7 +62,7 @@ export const metadata: Metadata = {
   },
 
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Islamic Society of RMIT',
     description:
       'The home of Muslim students at RMIT.',
