@@ -28,10 +28,16 @@ function normalizePackagePath(value) {
     .replace(/\/$/, '')
 }
 
+/*
+ * CI runs this after `npm ci --omit=dev --ignore-scripts`, so the
+ * installed node_modules tree is the production dependency tree.
+ * We intentionally compare npm's advisory report against packages
+ * that are physically installed instead of trusting lockfile flags
+ * such as devOptional, which can be misleading for optional peers.
+ */
 const treeResult =
   runNpm([
     'ls',
-    '--omit=dev',
     '--all',
     '--parseable',
   ])
@@ -41,7 +47,7 @@ if (
   treeResult.status !== 0
 ) {
   console.error(
-    'Unable to resolve the production dependency tree.',
+    'Unable to resolve the installed production dependency tree.',
   )
 
   if (treeResult.stderr) {
@@ -163,7 +169,7 @@ for (
 
 if (blocking.length > 0) {
   console.error(
-    'High or critical vulnerabilities are present in the production dependency tree:',
+    'High or critical vulnerabilities are present in the installed production dependency tree:',
   )
 
   for (const finding of blocking) {
@@ -187,7 +193,7 @@ console.log(
 
 if (ignored.length > 0) {
   console.log(
-    `High/critical advisories outside the production tree were excluded from the runtime gate: ${[
+    `High/critical advisories outside the installed production tree were excluded from the runtime gate: ${[
       ...new Set(ignored),
     ].sort().join(', ')}.`,
   )
