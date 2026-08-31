@@ -98,8 +98,8 @@ export default function PrayerSpaceDirectory() {
                     Temporary access changes should be checked in ISR Updates.
                   </p>
 
-                  <dl className="mt-6 grid gap-4 sm:grid-cols-2">
-                    <div className="border-t border-isr-light-blue/20 pt-4 sm:col-span-2">
+                  <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                    <dl className="border-t border-isr-light-blue/20 pt-4 sm:col-span-2">
                       <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                         Building
                       </dt>
@@ -107,9 +107,9 @@ export default function PrayerSpaceDirectory() {
                       <dd className="mt-1 text-sm font-semibold text-isr-dark-red">
                         {space.building}
                       </dd>
-                    </div>
+                    </dl>
 
-                    <div className="border-t border-isr-light-blue/20 pt-4 sm:col-span-2">
+                    <dl className="border-t border-isr-light-blue/20 pt-4 sm:col-span-2">
                       <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                         Prayer rooms
                       </dt>
@@ -117,9 +117,9 @@ export default function PrayerSpaceDirectory() {
                       <dd className="mt-1 text-sm font-semibold text-isr-dark-red">
                         {space.room}
                       </dd>
-                    </div>
+                    </dl>
 
-                    <div className="border-t border-isr-light-blue/20 pt-4 sm:col-span-2">
+                    <dl className="border-t border-isr-light-blue/20 pt-4 sm:col-span-2">
                       <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                         Published hours
                       </dt>
@@ -127,9 +127,9 @@ export default function PrayerSpaceDirectory() {
                       <dd className="mt-1 text-sm leading-relaxed text-gray-700">
                         {space.accessHours}
                       </dd>
-                    </div>
+                    </dl>
 
-                    <div className="border-t border-isr-light-blue/20 pt-4">
+                    <dl className="border-t border-isr-light-blue/20 pt-4">
                       <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                         Brothers
                       </dt>
@@ -137,9 +137,9 @@ export default function PrayerSpaceDirectory() {
                       <dd className="mt-1 text-sm leading-relaxed text-gray-700">
                         {space.brothers}
                       </dd>
-                    </div>
+                    </dl>
 
-                    <div className="border-t border-isr-light-blue/20 pt-4">
+                    <dl className="border-t border-isr-light-blue/20 pt-4">
                       <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                         Sisters
                       </dt>
@@ -147,9 +147,9 @@ export default function PrayerSpaceDirectory() {
                       <dd className="mt-1 text-sm leading-relaxed text-gray-700">
                         {space.sisters}
                       </dd>
-                    </div>
+                    </dl>
 
-                    <div className="border-t border-isr-light-blue/20 pt-4 sm:col-span-2">
+                    <dl className="border-t border-isr-light-blue/20 pt-4 sm:col-span-2">
                       <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                         Wudu
                       </dt>
@@ -157,9 +157,9 @@ export default function PrayerSpaceDirectory() {
                       <dd className="mt-1 text-sm leading-relaxed text-gray-700">
                         {space.wudu}
                       </dd>
-                    </div>
+                    </dl>
 
-                    <div className="border-t border-isr-light-blue/20 pt-4 sm:col-span-2">
+                    <dl className="border-t border-isr-light-blue/20 pt-4 sm:col-span-2">
                       <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                         Accessibility
                       </dt>
@@ -167,8 +167,8 @@ export default function PrayerSpaceDirectory() {
                       <dd className="mt-1 text-sm leading-relaxed text-gray-700">
                         {space.accessibility}
                       </dd>
-                    </div>
-                  </dl>
+                    </dl>
+                  </div>
                 </article>
               </div>
             )
