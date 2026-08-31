@@ -210,10 +210,10 @@ export default function Navbar() {
             aria-current={
               isActive(pathname, '/join') ? 'page' : undefined
             }
-            className={`hidden rounded-full px-5 py-2.5 text-sm font-bold transition sm:inline-flex ${
+            className={`hidden rounded-full px-5 py-2.5 text-sm font-bold text-white transition sm:inline-flex ${
               isActive(pathname, '/join')
-                ? 'bg-isr-turquoise text-white'
-                : 'bg-isr-dark-red text-white hover:bg-isr-turquoise'
+                ? 'bg-isr-dark-red ring-2 ring-isr-turquoise ring-offset-2'
+                : 'bg-isr-dark-red hover:bg-isr-turquoise hover:text-isr-dark-red'
             }`}
           >
             Join ISR
