@@ -291,6 +291,10 @@ function normalize(
       '',
     )
     .replace(
+      /[’‘`´]/g,
+      "'",
+    )
+    .replace(
       /jumu'?ah|jummah/g,
       'jumuah',
     )
@@ -304,6 +308,7 @@ const QUICK_SEARCHES = [
   'Membership',
   'Volunteer',
 ] as const
+
 export default function FindExperience() {
   const [
     query,
