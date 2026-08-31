@@ -36,131 +36,265 @@ type SearchItem = {
   title: string
   description: string
   href: string
-  category: SearchCategory
+  category:
+    SearchCategory
 }
 
-const STATIC_ITEMS: SearchItem[] = [
+const STATIC_ITEMS:
+  SearchItem[] = [
   {
-    id: 'start',
-    title: 'Student Guide',
+    id:
+      'start',
+
+    title:
+      'Student Guide',
+
     description:
       'New to RMIT or ISR? Start with the Muslim student essentials.',
-    href: '/student-guide',
-    category: 'Page',
+
+    href:
+      '/student-guide',
+
+    category:
+      'Page',
   },
   {
-    id: 'pray',
-    title: 'Pray at RMIT',
+    id:
+      'pray',
+
+    title:
+      'Pray at RMIT',
+
     description:
       'Prayer spaces, Jumu’ah and daily prayer times.',
-    href: '/pray',
-    category: 'Page',
+
+    href:
+      '/pray',
+
+    category:
+      'Page',
   },
   {
-    id: 'jumuah',
-    title: 'Jumu’ah at RMIT',
+    id:
+      'jumuah',
+
+    title:
+      'Jumu’ah at RMIT',
+
     description:
       'Current Friday prayer locations and times.',
-    href: '/pray#jumuah',
-    category: 'Prayer',
+
+    href:
+      '/pray#jumuah',
+
+    category:
+      'Prayer',
   },
   {
-    id: 'events',
-    title: 'What’s On at ISR',
+    id:
+      'events',
+
+    title:
+      'What’s On at ISR',
+
     description:
       'This week, one-off events, weekly programs and past events.',
-    href: '/events',
-    category: 'Page',
+
+    href:
+      '/events',
+
+    category:
+      'Page',
   },
   {
-    id: 'programs',
-    title: 'Weekly ISR Programs',
+    id:
+      'programs',
+
+    title:
+      'Weekly ISR Programs',
+
     description:
       'Regular halaqas, workshops and recurring campus activities.',
-    href: '/events#programs',
-    category: 'Page',
+
+    href:
+      '/events#programs',
+
+    category:
+      'Page',
   },
   {
-    id: 'updates',
-    title: 'ISR Updates',
+    id:
+      'updates',
+
+    title:
+      'ISR Updates',
+
     description:
       'Operational notices and time-sensitive ISR information.',
-    href: '/updates',
-    category: 'Page',
+
+    href:
+      '/updates',
+
+    category:
+      'Page',
   },
   {
-    id: 'support',
-    title: 'Student Support',
+    id:
+      'support',
+
+    title:
+      'Student Support',
+
     description:
       'Support pathways for Muslim students at RMIT.',
-    href: '/support',
-    category: 'Page',
+
+    href:
+      '/support',
+
+    category:
+      'Page',
   },
   {
-    id: 'join',
-    title: 'Join ISR',
+    id:
+      'join',
+
+    title:
+      'Join ISR',
+
     description:
       'Free membership, community, volunteering and team pathways.',
-    href: '/join',
-    category: 'Page',
+
+    href:
+      '/join',
+
+    category:
+      'Page',
   },
   {
-    id: 'contact',
-    title: 'Contact ISR',
+    id:
+      'contact',
+
+    title:
+      'Contact ISR',
+
     description:
       'Official Islamic Society of RMIT contact channels.',
-    href: '/contact',
-    category: 'Page',
+
+    href:
+      '/contact',
+
+    category:
+      'Page',
   },
   {
-    id: 'faq',
-    title: 'ISR FAQ',
+    id:
+      'faq',
+
+    title:
+      'ISR FAQ',
+
     description:
       'Quick answers about prayer, Jumu’ah, membership, events, community, volunteering and support.',
-    href: '/faq',
-    category: 'Page',
+
+    href:
+      '/faq',
+
+    category:
+      'Page',
   },
   {
-    id: 'about',
-    title: 'About ISR',
+    id:
+      'about',
+
+    title:
+      'About ISR',
+
     description:
       'Who ISR is, what it does and why it exists.',
-    href: '/about',
-    category: 'Page',
+
+    href:
+      '/about',
+
+    category:
+      'Page',
   },
+
   {
-    id: 'campuses',
-    title: 'Campus Guide',
+    id:
+      'campuses',
+
+    title:
+      'Campus Guide',
+
     description:
       'Muslim student information across RMIT campuses.',
-    href: '/campuses',
-    category: 'Page',
+
+    href:
+      '/campuses',
+
+    category:
+      'Page',
   },
   {
-    id: 'teams',
-    title: 'ISR Teams',
+    id:
+      'teams',
+
+    title:
+      'ISR Teams',
+
     description:
       'Explore the student teams that help bring ISR to life.',
-    href: '/teams',
-    category: 'Page',
+
+    href:
+      '/teams',
+
+    category:
+      'Page',
   },
   {
-    id: 'links',
-    title: 'ISR Links',
+    id:
+      'links',
+
+    title:
+      'ISR Links',
+
     description:
       'Membership, community, volunteering, social channels and useful ISR links.',
-    href: '/links',
-    category: 'Page',
+
+    href:
+      '/links',
+
+    category:
+      'Page',
   },
 ]
 
-const CATEGORY_ORDER: SearchCategory[] = [
+const CATEGORY_ORDER:
+  SearchCategory[] = [
   'Page',
   'Prayer',
   'Program',
   'Event',
   'ISR Update',
 ]
+
+function normalize(
+  value: string,
+): string {
+  return value
+    .toLowerCase()
+    .normalize(
+      'NFKD',
+    )
+    .replace(
+      /[̀-ͯ]/g,
+      '',
+    )
+    .replace(
+      /jumu'?ah|jummah/g,
+      'jumuah',
+    )
+}
 
 const QUICK_SEARCHES = [
   'Jumu’ah',
@@ -170,68 +304,51 @@ const QUICK_SEARCHES = [
   'Membership',
   'Volunteer',
 ] as const
-
-const STARTING_POINTS = [
-  {
-    title: 'Find a prayer space',
-    description:
-      'City, Bundoora and Brunswick prayer locations.',
-    href: '/campuses',
-  },
-  {
-    title: 'Find Jumu’ah',
-    description:
-      'Friday prayer times and campus arrangements.',
-    href: '/pray#jumuah',
-  },
-  {
-    title: 'See what’s on',
-    description:
-      'Events, halaqas, workshops and weekly programs.',
-    href: '/events',
-  },
-  {
-    title: 'New to RMIT',
-    description:
-      'The Muslim student essentials for getting started.',
-    href: '/student-guide',
-  },
-  {
-    title: 'Join ISR',
-    description:
-      'Membership, community, volunteering and team pathways.',
-    href: '/join',
-  },
-  {
-    title: 'Get student support',
-    description:
-      'Find the right pathway for a Muslim student concern.',
-    href: '/support',
-  },
-] as const
-
-function normalize(value: string): string {
-  return value
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/jumu'?ah|jummah/g, 'jumuah')
-}
-
 export default function FindExperience() {
-  const [query, setQuery] = useState('')
-  const [events, setEvents] = useState<Event[]>([])
-  const [programs, setPrograms] = useState<Program[]>([])
-  const [updates, setUpdates] = useState<Announcement[]>([])
-  const [loading, setLoading] = useState(true)
+  const [
+    query,
+    setQuery,
+  ] =
+    useState('')
+
+  const [
+    events,
+    setEvents,
+  ] =
+    useState<Event[]>([])
+
+  const [
+    programs,
+    setPrograms,
+  ] =
+    useState<Program[]>([])
+
+  const [
+    updates,
+    setUpdates,
+  ] =
+    useState<Announcement[]>([])
+
+  const [
+    loading,
+    setLoading,
+  ] =
+    useState(true)
 
   useEffect(() => {
-    const requestedQuery = new URLSearchParams(
-      window.location.search,
-    ).get('q')
+    const requestedQuery =
+      new URLSearchParams(
+        window.location.search,
+      ).get(
+        'q',
+      )
 
-    if (requestedQuery) {
-      setQuery(requestedQuery)
+    if (
+      requestedQuery
+    ) {
+      setQuery(
+        requestedQuery,
+      )
     }
   }, [])
 
@@ -243,25 +360,53 @@ export default function FindExperience() {
       fetchPrograms(),
       fetchAnnouncements(),
     ])
-      .then((results) => {
-        if (!active) return
+      .then(
+        (
+          results,
+        ) => {
+          if (!active) {
+            return
+          }
 
-        const [eventResult, programResult, updateResult] = results
+          const [
+            eventResult,
+            programResult,
+            updateResult,
+          ] =
+            results
 
-        if (eventResult.status === 'fulfilled') {
-          setEvents(eventResult.value)
-        }
+          if (
+            eventResult.status ===
+            'fulfilled'
+          ) {
+            setEvents(
+              eventResult.value,
+            )
+          }
 
-        if (programResult.status === 'fulfilled') {
-          setPrograms(programResult.value)
-        }
+          if (
+            programResult.status ===
+            'fulfilled'
+          ) {
+            setPrograms(
+              programResult.value,
+            )
+          }
 
-        if (updateResult.status === 'fulfilled') {
-          setUpdates(updateResult.value)
-        }
-      })
+          if (
+            updateResult.status ===
+            'fulfilled'
+          ) {
+            setUpdates(
+              updateResult.value,
+            )
+          }
+        },
+      )
       .finally(() => {
-        if (active) setLoading(false)
+        if (active) {
+          setLoading(false)
+        }
       })
 
     return () => {
@@ -269,105 +414,249 @@ export default function FindExperience() {
     }
   }, [])
 
-  const items = useMemo(() => {
-    const prayerItems: SearchItem[] = PRAYER_SPACES.map(
-      (space) => ({
-        id: 'prayer-' + space.id,
-        title: space.name,
-        description: [
-          space.building,
-          space.room,
-          space.summary,
+  const items =
+    useMemo(
+      () => {
+        const prayerItems:
+          SearchItem[] =
+          PRAYER_SPACES.map(
+            (
+              space,
+            ) => ({
+              id:
+                'prayer-' +
+                space.id,
+
+              title:
+                space.name,
+
+              description:
+                [
+                  space.building,
+                  space.room,
+                  space.summary,
+                ]
+                  .filter(
+                    Boolean,
+                  )
+                  .join(
+                    ' · ',
+                  ),
+
+              href:
+                '/pray#' +
+                space.id,
+
+              category:
+                'Prayer',
+            }),
+          )
+
+        const programItems:
+          SearchItem[] =
+          programs.map(
+            (
+              program,
+            ) => ({
+              id:
+                'program-' +
+                program.id,
+
+              title:
+                program.name,
+
+              description:
+                [
+                  formatProgramSchedule(
+                    program,
+                  ),
+                  program.campusLabel,
+                  program.venue,
+                  program.audience,
+                  program.localDemo
+                    ? 'Local demo'
+                    : null,
+                ]
+                  .filter(
+                    Boolean,
+                  )
+                  .join(
+                    ' · ',
+                  ),
+
+              href:
+                '/programs/' +
+                program.slug,
+
+              category:
+                'Program',
+            }),
+          )
+
+        const eventItems:
+          SearchItem[] =
+          events.map(
+            (
+              event,
+            ) => {
+              const formatted =
+                formatEventDate(
+                  event.date,
+                )
+
+              return {
+                id:
+                  'event-' +
+                  event.id,
+
+                title:
+                  event.name,
+
+                description:
+                  [
+                    formatted.date,
+                    event.campus,
+                    event.venue,
+                  ]
+                    .filter(
+                      Boolean,
+                    )
+                    .join(
+                      ' · ',
+                    ),
+
+                href:
+                  '/events/' +
+                  event.id,
+
+                category:
+                  'Event',
+              }
+            },
+          )
+
+        const updateItems:
+          SearchItem[] =
+          updates.map(
+            (
+              update,
+            ) => ({
+              id:
+                'update-' +
+                update.id,
+
+              title:
+                update.title,
+
+              description:
+                update.body,
+
+              href:
+                '/updates#update-' +
+                update.id,
+
+              category:
+                'ISR Update',
+            }),
+          )
+
+        return [
+          ...STATIC_ITEMS,
+          ...prayerItems,
+          ...programItems,
+          ...eventItems,
+          ...updateItems,
         ]
-          .filter(Boolean)
-          .join(' · '),
-        href: '/pray#' + space.id,
-        category: 'Prayer',
-      }),
+      },
+      [
+        events,
+        programs,
+        updates,
+      ],
     )
 
-    const programItems: SearchItem[] = programs.map(
-      (program) => ({
-        id: 'program-' + program.id,
-        title: program.name,
-        description: [
-          formatProgramSchedule(program),
-          program.campusLabel,
-          program.venue,
-          program.audience,
-          program.localDemo ? 'Local demo' : null,
-        ]
-          .filter(Boolean)
-          .join(' · '),
-        href: '/programs/' + program.slug,
-        category: 'Program',
-      }),
+  const results =
+    useMemo(
+      () => {
+        const value =
+          normalize(
+            query.trim(),
+          )
+
+        if (!value) {
+          return items
+        }
+
+        const terms =
+          value
+            .split(
+              /\s+/,
+            )
+            .filter(
+              Boolean,
+            )
+
+        return items.filter(
+          (
+            item,
+          ) => {
+            const haystack =
+              normalize(
+                [
+                  item.title,
+                  item.description,
+                  item.category,
+                ].join(
+                  ' ',
+                ),
+              )
+
+            return terms.every(
+              (
+                term,
+              ) =>
+                haystack.includes(
+                  term,
+                ),
+            )
+          },
+        )
+      },
+      [
+        items,
+        query,
+      ],
     )
 
-    const eventItems: SearchItem[] = events.map((event) => {
-      const formatted = formatEventDate(event.date)
+  const grouped =
+    useMemo(
+      () =>
+        CATEGORY_ORDER.map(
+          (
+            category,
+          ) => ({
+            category,
 
-      return {
-        id: 'event-' + event.id,
-        title: event.name,
-        description: [
-          formatted.date,
-          event.campus,
-          event.venue,
-        ]
-          .filter(Boolean)
-          .join(' · '),
-        href: '/events/' + event.id,
-        category: 'Event',
-      }
-    })
-
-    const updateItems: SearchItem[] = updates.map((update) => ({
-      id: 'update-' + update.id,
-      title: update.title,
-      description: update.body,
-      href: '/updates#update-' + update.id,
-      category: 'ISR Update',
-    }))
-
-    return [
-      ...STATIC_ITEMS,
-      ...prayerItems,
-      ...programItems,
-      ...eventItems,
-      ...updateItems,
-    ]
-  }, [events, programs, updates])
-
-  const normalizedQuery = normalize(query.trim())
-  const hasQuery = Boolean(normalizedQuery)
-
-  const results = useMemo(() => {
-    if (!normalizedQuery) return []
-
-    const terms = normalizedQuery.split(/\s+/).filter(Boolean)
-
-    return items.filter((item) => {
-      const haystack = normalize(
-        [
-          item.title,
-          item.description,
-          item.category,
-        ].join(' '),
-      )
-
-      return terms.every((term) => haystack.includes(term))
-    })
-  }, [items, normalizedQuery])
-
-  const grouped = useMemo(
-    () =>
-      CATEGORY_ORDER.map((category) => ({
-        category,
-        items: results.filter((item) => item.category === category),
-      })).filter((group) => group.items.length > 0),
-    [results],
-  )
+            items:
+              results.filter(
+                (
+                  item,
+                ) =>
+                  item.category ===
+                  category,
+              ),
+          }),
+        ).filter(
+          (
+            group,
+          ) =>
+            group.items.length >
+            0,
+        ),
+      [
+        results,
+      ],
+    )
 
   return (
     <div>
@@ -379,125 +668,111 @@ export default function FindExperience() {
           Search ISR
         </label>
 
-        <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-3 flex gap-3">
           <input
             id="isr-site-search"
             type="search"
             autoComplete="off"
             autoFocus
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            value={
+              query
+            }
+            onChange={(
+              event,
+            ) =>
+              setQuery(
+                event.target
+                  .value,
+              )
+            }
             placeholder="Try Jumu’ah, halaqa, Bundoora, membership, support..."
             className="min-h-14 w-full rounded-2xl border border-isr-light-blue/35 bg-white px-5 text-base text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-isr-turquoise focus:ring-4 focus:ring-isr-turquoise/10"
           />
 
-          {hasQuery && (
+          {query && (
             <button
               type="button"
-              onClick={() => setQuery('')}
+              onClick={() =>
+                setQuery('')
+              }
               className="isr-button-secondary shrink-0"
             >
-              Clear search
+              Clear
             </button>
           )}
         </div>
 
         <div className="mt-4">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-gray-500">
-            Try a popular search
+            Popular searches
           </p>
 
           <div className="mt-3 flex flex-wrap gap-2">
-            {QUICK_SEARCHES.map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => setQuery(item)}
-                className="min-h-11 rounded-full border border-isr-light-blue/30 bg-white px-4 py-2 text-xs font-bold text-isr-dark-red transition hover:border-isr-turquoise hover:text-isr-turquoise"
-              >
-                {item}
-              </button>
-            ))}
+            {QUICK_SEARCHES.map(
+              (
+                item,
+              ) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() =>
+                    setQuery(
+                      item,
+                    )
+                  }
+                  className="rounded-full border border-isr-light-blue/30 bg-white px-3.5 py-2 text-xs font-bold text-isr-dark-red transition hover:border-isr-turquoise hover:text-isr-turquoise"
+                >
+                  {item}
+                </button>
+              ),
+            )}
           </div>
         </div>
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-gray-600">
           <p aria-live="polite">
-            {!hasQuery
-              ? 'Type a word or choose a starting point below.'
-              : loading
-                ? 'Searching current ISR information…'
-                : `${results.length} result${results.length === 1 ? '' : 's'}`}
+            {loading
+              ? 'Loading current ISR information…'
+              : results.length +
+                ' result' +
+                (
+                  results.length ===
+                    1
+                    ? ''
+                    : 's'
+                )}
           </p>
 
           <Link
-            href="/contact"
+            href="/student-guide"
             className="font-bold text-isr-turquoise hover:text-isr-dark-red"
           >
-            Can’t find it? Contact ISR →
+            Not sure where to start? →
           </Link>
         </div>
       </section>
 
-      {!hasQuery ? (
-        <section className="mt-8" aria-labelledby="find-start-heading">
-          <div className="max-w-2xl">
-            <p className="isr-eyebrow text-isr-turquoise">
-              Common destinations
-            </p>
-
-            <h2
-              id="find-start-heading"
-              className="mt-3 text-2xl font-bold text-isr-dark-red sm:text-3xl"
-            >
-              Or go straight to what you need
-            </h2>
-          </div>
-
-          <div className="mt-6 divide-y divide-isr-light-blue/20 border-y border-isr-light-blue/20">
-            {STARTING_POINTS.map((item) => (
-              <Link
-                key={item.title}
-                href={item.href}
-                className="group flex min-h-20 items-center justify-between gap-5 py-5 transition hover:bg-isr-cream/35 sm:px-3"
-              >
-                <div className="min-w-0">
-                  <h3 className="font-bold text-isr-dark-red">
-                    {item.title}
-                  </h3>
-
-                  <p className="mt-1 text-sm leading-relaxed text-gray-600">
-                    {item.description}
-                  </p>
-                </div>
-
-                <span
-                  aria-hidden="true"
-                  className="shrink-0 font-bold text-isr-turquoise transition-transform group-hover:translate-x-1"
-                >
-                  →
-                </span>
-              </Link>
-            ))}
-          </div>
-        </section>
-      ) : results.length === 0 && !loading ? (
-        <section className="mt-8 border-y border-isr-light-blue/20 py-10 text-center sm:py-12">
+      {results.length ===
+      0 ? (
+        <section className="mt-8 rounded-3xl border border-isr-light-blue/25 bg-white p-8 text-center sm:p-12">
           <h2 className="text-2xl font-bold text-isr-dark-red">
-            Nothing matched “{query.trim()}”
+            Nothing matched that search
           </h2>
 
           <p className="mx-auto mt-3 max-w-xl leading-relaxed text-gray-600">
-            Try a shorter term, a campus name, Jumu’ah, prayer, event, membership or support.
+            Try Jumu&apos;ah, halaqa, a campus name,
+            event, membership or another shorter term.
           </p>
 
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <button
               type="button"
-              onClick={() => setQuery('')}
+              onClick={() =>
+                setQuery('')
+              }
               className="isr-button-secondary"
             >
-              Start again
+              Show everything
             </button>
 
             <Link
@@ -510,16 +785,35 @@ export default function FindExperience() {
         </section>
       ) : (
         <div className="mt-8 space-y-10">
-          {grouped.map((group) => {
-            const headingId =
-              'search-category-' +
-              group.category.toLowerCase().replace(/\s+/g, '-')
-
-            return (
-              <section key={group.category} aria-labelledby={headingId}>
-                <div className="flex items-center justify-between gap-4 border-b border-isr-light-blue/20 pb-3">
+          {grouped.map(
+            (
+              group,
+            ) => (
+              <section
+                key={
+                  group.category
+                }
+                aria-labelledby={
+                  'search-category-' +
+                  group.category
+                    .toLowerCase()
+                    .replace(
+                      /\s+/g,
+                      '-',
+                    )
+                }
+              >
+                <div className="flex items-center justify-between gap-4">
                   <h2
-                    id={headingId}
+                    id={
+                      'search-category-' +
+                      group.category
+                        .toLowerCase()
+                        .replace(
+                          /\s+/g,
+                          '-',
+                        )
+                    }
                     className="text-xl font-bold text-isr-dark-red"
                   >
                     {group.category}
@@ -530,35 +824,43 @@ export default function FindExperience() {
                   </span>
                 </div>
 
-                <div className="divide-y divide-isr-light-blue/20">
-                  {group.items.map((item) => (
-                    <Link
-                      key={item.id}
-                      href={item.href}
-                      className="group flex min-h-20 items-center justify-between gap-5 py-5 transition hover:bg-isr-cream/35 sm:px-3"
-                    >
-                      <div className="min-w-0">
-                        <h3 className="font-bold text-isr-dark-red group-hover:text-isr-turquoise">
-                          {item.title}
-                        </h3>
-
-                        <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-gray-600">
-                          {item.description}
-                        </p>
-                      </div>
-
-                      <span
-                        aria-hidden="true"
-                        className="shrink-0 font-bold text-isr-turquoise transition-transform group-hover:translate-x-1"
+                <div className="mt-4 grid gap-3">
+                  {group.items.map(
+                    (
+                      item,
+                    ) => (
+                      <Link
+                        key={
+                          item.id
+                        }
+                        href={
+                          item.href
+                        }
+                        className="isr-find-result"
                       >
-                        →
-                      </span>
-                    </Link>
-                  ))}
+                        <div className="min-w-0">
+                          <h3 className="font-bold text-isr-dark-red">
+                            {item.title}
+                          </h3>
+
+                          <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-gray-600">
+                            {item.description}
+                          </p>
+                        </div>
+
+                        <span
+                          aria-hidden="true"
+                          className="shrink-0 font-bold text-isr-turquoise"
+                        >
+                          →
+                        </span>
+                      </Link>
+                    ),
+                  )}
                 </div>
               </section>
-            )
-          })}
+            ),
+          )}
         </div>
       )}
     </div>
