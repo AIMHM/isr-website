@@ -174,8 +174,8 @@ export default function ManagedJumuahServices() {
                 </div>
 
                 <div className="px-6 py-6 sm:px-7">
-                  <dl className="grid gap-5 sm:grid-cols-2">
-                    <div className="sm:col-span-2">
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <dl className="sm:col-span-2">
                       <dt className="text-xs font-bold uppercase tracking-wide text-gray-500">
                         Venue
                       </dt>
@@ -183,9 +183,9 @@ export default function ManagedJumuahServices() {
                       <dd className="mt-1 text-base font-semibold leading-relaxed text-isr-dark-red">
                         {service.venue}
                       </dd>
-                    </div>
+                    </dl>
 
-                    <div>
+                    <dl>
                       <dt className="text-xs font-bold uppercase tracking-wide text-gray-500">
                         Brothers
                       </dt>
@@ -193,9 +193,9 @@ export default function ManagedJumuahServices() {
                       <dd className="mt-1 text-sm leading-relaxed text-gray-700">
                         {service.brothers}
                       </dd>
-                    </div>
+                    </dl>
 
-                    <div>
+                    <dl>
                       <dt className="text-xs font-bold uppercase tracking-wide text-gray-500">
                         Sisters
                       </dt>
@@ -203,8 +203,8 @@ export default function ManagedJumuahServices() {
                       <dd className="mt-1 text-sm leading-relaxed text-gray-700">
                         {service.sisters}
                       </dd>
-                    </div>
-                  </dl>
+                    </dl>
+                  </div>
 
                   {service.slug ===
                     'bundoora-jumuah' && (
