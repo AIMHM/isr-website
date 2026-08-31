@@ -31,13 +31,13 @@ function normalizePackagePath(value) {
 /*
  * CI runs this after `npm ci --omit=dev --ignore-scripts`, so the
  * installed node_modules tree is the production dependency tree.
- * We intentionally compare npm's advisory report against packages
- * that are physically installed instead of trusting lockfile flags
- * such as devOptional, which can be misleading for optional peers.
+ * `--omit=dev` also tells npm ls not to treat intentionally absent
+ * devDependencies as missing-package errors.
  */
 const treeResult =
   runNpm([
     'ls',
+    '--omit=dev',
     '--all',
     '--parseable',
   ])
