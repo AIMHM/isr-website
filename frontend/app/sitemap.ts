@@ -60,11 +60,6 @@ const pages = [
     priority: 0.82,
   },
   {
-    path: '/find',
-    frequency: 'monthly',
-    priority: 0.85,
-  },
-  {
     path: '/support',
     frequency: 'monthly',
     priority: 0.85,
@@ -79,7 +74,6 @@ const pages = [
     frequency: 'monthly',
     priority: 0.75,
   },
-
   {
     path: '/contact',
     frequency: 'monthly',
