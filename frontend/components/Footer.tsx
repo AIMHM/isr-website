@@ -16,7 +16,7 @@ const studentLinks = [
   },
   {
     href: '/student-guide',
-    label: 'Student Guide',
+    label: 'New Students',
   },
   {
     href: '/pray',
