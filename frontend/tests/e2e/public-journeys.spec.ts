@@ -214,6 +214,10 @@ test.describe('student task journeys', () => {
 
   test('first-time visitors can dismiss the original website tour', async ({ page }) => {
     await page.goto('/')
+    await page.evaluate((storageKey) => {
+      window.localStorage.removeItem(storageKey)
+    }, TOUR_STORAGE_KEY)
+    await page.reload()
 
     const tour = page.getByRole('dialog', {
       name: 'Welcome to ISR',
