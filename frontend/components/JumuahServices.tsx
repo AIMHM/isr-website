@@ -73,8 +73,8 @@ export default function JumuahServices() {
                   </div>
                 </div>
 
-                <dl className="mt-6 space-y-4">
-                  <div className="border-t border-isr-light-blue/20 pt-4">
+                <div className="mt-6 space-y-4">
+                  <dl className="border-t border-isr-light-blue/20 pt-4">
                     <dt className="text-xs font-bold uppercase tracking-wide text-gray-500">
                       Schedule rule
                     </dt>
@@ -84,9 +84,9 @@ export default function JumuahServices() {
                         service,
                       )}
                     </dd>
-                  </div>
+                  </dl>
 
-                  <div className="border-t border-isr-light-blue/20 pt-4">
+                  <dl className="border-t border-isr-light-blue/20 pt-4">
                     <dt className="text-xs font-bold uppercase tracking-wide text-gray-500">
                       Venue
                     </dt>
@@ -94,11 +94,11 @@ export default function JumuahServices() {
                     <dd className="mt-1 text-sm font-semibold text-isr-dark-red">
                       {service.venue}
                     </dd>
-                  </div>
-                </dl>
+                  </dl>
+                </div>
 
-                <dl className="mt-4 grid gap-4 border-t border-isr-light-blue/20 pt-4 sm:grid-cols-2">
-                  <div>
+                <div className="mt-4 grid gap-4 border-t border-isr-light-blue/20 pt-4 sm:grid-cols-2">
+                  <dl>
                     <dt className="text-xs font-bold uppercase tracking-wide text-gray-500">
                       Brothers
                     </dt>
@@ -106,9 +106,9 @@ export default function JumuahServices() {
                     <dd className="mt-1 text-sm leading-relaxed text-gray-700">
                       {service.brothers}
                     </dd>
-                  </div>
+                  </dl>
 
-                  <div>
+                  <dl>
                     <dt className="text-xs font-bold uppercase tracking-wide text-gray-500">
                       Sisters
                     </dt>
@@ -116,8 +116,8 @@ export default function JumuahServices() {
                     <dd className="mt-1 text-sm leading-relaxed text-gray-700">
                       {service.sisters}
                     </dd>
-                  </div>
-                </dl>
+                  </dl>
+                </div>
 
                 <p className="mt-5 rounded-xl bg-isr-cream/60 px-4 py-3 text-xs leading-relaxed text-gray-600">
                   {service.notes}
