@@ -11,53 +11,64 @@ export default function ProgramCard({
   program: Program
 }) {
   return (
-    <article className="group flex h-full flex-col border-t-4 border-isr-turquoise bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md sm:p-6">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        <span className="text-xs font-bold uppercase tracking-[0.16em] text-isr-turquoise">
+    <article className="isr-card flex h-full flex-col p-5 sm:p-6">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="rounded-full bg-isr-turquoise/10 px-3 py-1.5 text-xs font-bold text-isr-turquoise">
           Weekly program
         </span>
 
-        <span className="text-xs font-semibold text-gray-500">
+        <span className="rounded-full bg-isr-cream px-3 py-1.5 text-xs font-bold text-isr-dark-red">
           {program.category}
         </span>
 
         {program.localDemo && (
-          <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-900">
+          <span className="rounded-full bg-amber-100 px-3 py-1.5 text-xs font-bold text-amber-900">
             Local demo
           </span>
         )}
       </div>
 
-      <h3 className="mt-4 text-2xl font-bold leading-tight text-isr-dark-red">
+      <h3 className="mt-5 text-2xl font-bold leading-tight text-isr-dark-red">
         <Link
-          href={'/programs/' + program.slug}
+          href={
+            '/programs/' +
+            program.slug
+          }
           className="transition hover:text-isr-turquoise"
         >
           {program.name}
         </Link>
       </h3>
 
-      <p className="mt-3 text-base font-bold leading-relaxed text-isr-turquoise">
-        {formatProgramSchedule(program)}
+      <p className="mt-3 font-semibold leading-relaxed text-isr-turquoise">
+        {formatProgramSchedule(
+          program,
+        )}
       </p>
 
-      <p className="mt-2 text-sm font-medium text-gray-600">
-        {[program.campusLabel, program.audience]
-          .filter(Boolean)
-          .join(' · ')}
-      </p>
+      <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-gray-600">
+        <span className="rounded-full bg-isr-cream px-3 py-1.5">
+          {program.campusLabel}
+        </span>
+
+        <span className="rounded-full bg-isr-cream px-3 py-1.5">
+          {program.audience}
+        </span>
+      </div>
 
       <p className="mt-5 flex-1 text-sm leading-relaxed text-gray-700">
         {program.summary}
       </p>
 
-      <div className="mt-5 border-y border-isr-light-blue/20 py-4">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-gray-500">
+      <div className="mt-5 rounded-2xl bg-isr-cream/70 p-4">
+        <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
           Attendance
         </p>
 
         <p className="mt-1 font-bold text-isr-dark-red">
-          {getProgramRegistrationLabel(program)}
+          {getProgramRegistrationLabel(
+            program,
+          )}
         </p>
 
         {program.price && (
@@ -67,16 +78,19 @@ export default function ProgramCard({
         )}
       </div>
 
-      <div className="mt-5 flex flex-wrap items-start justify-between gap-3">
-        <span className="max-w-[70%] text-sm leading-relaxed text-gray-600">
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-isr-light-blue/20 pt-5">
+        <span className="text-sm text-gray-600">
           {program.venue}
         </span>
 
         <Link
-          href={'/programs/' + program.slug}
-          className="inline-flex min-h-11 items-center font-bold text-isr-turquoise transition hover:text-isr-dark-red"
+          href={
+            '/programs/' +
+            program.slug
+          }
+          className="font-bold text-isr-turquoise transition hover:text-isr-dark-red"
         >
-          View program →
+          Program details →
         </Link>
       </div>
     </article>
