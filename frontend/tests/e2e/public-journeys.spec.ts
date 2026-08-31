@@ -96,6 +96,7 @@ test.describe('student task journeys', () => {
     await expect(
       bundoora.getByRole('heading', {
         name: 'Bundoora',
+        exact: true,
       }),
     ).toBeVisible()
 
