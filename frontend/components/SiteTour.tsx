@@ -9,8 +9,8 @@ import {
   usePathname,
 } from 'next/navigation'
 
-const TOUR_EVENT =
-  'isr:tour:start'
+const STORAGE_KEY = 'isr-public-tour-v1-complete'
+const TOUR_EVENT = 'isr:tour:start'
 
 type TourStep = {
   title: string
@@ -29,55 +29,53 @@ const STEPS: TourStep[] = [
   {
     title: 'Welcome to ISR',
     description:
-      'Use this short tour whenever you want a reminder of the main student pathways on the website.',
+      'Here is a quick guide to the main parts of the website so you always know where to go.',
   },
   {
     title: 'Pray at RMIT',
     description:
-      'Find prayer spaces, current prayer information and ISR Jumu’ah arrangements across RMIT.',
+      'Find prayer spaces, Jumuah arrangements and current prayer information across RMIT campuses.',
     selector: 'a[href="/pray"]',
   },
   {
     title: 'What’s On',
     description:
-      'Find one-off events, halaqas, workshops and recurring weekly programs in one place.',
+      'This is where ISR events and recurring weekly programs come together in one place.',
     selector: 'a[href="/events"]',
   },
   {
-    title: 'Campus Guide',
+    title: 'Campuses',
     description:
-      'Choose City, Bundoora or Brunswick for campus-specific prayer, Jumu’ah and activity information.',
+      'Open City, Bundoora and Brunswick campus information, including prayer and campus-specific activity.',
     selector: 'a[href="/campuses"]',
   },
   {
-    title: 'New Students',
+    title: 'Student Guide',
     description:
-      'Start with the Muslim student essentials if you are new to RMIT: prayer, Jumu’ah, community and support.',
+      'Use the Student Guide for Muslim student essentials and the journey from attending to joining, volunteering and leading.',
     selector: 'a[href="/student-guide"]',
   },
   {
     title: 'Student Support',
     description:
-      'If something is affecting your experience as a Muslim student, use Student Support to find the closest pathway.',
+      'If something is affecting your experience as a Muslim student, start here to find the right information or support pathway.',
     selector: 'a[href="/support"]',
   },
   {
     title: 'Join ISR',
     description:
-      'Find membership, community, volunteering and team opportunities without needing to understand ISR’s internal structure.',
+      'Membership, community, volunteering and ways to become more involved with ISR live here.',
     selector: 'a[href="/join"]',
   },
   {
-    title: 'Search ISR',
+    title: 'Search',
     description:
-      'When you know what you need but not where it lives, Search ISR can find pages, prayer spaces, programs, events and updates.',
+      'Not sure where something lives? Search ISR to quickly find the right page or information.',
     selector: 'a[href="/find"]',
   },
 ]
 
-function findVisibleElement(
-  selector?: string,
-): HTMLElement | null {
+function findVisibleElement(selector?: string): HTMLElement | null {
   if (!selector) return null
 
   const elements = Array.from(
@@ -103,8 +101,7 @@ export default function SiteTour() {
   const pathname = usePathname()
   const [active, setActive] = useState(false)
   const [index, setIndex] = useState(0)
-  const [spotlight, setSpotlight] =
-    useState<SpotlightRect | null>(null)
+  const [spotlight, setSpotlight] = useState<SpotlightRect | null>(null)
 
   const dialogRef = useRef<HTMLElement | null>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
@@ -120,6 +117,7 @@ export default function SiteTour() {
   }
 
   function finish() {
+    window.localStorage.setItem(STORAGE_KEY, 'true')
     setActive(false)
     restoreFocus()
   }
@@ -127,15 +125,25 @@ export default function SiteTour() {
   useEffect(() => {
     if (isAdmin) return
 
-    function startTour() {
+    function restartTour() {
       setIndex(0)
       setActive(true)
     }
 
-    window.addEventListener(TOUR_EVENT, startTour)
+    window.addEventListener(TOUR_EVENT, restartTour)
+
+    const timer = window.setTimeout(() => {
+      const complete = window.localStorage.getItem(STORAGE_KEY)
+
+      if (!complete) {
+        setIndex(0)
+        setActive(true)
+      }
+    }, 700)
 
     return () => {
-      window.removeEventListener(TOUR_EVENT, startTour)
+      window.clearTimeout(timer)
+      window.removeEventListener(TOUR_EVENT, restartTour)
     }
   }, [isAdmin])
 
@@ -157,6 +165,7 @@ export default function SiteTour() {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         event.preventDefault()
+        window.localStorage.setItem(STORAGE_KEY, 'true')
         setActive(false)
         restoreFocus()
         return
@@ -192,7 +201,6 @@ export default function SiteTour() {
           event.preventDefault()
           focusable[focusable.length - 1].focus()
         }
-
         return
       }
 
@@ -270,7 +278,7 @@ export default function SiteTour() {
       {spotlight ? (
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed rounded-xl border-2 border-isr-yellow transition-all duration-200"
+          className="pointer-events-none fixed rounded-2xl border-2 border-isr-yellow transition-all duration-200"
           style={{
             top: spotlight.top,
             left: spotlight.left,
@@ -280,10 +288,7 @@ export default function SiteTour() {
           }}
         />
       ) : (
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-black/70"
-        />
+        <div aria-hidden="true" className="absolute inset-0 bg-black/70" />
       )}
 
       <section
@@ -293,7 +298,7 @@ export default function SiteTour() {
         aria-modal="true"
         aria-labelledby="isr-tour-title"
         aria-describedby="isr-tour-description"
-        className="fixed bottom-4 left-1/2 max-h-[calc(100vh-2rem)] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 overflow-y-auto rounded-2xl bg-white p-5 shadow-2xl outline-none sm:bottom-8 sm:p-6"
+        className="fixed bottom-4 left-1/2 max-h-[calc(100vh-2rem)] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 overflow-y-auto rounded-[1.5rem] bg-white p-5 shadow-2xl outline-none sm:bottom-8 sm:p-6"
       >
         <div className="flex items-start justify-between gap-5">
           <div>
@@ -314,7 +319,7 @@ export default function SiteTour() {
             onClick={finish}
             className="min-h-11 rounded-full px-3 py-2 text-sm font-semibold text-gray-500 transition hover:bg-gray-100 hover:text-isr-dark-red"
           >
-            Close
+            Skip tour
           </button>
         </div>
 
@@ -357,9 +362,7 @@ export default function SiteTour() {
           </button>
         </div>
 
-        <p className="sr-only">
-          Press Escape to close the website tour.
-        </p>
+        <p className="sr-only">Press Escape to close the website tour.</p>
       </section>
     </div>
   )
