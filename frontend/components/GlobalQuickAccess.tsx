@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -59,15 +60,15 @@ export default function GlobalQuickAccess() {
   const panelRef = useRef<HTMLDivElement | null>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
 
-  function openPanel() {
+  const openPanel = useCallback(() => {
     previousFocusRef.current =
       document.activeElement instanceof HTMLElement
         ? document.activeElement
         : null
     setOpen(true)
-  }
+  }, [])
 
-  function closePanel() {
+  const closePanel = useCallback(() => {
     setOpen(false)
     const previous = previousFocusRef.current
     previousFocusRef.current = null
@@ -75,15 +76,15 @@ export default function GlobalQuickAccess() {
     window.requestAnimationFrame(() => {
       previous?.focus()
     })
-  }
+  }, [])
 
-  function togglePanel() {
+  const togglePanel = useCallback(() => {
     if (open) {
       closePanel()
     } else {
       openPanel()
     }
-  }
+  }, [closePanel, open, openPanel])
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -98,12 +99,7 @@ export default function GlobalQuickAccess() {
         event.key.toLowerCase() === 'k'
       ) {
         event.preventDefault()
-
-        if (open) {
-          closePanel()
-        } else {
-          openPanel()
-        }
+        togglePanel()
         return
       }
 
@@ -124,7 +120,7 @@ export default function GlobalQuickAccess() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [open])
+  }, [closePanel, open, togglePanel])
 
   useEffect(() => {
     if (!open || !panelRef.current) return
