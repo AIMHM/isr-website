@@ -225,7 +225,6 @@
     gap: 0.35rem;
     font-size: 0.875rem;
     font-weight: 700;
-    color: #39766D;
     transition: color 180ms ease;
   }
 
@@ -241,8 +240,13 @@
  * the white/cream surfaces used across the public site.
  */
 @layer utilities {
-  .text-isr-turquoise {
+  .text-isr-turquoise,
+  .isr-text-link {
     color: #39766D;
+  }
+
+  .isr-text-link:hover {
+    color: #5B0B05;
   }
 
   .text-gray-500 {
