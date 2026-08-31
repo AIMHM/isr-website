@@ -187,8 +187,8 @@ export default function ManagedPrayerSpaceDirectory() {
                     </p>
                   )}
 
-                  <dl className="mt-6 space-y-4">
-                    <div className="border-t border-isr-light-blue/20 pt-4">
+                  <dl className="mt-6 grid gap-4 sm:grid-cols-2">
+                    <div className="border-t border-isr-light-blue/20 pt-4 sm:col-span-2">
                       <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                         Building
                       </dt>
@@ -198,7 +198,7 @@ export default function ManagedPrayerSpaceDirectory() {
                       </dd>
                     </div>
 
-                    <div className="border-t border-isr-light-blue/20 pt-4">
+                    <div className="border-t border-isr-light-blue/20 pt-4 sm:col-span-2">
                       <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                         Prayer rooms
                       </dt>
@@ -208,7 +208,7 @@ export default function ManagedPrayerSpaceDirectory() {
                       </dd>
                     </div>
 
-                    <div className="border-t border-isr-light-blue/20 pt-4">
+                    <div className="border-t border-isr-light-blue/20 pt-4 sm:col-span-2">
                       <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                         Published hours
                       </dt>
@@ -218,29 +218,27 @@ export default function ManagedPrayerSpaceDirectory() {
                       </dd>
                     </div>
 
-                    <div className="grid gap-4 border-t border-isr-light-blue/20 pt-4 sm:grid-cols-2">
-                      <div>
-                        <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                          Brothers
-                        </dt>
+                    <div className="border-t border-isr-light-blue/20 pt-4">
+                      <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        Brothers
+                      </dt>
 
-                        <dd className="mt-1 text-sm leading-relaxed text-gray-700">
-                          {space.brothers}
-                        </dd>
-                      </div>
-
-                      <div>
-                        <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                          Sisters
-                        </dt>
-
-                        <dd className="mt-1 text-sm leading-relaxed text-gray-700">
-                          {space.sisters}
-                        </dd>
-                      </div>
+                      <dd className="mt-1 text-sm leading-relaxed text-gray-700">
+                        {space.brothers}
+                      </dd>
                     </div>
 
                     <div className="border-t border-isr-light-blue/20 pt-4">
+                      <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        Sisters
+                      </dt>
+
+                      <dd className="mt-1 text-sm leading-relaxed text-gray-700">
+                        {space.sisters}
+                      </dd>
+                    </div>
+
+                    <div className="border-t border-isr-light-blue/20 pt-4 sm:col-span-2">
                       <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                         Wudu
                       </dt>
@@ -250,7 +248,7 @@ export default function ManagedPrayerSpaceDirectory() {
                       </dd>
                     </div>
 
-                    <div className="border-t border-isr-light-blue/20 pt-4">
+                    <div className="border-t border-isr-light-blue/20 pt-4 sm:col-span-2">
                       <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                         Accessibility
                       </dt>
