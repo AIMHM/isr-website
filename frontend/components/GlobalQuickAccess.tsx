@@ -183,7 +183,7 @@ export default function GlobalQuickAccess() {
       >
         <span aria-hidden="true" className="text-lg">⌕</span>
         <span>Quick access</span>
-        <span aria-hidden="true" className="hidden text-[10px] font-bold opacity-60 sm:inline">
+        <span aria-hidden="true" className="hidden text-[10px] font-bold opacity-70 sm:inline">
           Ctrl K
         </span>
       </button>
