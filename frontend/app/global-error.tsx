@@ -3,6 +3,7 @@
 import {
   useEffect,
 } from 'react'
+import Link from 'next/link'
 
 export default function GlobalError({
   error,
@@ -108,7 +109,7 @@ export default function GlobalError({
                 Try again
               </button>
 
-              <a
+              <Link
                 href="/"
                 style={{
                   minHeight: '48px',
@@ -125,7 +126,7 @@ export default function GlobalError({
                 }}
               >
                 ISR homepage
-              </a>
+              </Link>
 
               <a
                 href="mailto:isr@rmit.edu.au"
