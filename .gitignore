@@ -13,6 +13,13 @@ frontend/out/
 dist/
 build/
 
+# Generated deployment packages and staging workspaces
+*-deploy.zip
+*-flat.zip
+deploy-check/
+deploy-staging/
+deploy-temp/
+
 # Logs
 *.log
 npm-debug.log*
