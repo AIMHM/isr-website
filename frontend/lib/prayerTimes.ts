@@ -1,5 +1,6 @@
 import {
   API_BASE_URL,
+  fetchWithTimeout,
 } from '@/lib/api'
 import {
   MOCK_PRAYER_TIMES,
@@ -135,7 +136,7 @@ export async function fetchPrayerTimes():
   }
 
   const response =
-    await fetch(
+    await fetchWithTimeout(
       `${API_BASE_URL}/api/prayer-times`,
     )
 
@@ -218,7 +219,7 @@ export async function fetchPrayerTimesForDate(
   }
 
   const response =
-    await fetch(
+    await fetchWithTimeout(
       `${API_BASE_URL}/api/prayer-times/${date}`,
     )
 
