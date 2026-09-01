@@ -18,6 +18,10 @@ const PUBLIC_ROUTES = [
   '/links',
   '/find',
   '/contact',
+  '/updates',
+  '/privacy',
+  '/governance',
+  '/accessibility',
 ] as const
 
 const ACCESSIBILITY_ROUTES = PUBLIC_ROUTES
