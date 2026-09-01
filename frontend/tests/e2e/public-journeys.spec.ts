@@ -32,6 +32,44 @@ const ACCESSIBILITY_ROUTES = [
 
 const TOUR_STORAGE_KEY = 'isr-public-tour-v1-complete'
 
+const E2E_SCHEDULED_EVENT = {
+  id: 9001,
+  name: 'Demo: ISR Heritage Dinner',
+  date: '2099-09-20T05:30:00.000Z',
+  endDate: '2099-09-20T10:00:00.000Z',
+  imageUrl: '',
+  description:
+    'Deterministic browser-QA event used only inside the Playwright test.',
+  ticketUrl: 'https://example.com/register',
+  registrationMode: 'required',
+  venue: 'RMIT Building 16, Storey Hall',
+  campus: 'City campus',
+  audience: 'RMIT students and invited guests',
+  price: '$15',
+  accessibility: 'Contact ISR for accessibility arrangements.',
+  status: 'scheduled',
+  statusNote: null,
+}
+
+const E2E_POSTPONED_EVENT = {
+  id: 9002,
+  name: 'Demo: Weekly Brothers Halaqa',
+  date: '2099-09-25T07:30:00.000Z',
+  endDate: '2099-09-25T09:00:00.000Z',
+  imageUrl: '',
+  description:
+    'Deterministic postponed event used only inside the Playwright test.',
+  ticketUrl: 'https://example.com/register',
+  registrationMode: 'required',
+  venue: 'RMIT City campus',
+  campus: 'City campus',
+  audience: 'Brothers',
+  price: 'Free',
+  accessibility: 'Contact ISR for accessibility arrangements.',
+  status: 'postponed',
+  statusNote: 'A new date is being confirmed.',
+}
+
 test.beforeEach(async ({ page }, testInfo) => {
   if (testInfo.title.includes('first-time visitors')) {
     return
@@ -169,7 +207,17 @@ test.describe('student task journeys', () => {
     ).toBeVisible()
   })
 
-  test('event detail renders the selected published-style record', async ({ page }) => {
+  test('event detail recovers through the client API and renders the selected record', async ({ page }) => {
+    await page.route('**/api/events/9001', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: E2E_SCHEDULED_EVENT,
+        }),
+      })
+    })
+
     const response = await page.goto('/events/9001')
 
     expect(response?.status()).toBeLessThan(400)
@@ -177,7 +225,7 @@ test.describe('student task journeys', () => {
     await expect(
       page.getByRole('heading', {
         level: 1,
-        name: 'Demo: ISR Heritage Dinner',
+        name: E2E_SCHEDULED_EVENT.name,
       }),
     ).toBeVisible()
     await expect(
@@ -188,12 +236,22 @@ test.describe('student task journeys', () => {
   })
 
   test('postponed events never expose a registration action', async ({ page }) => {
+    await page.route('**/api/events/9002', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: E2E_POSTPONED_EVENT,
+        }),
+      })
+    })
+
     await page.goto('/events/9002')
 
     await expect(
       page.getByRole('heading', {
         level: 1,
-        name: 'Demo: Weekly Brothers Halaqa',
+        name: E2E_POSTPONED_EVENT.name,
       }),
     ).toBeVisible()
     await expect(page.locator('#main-content')).toContainText(
