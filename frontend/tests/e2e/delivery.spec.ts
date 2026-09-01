@@ -32,6 +32,24 @@ test.describe('public delivery safeguards', () => {
     expect(headers['permissions-policy']).toContain('geolocation=()')
   })
 
+  test('admin pages are private, uncached and excluded from indexing', async ({ page }) => {
+    const response = await page.goto('/admin/login')
+
+    expect(response).not.toBeNull()
+    expect(response?.status()).toBeLessThan(400)
+
+    const headers = response?.headers() ?? {}
+
+    expect(headers['cache-control']).toContain('private')
+    expect(headers['cache-control']).toContain('no-store')
+    expect(headers['x-robots-tag']).toContain('noindex')
+    expect(headers['x-robots-tag']).toContain('nofollow')
+
+    const robots = page.locator('meta[name="robots"]')
+    await expect(robots).toHaveAttribute('content', /noindex/i)
+    await expect(robots).toHaveAttribute('content', /nofollow/i)
+  })
+
   test('robots exposes the production crawl policy and sitemap', async ({ request }) => {
     const response = await request.get('/robots.txt')
 
