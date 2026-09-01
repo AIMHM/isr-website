@@ -12,6 +12,9 @@ import contactRouter from "./routes/contact";
 import weatherRouter from "./routes/weather";
 import announcementsRouter from "./routes/announcements";
 import prayerContentRouter from "./routes/prayerContent";
+import {
+  getReadiness,
+} from "./controllers/healthController";
 
 import {
   createRateLimiter,
@@ -99,6 +102,11 @@ app.get(
   (_req, res) => {
     res.status(200).send("OK");
   },
+);
+
+app.get(
+  "/health/ready",
+  getReadiness,
 );
 
 app.use(
