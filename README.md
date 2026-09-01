@@ -1,171 +1,195 @@
 # ISR Website
 
-The official website for the **Islamic Society of RMIT (ISR)** — a hub for RMIT Muslim students and the broader RMIT community to find prayer times, stay up to date with events, and connect with ISR.
+Website development repository for the **Islamic Society of RMIT (ISR)**.
 
-https://theisr.com.au
+Public site: https://theisr.com.au
 
----
+> **Development safety:** active Website 2.0 work happens on the `ideas` branch. Do not deploy, migrate a production database, change DNS/hosting, or merge this work into production as part of ordinary development or review.
 
-## Table of Contents
+## What this repository contains
 
-- [Overview](#overview)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Pages & Features](#pages--features)
-- [Colour Palette](#colour-palette)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [Roadmap](#roadmap)
+This is a monorepo with:
 
----
+- `frontend/` — Next.js 15 public website and admin interface
+- `backend/` — Express 5 API, Prisma and Supabase integrations
+- `.github/workflows/ci.yml` — automated quality, security and browser checks
+- `PRODUCTION_MIGRATION_RUNBOOK.md` — guarded production database procedure for an explicitly authorised release only
 
-## Overview
+The public experience includes prayer and Jumu’ah information, campus guidance, events and weekly programs, student support, membership/community pathways, ISR updates, search, contact information and accessibility/privacy/governance pages.
 
-This is a monorepo containing both the **Next.js frontend** and the **Express backend** for the ISR website. The site provides:
+## Branches
 
-- Live prayer times sourced from an external API
-- An admin-managed events board
-- Information about ISR's mission, vision, and team
-- Links to ISR's social platforms and membership registration
+| Branch | Purpose |
+| --- | --- |
+| `ideas` | Active development and team-review branch |
+| `main` | Do not modify or merge into without explicit release approval |
+| `restore/pre-master-prompt` | Preserved restore point for the earlier preferred visual baseline |
+| `backup/post-master-prompt` | Preserved backup of the later visual redesign work |
 
-**Target audience:** RMIT Muslim students and the general RMIT student community.
+## Fastest safe way to review the website
 
-**Target launch:** Semester 2, 2026.
+For **UI/UX review**, you do not need a Supabase project and you should not connect the development site to the existing production database.
 
----
+### Requirements
 
-## Tech Stack
+- Node.js 22 recommended
+- npm
 
-| Layer     | Technology                          |
-|-----------|-------------------------------------|
-| Frontend  | [Next.js](https://nextjs.org/)      |
-| Backend   | [Express.js](https://expressjs.com/)|
-| Database  | [Supabase](https://supabase.com/)   |
-| Auth      | Supabase Auth (admin panel)         |
-| Prayer Times | [Aladhan API](https://aladhan.com/prayer-times-api) (or equivalent) |
-| Hosting   | TBD                                 |
+### Windows / PowerShell
 
----
+```powershell
+$ErrorActionPreference = "Stop"
 
-## Project Structure
+git clone https://github.com/AIMHM/isr-website.git
+Set-Location .\isr-website
+git switch ideas
 
-```
-isr-website/
-├── frontend/          # Next.js app
-│   ├── app/           # App router pages and layouts
-│   ├── components/    # Shared UI components
-│   └── public/        # Static assets
-├── backend/           # Express API server
-│   ├── routes/        # API route handlers
-│   ├── middleware/     # Auth and other middleware
-│   └── index.js       # Entry point
-└── README.md
+Set-Location .\frontend
+npm.cmd ci
+
+@"
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:4000
+NEXT_PUBLIC_LOCAL_ADMIN_MODE=false
+NEXT_PUBLIC_USE_MOCK_DATA=true
+"@ | Set-Content .env.local
+
+npm.cmd run dev
 ```
 
----
+Open `http://localhost:3000`.
 
-## Pages & Features
+This review configuration uses the frontend's development/mock-data path and does **not** require production Supabase credentials.
 
-| Page / Feature     | Description                                                                 |
-|--------------------|-----------------------------------------------------------------------------|
-| **Home**           | Landing page with hero section, prayer times, and highlights                |
-| **Events**         | Upcoming and past ISR events, managed by admins via an authenticated panel  |
-| **Mission & Vision** | ISR's core values, mission, and vision statements                         |
-| **About Us**       | Information about ISR and its committee                                     |
-| **Contact**        | Contact form and links to WhatsApp and Instagram                            |
-| **Become a Member**| Redirects to the external ISR membership registration page                  |
-| **Admin Panel**    | Protected route for committee members to create, edit, and delete events    |
-
----
-
-## Colour Palette
-
-Use ISR's exact brand colours throughout the site.
-
-| Name        | Hex       | Preview |
-|-------------|-----------|---------|
-| Cream       | `#EAE3D8` | ![#EAE3D8](https://placehold.co/16x16/EAE3D8/EAE3D8.png) |
-| Light Blue  | `#98AEA8` | ![#98AEA8](https://placehold.co/16x16/98AEA8/98AEA8.png) |
-| Yellow-ish  | `#EBE8CB` | ![#EBE8CB](https://placehold.co/16x16/EBE8CB/EBE8CB.png) |
-| Turquoise   | `#509589` | ![#509589](https://placehold.co/16x16/509589/509589.png) |
-| Dark Red    | `#5B0B05` | ![#5B0B05](https://placehold.co/16x16/5B0B05/5B0B05.png) |
-| Bright Red  | `#D43325` | ![#D43325](https://placehold.co/16x16/D43325/D43325.png) |
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- npm or pnpm
-- A Supabase project (see [Environment Variables](#environment-variables))
-
-### Installation
+### macOS / Linux
 
 ```bash
-# Clone the repo
-git clone https://github.com/Captain-Fahd/isr-website.git
+git clone https://github.com/AIMHM/isr-website.git
 cd isr-website
-
-# Install frontend dependencies
+git switch ideas
 cd frontend
-npm install
+npm ci
 
-# Install backend dependencies
-cd ../backend
-npm install
-```
+cat > .env.local <<'EOF'
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:4000
+NEXT_PUBLIC_LOCAL_ADMIN_MODE=false
+NEXT_PUBLIC_USE_MOCK_DATA=true
+EOF
 
-### Running locally
-
-```bash
-# In one terminal — start the backend
-cd backend
-npm run dev
-
-# In another terminal — start the frontend
-cd frontend
 npm run dev
 ```
 
-The frontend will be available at `http://localhost:3000` and the backend at `http://localhost:4000` (or as configured in your `.env`).
+Open `http://localhost:3000`.
 
----
+## Full local stack
 
-## Environment Variables
+Only use the backend when you are intentionally developing or testing backend behaviour. Use **development/test credentials and a non-production database**.
 
-Create a `.env.local` file in `frontend/` and a `.env` file in `backend/`. **Never commit these files.**
+In separate terminals:
 
-### `frontend/.env.local`
+```text
+backend/  -> npm run dev
+frontend/ -> npm run dev
+```
+
+Defaults are normally:
+
+- frontend: `http://localhost:3000`
+- backend: `http://localhost:4000`
+
+### Frontend environment
+
+`frontend/.env.local`
 
 ```env
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_API_URL=http://localhost:4000
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_LOCAL_ADMIN_MODE=false
+NEXT_PUBLIC_USE_MOCK_DATA=true
 ```
 
-### `backend/.env`
+Set `NEXT_PUBLIC_USE_MOCK_DATA=false` only when deliberately testing a configured development backend.
+
+### Backend environment
+
+The backend expects configuration for its database/Supabase connection, allowed frontend origins, weather service and email service. Never place production secrets in chat, source control, screenshots or committed `.env` files.
+
+Relevant keys include:
 
 ```env
 PORT=4000
-SUPABASE_URL=your_supabase_url
-SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
-PRAYER_API_URL=https://api.aladhan.com/v1
-DATABASE_URL=your_database_url
+DATABASE_URL=...
+SUPABASE_URL=...
+SUPABASE_PUBLISHABLE_KEY=...
+SUPABASE_ANON_KEY=...
+SUPABASE_SECRET_KEY=...
+CORS_ALLOWED_ORIGINS=http://localhost:3000
+WEATHER_API_KEY=...
+RESEND_API_KEY=...
+RESEND_FROM_ADDRESS=...
 ```
 
----
+`.env` and `.env.local` are ignored by Git.
 
-## Roadmap
+## Quality checks
 
-- [ ] Project scaffolding (Next.js + Express + Supabase)
-- [ ] Global layout, navigation, and colour system
-- [ ] Prayer times page (Aladhan API integration)
-- [ ] Events listing page
-- [ ] Admin auth and event management panel
-- [ ] Mission & Vision and About Us pages
-- [ ] Contact page (form + social links)
-- [ ] Become a Member redirect
-- [ ] Deployment setup
-- [ ] Launch — Semester 2, 2026
+Every push to `ideas` runs GitHub Actions checks covering:
+
+- frontend production dependency security audit
+- TypeScript type-checking
+- ESLint
+- public-route/link QA
+- Next.js production build
+- Playwright browser journeys on desktop and mobile
+- automated WCAG A/AA checks with axe-core
+- baseline HTTP security headers
+- robots, sitemap and web-app manifest checks
+- JavaScript delivery budgets for core public routes
+- backend production dependency security audit
+- Prisma schema validation and client generation
+- backend Jest tests
+- backend predeployment audit
+- backend production build
+
+Useful local commands:
+
+```text
+frontend: npm run lint
+frontend: npx tsc --noEmit
+frontend: npm run isr:public-qa
+frontend: npm run build
+frontend: npm run test:e2e
+
+backend:  npx prisma validate
+backend:  npm test -- --runInBand
+backend:  npm run audit:predeploy
+backend:  npm run build
+```
+
+## Current delivery profile
+
+The website is built with the Next.js App Router. Public routes are tested at desktop and mobile widths, and core page JavaScript delivery is guarded in CI. Public network requests are bounded so an unavailable external service cannot leave the interface waiting indefinitely.
+
+The admin area is intentionally excluded from indexing and is served with private/no-store caching rules.
+
+## Brand colours
+
+| Name | Hex |
+| --- | --- |
+| Cream | `#EAE3D8` |
+| Light Blue | `#98AEA8` |
+| Yellow | `#EBE8CB` |
+| Turquoise | `#509589` |
+| Dark Red | `#5B0B05` |
+| Bright Red | `#D43325` |
+
+The brighter turquoise remains the brand surface/decorative colour. Accessible readable text uses a darker companion shade where required to meet WCAG contrast.
+
+## Production boundary
+
+Development readiness is **not** production authorisation.
+
+Before any future release, the exact release SHA, environment configuration, database backup, migration status, hosting configuration and final public QA must be reviewed against the production runbook. Production database scripts in this repository contain explicit confirmation gates by design.
+
+Do not run production backup/migration procedures or connect development work to the existing production Supabase project merely to review how the website looks.
