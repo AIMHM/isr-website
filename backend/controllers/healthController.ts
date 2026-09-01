@@ -8,16 +8,30 @@ import {
 
 const READINESS_TIMEOUT_MS = 2_000;
 
-function readinessTimeout(): Promise<never> {
-  return new Promise((_, reject) => {
-    setTimeout(() => {
-      reject(
-        new Error(
-          "Database readiness check timed out",
-        ),
-      );
-    }, READINESS_TIMEOUT_MS);
-  });
+async function checkDatabaseReadiness(): Promise<void> {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+
+  try {
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeout = setTimeout(() => {
+        reject(
+          new Error(
+            "Database readiness check timed out",
+          ),
+        );
+      }, READINESS_TIMEOUT_MS);
+    });
+
+    await Promise.race([
+      prisma.$queryRaw`SELECT 1`,
+      timeoutPromise,
+    ]);
+  }
+  finally {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+  }
 }
 
 export const getReadiness = async (
@@ -30,10 +44,7 @@ export const getReadiness = async (
   );
 
   try {
-    await Promise.race([
-      prisma.$queryRaw`SELECT 1`,
-      readinessTimeout(),
-    ]);
+    await checkDatabaseReadiness();
 
     res.status(200).json({
       status: "ready",
