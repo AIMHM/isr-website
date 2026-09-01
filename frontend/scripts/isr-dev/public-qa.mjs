@@ -209,6 +209,13 @@ const generatedRoutes =
     '/manifest.webmanifest',
   ])
 
+// Public utility routes can be intentionally discoverable through the UI
+// while excluded from search-engine indexing and the XML sitemap.
+const noIndexRoutes =
+  new Set([
+    '/find',
+  ])
+
 function routeExists(
   target,
 ) {
@@ -455,6 +462,16 @@ if (
         `Sitemap route does not exist: ${route}`,
       )
     }
+
+    if (
+      noIndexRoutes.has(
+        route,
+      )
+    ) {
+      errors.push(
+        `Noindex route must not be listed in sitemap: ${route}`,
+      )
+    }
   }
 
   for (
@@ -468,7 +485,10 @@ if (
       route ===
         '/announcements' ||
       route ===
-        '/start'
+        '/start' ||
+      noIndexRoutes.has(
+        route,
+      )
     ) {
       continue
     }
