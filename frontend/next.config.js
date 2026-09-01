@@ -2,6 +2,12 @@
 const nextConfig = {
   reactStrictMode: true,
 
+  // Lint runs as its own blocking CI step. Keeping it out of `next build`
+  // avoids Next 15 invoking legacy ESLint options against the flat config.
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   images: {
     remotePatterns: [
       {
