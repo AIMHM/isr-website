@@ -1,7 +1,10 @@
 import {
   MELBOURNE_TIME_ZONE,
 } from '@/lib/dateTime'
-import { API_BASE_URL } from '@/lib/api'
+import {
+  API_BASE_URL,
+  fetchWithTimeout,
+} from '@/lib/api'
 import { MOCK_ANNOUNCEMENTS } from '@/lib/mockData'
 import { IS_LOCAL_MOCK_DATA } from '@/lib/mockMode'
 import {
@@ -122,7 +125,7 @@ export async function fetchAnnouncements(): Promise<
 > {
   if (IS_LOCAL_ADMIN_MODE) {
     const response =
-      await fetch(
+      await fetchWithTimeout(
         localAdminApiUrl(
           '/announcements',
         ),
@@ -169,7 +172,7 @@ export async function fetchAnnouncements(): Promise<
   }
 
   const response =
-    await fetch(
+    await fetchWithTimeout(
       `${API_BASE_URL}/api/announcements`,
       fetchOptions(),
     )
