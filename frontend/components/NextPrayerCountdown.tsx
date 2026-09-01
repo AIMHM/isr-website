@@ -2,7 +2,6 @@
 
 import {
   useEffect,
-  useMemo,
   useState,
 } from 'react'
 import {
@@ -10,7 +9,6 @@ import {
   fetchPrayerTimesForDate,
   getNextPrayer,
   melbourneApiDate,
-  type DailyPrayer,
   type PrayerTimesData,
 } from '@/lib/prayerTimes'
 
@@ -42,7 +40,9 @@ function parsePrayerTime(
   }
 }
 
-function melbourneSeconds() {
+function melbourneSeconds(
+  now = Date.now(),
+) {
   const parts =
     new Intl.DateTimeFormat(
       'en-AU',
@@ -63,7 +63,9 @@ function melbourneSeconds() {
           false,
       },
     ).formatToParts(
-      new Date(),
+      new Date(
+        now,
+      ),
     )
 
   const get =
@@ -97,9 +99,13 @@ function melbourneSeconds() {
   )
 }
 
-function currentMelbourneMinutes() {
+function currentMelbourneMinutes(
+  now = Date.now(),
+) {
   return Math.floor(
-    melbourneSeconds() /
+    melbourneSeconds(
+      now,
+    ) /
       60,
   )
 }
@@ -125,6 +131,7 @@ function prayerMinutes(
 function isAfterIsha(
   timings:
     Record<string, string>,
+  now = Date.now(),
 ): boolean {
   const isha =
     prayerMinutes(
@@ -136,13 +143,16 @@ function isAfterIsha(
   }
 
   return (
-    currentMelbourneMinutes() >=
+    currentMelbourneMinutes(
+      now,
+    ) >=
     isha
   )
 }
 
 function secondsUntil(
   value: string,
+  now = Date.now(),
 ) {
   const parsed =
     parsePrayerTime(
@@ -153,21 +163,23 @@ function secondsUntil(
     return null
   }
 
-  const now =
-    melbourneSeconds()
+  const current =
+    melbourneSeconds(
+      now,
+    )
 
   let target =
     parsed.hour * 3600 +
     parsed.minute * 60
 
-  if (target <= now) {
+  if (target <= current) {
     target +=
       24 * 3600
   }
 
   return Math.max(
     0,
-    target - now,
+    target - current,
   )
 }
 
@@ -237,7 +249,9 @@ function displayTime(
   )} ${suffix}`
 }
 
-function displayDate() {
+function displayDate(
+  now = Date.now(),
+) {
   return new Intl.DateTimeFormat(
     'en-AU',
     {
@@ -257,7 +271,9 @@ function displayDate() {
         'numeric',
     },
   ).format(
-    new Date(),
+    new Date(
+      now,
+    ),
   )
 }
 
@@ -408,32 +424,19 @@ export default function NextPrayerCountdown() {
   }, [])
 
   const next =
-    useMemo<DailyPrayer | null>(
-      () =>
-        data
-          ? getNextPrayer(
-              data.timings,
-            )
-          : null,
-      [
-        data,
-        tick,
-      ],
-    )
+    data
+      ? getNextPrayer(
+          data.timings,
+        )
+      : null
 
   const afterIsha =
-    useMemo(
-      () =>
-        data
-          ? isAfterIsha(
-              data.timings,
-            )
-          : false,
-      [
-        data,
-        tick,
-      ],
-    )
+    data
+      ? isAfterIsha(
+          data.timings,
+          tick,
+        )
+      : false
 
   const time =
     next &&
@@ -450,18 +453,12 @@ export default function NextPrayerCountdown() {
       : null
 
   const remaining =
-    useMemo(
-      () =>
-        time
-          ? secondsUntil(
-              time,
-            )
-          : null,
-      [
-        time,
-        tick,
-      ],
-    )
+    time
+      ? secondsUntil(
+          time,
+          tick,
+        )
+      : null
 
   if (loading) {
     return (
@@ -545,7 +542,9 @@ export default function NextPrayerCountdown() {
       </div>
 
       <p className="mt-5 text-xs font-semibold text-white/55">
-        {displayDate()}
+        {displayDate(
+          tick,
+        )}
       </p>
 
       <p className="mt-4 text-xs leading-relaxed text-white/45">
