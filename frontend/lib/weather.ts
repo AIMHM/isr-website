@@ -1,5 +1,6 @@
 import {
   API_BASE_URL,
+  fetchWithTimeout,
 } from '@/lib/api'
 import {
   MOCK_WEATHER,
@@ -51,7 +52,7 @@ export async function fetchWeather():
   }
 
   const response =
-    await fetch(
+    await fetchWithTimeout(
       `${API_BASE_URL}/api/weather`,
     )
 
