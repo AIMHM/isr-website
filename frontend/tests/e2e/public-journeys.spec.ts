@@ -179,6 +179,39 @@ test.describe('student task journeys', () => {
     ).toBeVisible()
   })
 
+  test('quick access opens from the keyboard, locks the page and restores focus', async ({ page }) => {
+    await page.goto('/')
+
+    const quickAccessButton = page.getByRole('button', {
+      name: /Quick access/i,
+    })
+
+    await quickAccessButton.focus()
+    await expect(quickAccessButton).toBeFocused()
+
+    await page.keyboard.press('Control+k')
+
+    const dialog = page.getByRole('dialog', {
+      name: 'Where do you need to go?',
+    })
+
+    await expect(dialog).toBeVisible()
+    await expect(
+      dialog.getByRole('link', {
+        name: /Search ISR/i,
+      }),
+    ).toBeFocused()
+
+    expect(
+      await page.locator('body').evaluate((body) => body.style.overflow),
+    ).toBe('hidden')
+
+    await page.keyboard.press('Escape')
+
+    await expect(dialog).toBeHidden()
+    await expect(quickAccessButton).toBeFocused()
+  })
+
   test('mobile navigation opens, locks the page and restores focus', async ({
     page,
   }, testInfo) => {
