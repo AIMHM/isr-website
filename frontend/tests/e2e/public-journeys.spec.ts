@@ -24,7 +24,11 @@ const PUBLIC_ROUTES = [
   '/accessibility',
 ] as const
 
-const ACCESSIBILITY_ROUTES = PUBLIC_ROUTES
+const ACCESSIBILITY_ROUTES = [
+  ...PUBLIC_ROUTES,
+  '/events/9001',
+  '/events/9002',
+] as const
 
 const TOUR_STORAGE_KEY = 'isr-public-tour-v1-complete'
 
@@ -163,6 +167,43 @@ test.describe('student task journeys', () => {
         name: /Join ISR/i,
       }).first(),
     ).toBeVisible()
+  })
+
+  test('event detail renders the selected published-style record', async ({ page }) => {
+    const response = await page.goto('/events/9001')
+
+    expect(response?.status()).toBeLessThan(400)
+    await expect(page.locator('#main-content')).toBeVisible()
+    await expect(
+      page.getByRole('heading', {
+        level: 1,
+        name: 'Demo: ISR Heritage Dinner',
+      }),
+    ).toBeVisible()
+    await expect(
+      page.getByRole('link', {
+        name: /Back to events/i,
+      }).first(),
+    ).toHaveAttribute('href', '/events')
+  })
+
+  test('postponed events never expose a registration action', async ({ page }) => {
+    await page.goto('/events/9002')
+
+    await expect(
+      page.getByRole('heading', {
+        level: 1,
+        name: 'Demo: Weekly Brothers Halaqa',
+      }),
+    ).toBeVisible()
+    await expect(page.locator('#main-content')).toContainText(
+      'This event has been postponed',
+    )
+    await expect(
+      page.getByRole('link', {
+        name: /Register for this event/i,
+      }),
+    ).toHaveCount(0)
   })
 
   test('unknown URLs provide recovery rather than a dead end', async ({ page }) => {
