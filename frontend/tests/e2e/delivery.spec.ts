@@ -3,6 +3,14 @@ import {
   test,
 } from '@playwright/test'
 
+const CORE_PUBLIC_ROUTES = [
+  '/',
+  '/pray',
+  '/events',
+] as const
+
+const MAX_CORE_ROUTE_JS_BYTES = 300 * 1024
+
 test.describe('public delivery safeguards', () => {
   test('public pages send the baseline security headers', async ({ request }) => {
     const response = await request.get('/')
@@ -75,4 +83,32 @@ test.describe('public delivery safeguards', () => {
       ]),
     )
   })
+
+  for (const route of CORE_PUBLIC_ROUTES) {
+    test(`${route} stays within the core JavaScript delivery budget`, async ({ page }) => {
+      await page.goto(route)
+      await expect(page.locator('#main-content')).toBeVisible()
+
+      const javascriptBytes = await page.evaluate(() =>
+        performance
+          .getEntriesByType('resource')
+          .map((entry) => entry as PerformanceResourceTiming)
+          .filter((entry) =>
+            entry.name.includes('/_next/static/chunks/') &&
+            (entry.initiatorType === 'script' || entry.name.endsWith('.js')),
+          )
+          .reduce(
+            (total, entry) =>
+              total +
+              (entry.transferSize || entry.encodedBodySize || 0),
+            0,
+          ),
+      )
+
+      expect(
+        javascriptBytes,
+        `${route} delivered ${Math.round(javascriptBytes / 1024)} kB of Next.js JavaScript; budget is ${MAX_CORE_ROUTE_JS_BYTES / 1024} kB.`,
+      ).toBeLessThanOrEqual(MAX_CORE_ROUTE_JS_BYTES)
+    })
+  }
 })
