@@ -4,6 +4,7 @@ import {
 } from '@/lib/localAdminMode'
 import {
   API_BASE_URL,
+  fetchWithTimeout,
 } from '@/lib/api'
 import {
   IS_LOCAL_MOCK_DATA,
@@ -274,7 +275,7 @@ export async function fetchPrograms():
     IS_LOCAL_ADMIN_MODE
   ) {
     const response =
-      await fetch(
+      await fetchWithTimeout(
         localAdminApiUrl(
           '/programs?scope=public',
         ),
@@ -303,7 +304,7 @@ export async function fetchPrograms():
   }
 
   const response =
-    await fetch(
+    await fetchWithTimeout(
       `${API_BASE_URL}/api/programs`,
       typeof window ===
         'undefined'
